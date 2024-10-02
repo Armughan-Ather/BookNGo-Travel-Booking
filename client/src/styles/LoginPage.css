@@ -1,100 +1,154 @@
 /* General container styling */
 .container {
-    display: flex;
-    height: 100vh;
-    background-color: #f4f4f9;
-    padding: 0 2rem;
-  }
-  
-  /* Left side styling */
-  .left-side {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: flex-start;
-    width: 50%;
-    padding: 2rem;
-    margin-left: 4rem; /* Increased margin on the left side */
-  }
-  
+  display: flex;
+  height: 100vh;
+  background-color: #f4f4f9;
+  padding: 0 2rem;
+  justify-content: center; /* Center the entire container horizontally */
+  align-items: center; /* Center the container vertically */
+}
+
+/* Left side styling */
+.left-side {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start; /* Align to the left by default */
+  text-align: left; /* Left-align text */
+  width: 50%;
+  padding: 2rem;
+  margin-left: 0; /* Remove margin to prevent side spacing */
+}
+
 .left-side > .appTitle {
-    font-size: 4rem;
-    color: #003049 ;    
-    margin: 0;
+  font-size: 4rem;
+  color: #003049;
+  margin: 0;
+  text-align: left; /* Left align on larger screens */
+}
+
+.left-side > .appTagline {
+  font-size: 1.5rem;
+  color: #669bbc;
+  text-align: left; /* Left align on larger screens */
+}
+
+/* Right side styling */
+.right-side {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 50%;
+  padding: 2rem;
+}
+
+/* Login form styling */
+.login {
+  background-color: #fff;
+  border-radius: 0.8rem;
+  box-shadow: 0 0.4rem 0.8rem rgba(0, 0, 0, 0.1);
+  padding: 2.5rem;
+  width: 100%;
+  max-width: 25rem;
+  margin: 0 auto; /* Center form */
+}
+
+/* Input fields styling */
+input {
+  width: 85%;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  border: 0.1rem solid #ddd;
+  border-radius: 0.4rem;
+  font-size: 1rem;
+}
+
+/* Placeholder styling */
+input::placeholder {
+  font-size: 1rem; /* Default placeholder font size */
+}
+
+/* Button styling */
+button {
+  width: 100%;
+  height: 100%;
+  padding: 1.5rem;
+  border: none;
+  border-radius: 0.4rem;
+  font-size: 1rem;
+  cursor: pointer;
+  color: #fff;
+  transition: background-color 0.3s ease;
+  margin-bottom: 1rem;
+}
+
+#loginButton {
+  background-color: #28a745;
+}
+
+#loginButton:hover {
+  background-color: #218838;
+}
+
+#signupButton {
+  background-color: #007bff;
+}
+
+#signupButton:hover {
+  background-color: #0056b3;
+}
+
+/* Focus effect for input fields */
+form > input:focus {
+  border-color: grey;
+  outline: none;
+}
+
+
+/* Responsive Design for Mobile */
+@media (max-width: 768px) {
+  /* Adjust layout for mobile */
+  .container {
+      flex-direction: column; /* Stack elements vertically */
+      padding: 1rem;
   }
-  
-   .left-side> .appTagline {
-    font-size: 1.5rem;
-    color: #669bbc ;
+
+  .left-side, .right-side {
+      width: 100%; /* Make full width */
+      padding: 1rem;
   }
-  
-  /* Right side styling */
-  .right-side {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 50%;
-    padding: 2rem;
+
+  /* Align title and tagline to the center of the screen */
+  .left-side {
+      justify-content: flex-start; /* Push content to the top */
+      text-align: center; /* Center text */
+      align-items: center;
   }
-  
-  /* Login form styling */
+
+  /* Adjust heading sizes for mobile */
+  .left-side > .appTitle {
+      font-size: 2.5rem; /* Smaller title on mobile */
+      text-align: center; /* Center text */
+  }
+
+  .left-side > .appTagline {
+      font-size: 1.2rem; /* Adjust tagline size */
+      text-align: center; /* Center text */
+  }
+
+  /* Adjust form size for mobile */
   .login {
-    background-color: #fff;
-    border-radius: 0.8rem;
-    box-shadow: 0 0.4rem 0.8rem rgba(0, 0, 0, 0.1);
-    padding: 2.5rem;
-    width: 100%;
-    max-width: 25rem;
+      padding: 1.5rem;
+      max-width: 90%; /* Increase form width */
   }
-  
-  /* Input fields styling */
-  input {
-    width: 85%;
-    padding: 1.5rem;
-    margin-bottom: 1.5rem;
-    border: 0.1rem solid #ddd;
-    border-radius: 0.4rem;
-    font-size: 1rem;
-    
+
+  /* Placeholder size for mobile */
+  input::placeholder {
+      font-size: 0.9rem; /* Slightly smaller placeholder */
   }
-  
-  /* Button styling */
-  
+
+  /* Adjust button padding for mobile */
   button {
-    width: 100%;
-    padding: 1.5rem;
-    border: none;
-    border-radius: 0.4rem;
-    font-size: 1rem;
-    cursor: pointer;
-    color: #fff;
-    transition: background-color 0.3s ease;
-    margin-bottom: 1rem;
+      padding: 1rem;
   }
-  
-  #loginButton {
-    background-color: #28a745;
-  }
-  
-  #loginButton:hover {
-    background-color: #218838;
-  }
-  
-  #singupButton {
-    background-color: #007bff;
-  }
-  
-  #singupButton:hover {
-    background-color: #0056b3;
-  }
-  form > input:focus{
-    border-color: grey ;
-    outline: none;
-  }
-  /* Signup button link styling */
-  #singupButton a{
-    color: #fff;
-    text-decoration: none;
-    display: block;
-  }
-  
+}

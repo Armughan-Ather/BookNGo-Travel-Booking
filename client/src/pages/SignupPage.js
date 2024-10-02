@@ -1,5 +1,7 @@
 import React from "react"
-import "../styles/SignUpPage.css"
+import"../styles/SignUpPage.css"
+import { useNavigate } from "react-router-dom";
+
 export default function SignupPage(){
     const [signupData,setSignupData]=React.useState({
         username:"",
@@ -20,6 +22,10 @@ export default function SignupPage(){
                 [name] : value
             }
         })
+    }
+    const navigate = useNavigate();
+    function returnToLogin(){
+        navigate("../login")
     }
     return (
         <div className="container">
@@ -66,6 +72,7 @@ export default function SignupPage(){
                             onChange={handleChange} 
                         />
                         <button className="signupButton">Sign Up</button>
+                        <button className="BackloginButton" onClick={returnToLogin}>Back to Login</button>
                     </form>
                 </div>
             </div>

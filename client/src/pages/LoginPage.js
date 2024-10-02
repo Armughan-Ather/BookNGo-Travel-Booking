@@ -1,5 +1,6 @@
 import React from "react";
 import "../styles/LoginPage.css";
+import { useNavigate } from "react-router-dom";
 
 export default function LoginPage() {
     const [loginData, setLoginData] = React.useState({
@@ -19,6 +20,11 @@ export default function LoginPage() {
                 [name]: value
             };
         });
+    }
+    const navigate = useNavigate();
+
+    function handleSignup(){
+        navigate("/signup")
     }
 
     return (
@@ -45,7 +51,7 @@ export default function LoginPage() {
                             onChange={handleChange}
                         />
                         <button id="loginButton">Login</button>
-                         <button id="singupButton" type="button"><a href="./signup">Create new account</a></button> 
+                        <button id="signupButton" type="button" onClick={handleSignup}>Create new account</button> 
                         
                     </form>
                 </div>
