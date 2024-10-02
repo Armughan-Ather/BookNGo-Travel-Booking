@@ -236,7 +236,7 @@ export default function Navbar() {
           </a>
         </div>
 
-        {/* Profile Section on the right */}
+        {/* Profile Section */}
         <div
           className="navbar-profile"
           onClick={() => setProfileOpen((prevState) => !prevState)}

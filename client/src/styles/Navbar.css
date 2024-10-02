@@ -1,73 +1,95 @@
 /* Navbar Container */
 .custom-navbar {
     width: 100%;
-    background-color: #003c58;
+    background-color: #0A3D62; /* Dark Blue for a professional look */
     color: white;
     display: flex;
     flex-direction: column;
-  }
-  
-  /* First Row: Logo and Hamburger */
-  .navbar-first-row {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    font-family: 'Roboto', sans-serif;
+}
+
+/* First Row: Logo and Hamburger */
+.navbar-first-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 1rem;
-  }
-  
-  .navbar-logo {
-    font-size: 2rem;
+    background-color: #1B4F72; /* Slightly lighter blue for differentiation */
+}
+
+.navbar-logo {
+    font-size: 2.5rem; /* Slightly bigger for better visibility */
     font-weight: bold;
-  }
-  
-  .hamburger-icon {
-    font-size: 2rem;
+    color: #EAF2F8; /* Softer off-white */
+}
+
+.hamburger-icon {
+    font-size: 2.5rem;
     cursor: pointer;
     display: none;
-  }
-  
-  /* Second Row: Navigation Links on Left and Profile on Right */
-  .navbar-second-row {
+    color: #EAF2F8;
+}
+
+/* Second Row: Navigation Links on Left and Profile on Right */
+.navbar-second-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 0.5rem 1rem;
-    background-color: #005075;
+    background-color: #0A3D62;
     flex-wrap: wrap;
-  }
-  
-  /* Left-side links */
-  .navbar-links-left {
+    transition: all 0.3s ease; /* Smooth transition on resize */
+}
+
+/* Left-side links */
+.navbar-links-left {
     display: flex;
-    gap: 2rem; /* Adds spacing between the links */
-  }
-  
-  .navbar-links-left a {
-    color: white;
+    gap: 2rem;
+}
+
+.navbar-links-left a {
+    color: #EAF2F8;
     text-decoration: none;
     font-size: 1.2rem;
     display: flex;
     align-items: center;
-  }
-  
-  /* Profile on the right */
-  .navbar-profile {
+    padding: 0.5rem;
+    transition: all 0.3s ease; /* Smooth hover transition */
+}
+
+.navbar-links-left a:hover {
+    background-color: #48C9B0; /* Cyan accent for hover */
+    color: #fff;
+    border-radius: 5px;
+}
+
+/* Profile on the right */
+.navbar-profile {
     position: relative;
     cursor: pointer;
     display: flex;
     align-items: center;
-    color: white;
-  }
-  
-  .navbar-profile i {
+    color: #EAF2F8;
+    padding: 0.5rem;
+    transition: all 0.3s ease;
+}
+
+.navbar-profile:hover {
+    background-color: #48C9B0;
+    border-radius: 5px;
+}
+
+.navbar-profile i {
     margin-right: 0.5rem;
-  }
-  
-  /* Dropdown Menu */
-  .dropdown-menu {
+}
+
+/* Dropdown Menu */
+.dropdown-menu {
     position: absolute;
     top: calc(100% + 10px);
-    right: 0;
+    left: 50%;
+    transform: translateX(-50%);
     background-color: white;
     color: black;
     display: none;
@@ -76,47 +98,50 @@
     border-radius: 5px;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
     z-index: 9999;
-  }
-  
-  .dropdown-menu a {
-    padding: 0.5rem 1rem;
+    transition: all 0.3s ease;
+}
+
+.dropdown-menu a {
+    padding: 0.75rem 1rem;
     text-decoration: none;
     color: black;
-  }
-  
-  .dropdown-menu a:hover {
+    transition: all 0.3s ease;
+}
+
+.dropdown-menu a:hover {
     background-color: #f1f1f1;
-  }
-  
-  .dropdown-menu.active {
+}
+
+/* Display dropdown on profile click */
+.dropdown-menu.active {
     display: flex;
-  }
-  
-  /* Hide menu items by default on mobile */
-  @media (max-width: 768px) {
-    .hamburger-icon{
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+    .hamburger-icon {
         display: flex;
     }
-    .navbar-second-row {
-      display: none;
-    }
-  
-    /* Show the menu when hamburger is clicked */
-    .navbar-second-row.menu-open {
-      display: flex;
-      flex-direction: column;
-      width: 100%;
-    }
-  
-    .navbar-links-left {
-      flex-direction: column;
-      gap: 1rem;
-    }
-  
-    .navbar-profile {
-      align-self: flex-end;
-    }
-  }
-  
 
-  
+    .navbar-second-row {
+        display: none;
+    }
+
+    .navbar-second-row.menu-open {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        background-color: #1B4F72; /* Consistent color */
+    }
+
+    .navbar-links-left {
+        flex-direction: column;
+        gap: 1rem;
+        padding: 1rem 0;
+    }
+
+    .navbar-profile {
+        align-self: center;
+        padding: 1rem 0;
+    }
+}
