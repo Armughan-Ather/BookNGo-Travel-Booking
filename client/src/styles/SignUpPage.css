@@ -98,10 +98,45 @@ input:focus {
   color: #fff;
   cursor: pointer;
   font-size: 1.2rem;
+  
 }
 
 .BackloginButton:hover {
   background-color: #0056b3;
+}
+.password-container {
+  position: relative; /* Position relative for the eye icon */
+  width: 100%; /* Match the width of the input */
+}
+
+/* Eye icon styling */
+.eye-icon {
+  position: absolute;
+  right: 1.5rem; /* Space from the right */
+  top: 40%; /* Center vertically */
+  transform: translateY(-50%); /* Adjust for vertical centering */
+  cursor: pointer; /* Pointer cursor for interaction */
+  color: #007bff; /* Change the icon color */
+  
+  color: #666;
+}
+
+/* Input fields styling */
+input {
+  width: 100%; /* Change this to 100% to fit the container */
+  padding: 1.5rem; /* Add padding */
+  margin-bottom: 1.5rem; /* Space below */
+  border: 0.1rem solid #ddd; /* Border styling */
+  border-radius: 0.4rem; /* Rounded corners */
+  font-size: 1rem; /* Font size */
+}
+
+.error {
+  color: #d9534f; /* Subtle red for a more professional look */
+  font-size: 0.85rem; /* A bit smaller for error message */
+  font-weight: 600; /* Medium weight for emphasis */
+  margin-bottom: 1rem; /* Space between the message and the next element */
+  text-align: left; /* Align text to the left */
 }
 
 /* Mobile responsive styles */

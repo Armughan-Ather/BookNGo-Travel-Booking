@@ -1,3 +1,8 @@
+/* Reset margins and padding for body and html */
+body {
+  margin: 0 !important;
+  padding: 0 !important;
+}
 /* General container styling */
 .container {
   display: flex;
@@ -104,6 +109,37 @@ form > input:focus {
   outline: none;
 }
 
+/* Error message styling */
+/* Clean error message styling */
+.error {
+  color: #d9534f; /* Subtle red for a more professional look */
+  font-size: 0.85rem; /* A bit smaller for error message */
+  font-weight: 600; /* Medium weight for emphasis */
+  margin-bottom: 1rem; /* Space between the message and the next element */
+  text-align: left; /* Align text to the left */
+}
+/* Other existing styles remain unchanged */
+
+/* Password container */
+.password-container {
+  position: relative; /* Position relative for the eye icon */
+  width: 100%; /* Match the width of the input */
+}
+
+/* Eye icon styling */
+.eye-icon {
+  position: absolute;
+  right: 1.5rem; /* Space from the right */
+  top: 40%; /* Center vertically */
+  transform: translateY(-50%); /* Adjust for vertical centering */
+  cursor: pointer; /* Pointer cursor for interaction */
+  color: #007bff; /* Change the icon color */
+  
+  color: #666;
+}
+
+
+/* Other existing styles remain unchanged */
 
 /* Responsive Design for Mobile */
 @media (max-width: 768px) {
@@ -152,3 +188,4 @@ form > input:focus {
       padding: 1rem;
   }
 }
+
