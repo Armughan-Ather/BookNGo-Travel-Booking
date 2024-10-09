@@ -169,8 +169,11 @@
 //         </div>
 //     );
 // }
+
+
+
 import React, { useState, useEffect, useRef } from 'react';
-import { FaSearch, FaMapMarkerAlt, FaBed, FaCalendarAlt, FaTimes } from 'react-icons/fa';
+import { FaSearch, FaMapMarkerAlt, FaBed, FaCalendarAlt, FaTimes, FaCaretDown } from 'react-icons/fa';
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
 import '../styles/HotelPage.css';
@@ -178,13 +181,13 @@ import { MdOutlineAddLocation } from "react-icons/md";
 import cities from 'cities.json'; // Import the cities.json dataset
 
 // Custom Date Picker Input
-const CustomInput = React.forwardRef(({ onClick, value, onClear }, ref) => (
+const CustomInput = React.forwardRef(({ onClick, value, onClear, placeholder }, ref) => (
     <div className="input-container" ref={ref}>
         <FaCalendarAlt className="input-icon" onClick={onClick} />
         <input
             type="text"
             className="date-input"
-            placeholder={value || "Select Date"}
+            placeholder={value || placeholder}
             value={value}
             readOnly
             onClick={onClick}
@@ -208,7 +211,6 @@ export default function HotelPage() {
 
     const indexedCities = {};
 
-    // Preprocess the cities by first letter
     cities.forEach(city => {
         const firstLetter = city.name[0].toLowerCase();
         if (!indexedCities[firstLetter]) {
@@ -255,7 +257,6 @@ export default function HotelPage() {
         setRoomType(e.target.value);
     }
 
-    // Close dropdown when clicking outside
     useEffect(() => {
         function handleClickOutside(event) {
             if (inputRef.current && !inputRef.current.contains(event.target)) {
@@ -271,70 +272,73 @@ export default function HotelPage() {
 
     return (
         <div className="hotel-page">
-            <h1>Find Your Perfect Hotel</h1>
+            <div className="hero-section">
+                <h1 className="hero-heading heroTagline">Discover Your Ideal Stay</h1>
+                <div className="search-container">
+                    <div className="input-container citySearch" ref={inputRef}>
+                        <FaMapMarkerAlt className="input-icon city-icon" />
+                        <input
+                            type="text"
+                            className='inputDropdown'
+                            placeholder="City or Hotel"
+                            value={searchInput}
+                            onChange={handleSearchInput}
+                            onFocus={() => setShowSuggestions(true)}
+                        />
+                        {showSuggestions && (
+                            <ul className="suggestions-dropdown">
+                                {suggestions.map((name, index) => (
+                                    <li key={index} onClick={() => handleCityOrHotelSelect(name)}>
+                                        <MdOutlineAddLocation className="dropdown-icon" /> {name}
+                                    </li>
+                                ))}
+                            </ul>
+                        )}
+                    </div>
+                </div>
 
-            <div className="search-container">
-                <div className="input-container" ref={inputRef}>
-                    <FaMapMarkerAlt className="input-icon" />
-                    <input
-                        type="text"
-                        className='inputDropdown'
-                        placeholder="City or Hotel"
-                        value={searchInput}
-                        onChange={handleSearchInput}
-                        onFocus={() => setShowSuggestions(true)}
+                <div className="search-container">
+                    <DatePicker
+                        selected={checkInDate}
+                        onChange={(date) => setCheckInDate(date)}
+                        placeholderText="Check-In Date"
+                        dateFormat="MM/dd/yyyy"
+                        customInput={<CustomInput onClear={() => setCheckInDate(null)} />}
                     />
-                    {showSuggestions && (
-                        <ul className="suggestions-dropdown">
-                            {suggestions.map((name, index) => (
-                                <li key={index} onClick={() => handleCityOrHotelSelect(name)}>
-                                    <MdOutlineAddLocation className="dropdown-icon" /> {name}
-                                </li>
-                            ))}
-                        </ul>
-                    )}
-                </div>
 
-                <DatePicker
-                    selected={checkInDate}
-                    onChange={(date) => setCheckInDate(date)}
-                    placeholderText="Check-In Date"
-                    dateFormat="MM/dd/yyyy"
-                    customInput={<CustomInput onClear={() => setCheckInDate(null)} />}
-                />
-
-                <DatePicker
-                    selected={checkOutDate}
-                    onChange={(date) => setCheckOutDate(date)}
-                    placeholderText="Check-Out Date"
-                    dateFormat="MM/dd/yyyy"
-                    customInput={<CustomInput onClear={() => setCheckOutDate(null)} />}
-                />
-
-                <div className="input-container">
-                    <FaBed className="input-icon" />
-                    <input
-                        type="number"
-                        placeholder="Rooms"
-                        className="rooms-input"
-                        value={rooms}
-                        onChange={handleRoomsChange}
+                    <DatePicker
+                        selected={checkOutDate}
+                        onChange={(date) => setCheckOutDate(date)}
+                        placeholderText="Check-Out Date"
+                        dateFormat="MM/dd/yyyy"
+                        customInput={<CustomInput onClear={() => setCheckOutDate(null)} />}
                     />
-                </div>
 
-                {/* Dropdown for room type */}
-                <div className="input-container">
-                    <select value={roomType} onChange={handleRoomTypeChange} className="room-type-dropdown">
-                        <option value="standard">Standard</option>
-                        <option value="deluxe">Deluxe</option>
-                    </select>
-                </div>
+                    <div className="input-container">
+                        <FaBed className="input-icon" />
+                        <input
+                            type="number"
+                            placeholder="Rooms"
+                            className="rooms-input"
+                            value={rooms}
+                            onChange={handleRoomsChange}
+                        />
+                    </div>
 
-                <button className="search-button">
-                    <FaSearch />
-                </button>
+                    <div className="input-container room-type-container">
+                        <select value={roomType} onChange={handleRoomTypeChange} className="room-type-dropdown">
+                            <option value="standard">Standard</option>
+                            <option value="deluxe">Deluxe</option>
+                            
+                        </select>
+                        {/* <FaCaretDown className="dropdown-icon" /> */}
+                    </div>
+
+                    <button className="search-button">
+                        <FaSearch />
+                    </button>
+                </div>
             </div>
-
         </div>
     );
 }
