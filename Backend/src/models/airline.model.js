@@ -1,6 +1,7 @@
 export const createTableAirline = `
 CREATE TABLE IF NOT EXISTS Airline (
-name VARCHAR(100) PRIMARY KEY,
+id int auto_increment PRIMARY KEY,
+name VARCHAR(100) unique,
 rating INT NOT NULL,
 ratingCount INT NOT NULL DEFAULT 0
 )
