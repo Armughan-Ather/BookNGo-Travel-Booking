@@ -1,10 +1,10 @@
 export const createTableBundle = `
 CREATE TABLE IF NOT EXISTS Bundle (
 flightId INT NOT NULL,
-hotelName VARCHAR(100) NOT NULL,
+hotelId int NOT NULL,
 discount INT NOT NULL,
-PRIMARY KEY (flightId, hotelName),
+PRIMARY KEY (flightId, hotelId),
 FOREIGN KEY (flightId) REFERENCES Flight(id),
-FOREIGN KEY (hotelName) REFERENCES Hotel(name)
+FOREIGN KEY (hotelId) REFERENCES Hotel(id)
 )
 `;

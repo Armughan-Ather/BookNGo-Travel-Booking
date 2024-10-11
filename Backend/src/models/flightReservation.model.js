@@ -1,12 +1,12 @@
 export const createTableFlightReservation = `
 CREATE TABLE IF NOT EXISTS FlightReservation (
 id INT AUTO_INCREMENT PRIMARY KEY,
-airlineName VARCHAR(100) NOT NULL,
-userId VARCHAR(20),
+flightId int NOT NULL,
+userId int not null,
 bookingDate DATE DEFAULT CURRENT_TIMESTAMP,
-status VARCHAR(50) NOT NULL DEFAULT 'Scheduled',
+status VARCHAR(50) NOT NULL DEFAULT 'Booked',
 seats INT NOT NULL,
-FOREIGN KEY (airlineName) REFERENCES Airline(name),
+FOREIGN KEY (flightId) REFERENCES Flight(id),
 FOREIGN KEY (userId) REFERENCES User(id)
 )
 `;

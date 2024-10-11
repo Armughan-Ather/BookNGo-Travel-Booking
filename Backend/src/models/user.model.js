@@ -1,6 +1,7 @@
 export const createTableUser = `
 CREATE TABLE IF NOT EXISTS User (
-id VARCHAR(20) PRIMARY KEY,
+id int Auto_increment primary key,
+userName VARCHAR(20) unique,
 name VARCHAR(100) NOT NULL,
 password VARCHAR(100) NOT NULL,
 email VARCHAR(100) NOT NULL,
