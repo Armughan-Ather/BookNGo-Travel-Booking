@@ -98,7 +98,142 @@ const registerUser = async (req, res) => {
 export { registerUser };
 
 
+const loginUser = async (req, res) => {
 
+    try {
+        console.log('Request Body:', req.body);
+        const { userNameOrEmail, password } = req.body;
+
+        // 1. Basic validations
+        if (!userNameOrEmail || !password) {
+            return res.status(400).json({ error: 'Username/Email and password are required.' });
+        }
+
+        // 2. Fetch user from the database using a parameterized query
+        connection.query(
+            'SELECT * FROM User WHERE userName = ? OR email = ?',
+            [userNameOrEmail, userNameOrEmail],
+            async (error, rows) => {
+                if (error) {
+                    console.error('Error during user login:', error);
+                    return res.status(500).json({ error: 'Something went wrong while logging in the user.' });
+                }
+
+                // 3. Check if user exists
+                if (rows.length > 0) {
+                    console.log("hi");
+                    const user = rows[0];
+                    console.log(user);
+
+                    // 4. Compare the provided password with the hashed password
+                    const passwordMatch = await bcrypt.compare(password, user.password);
+                    if (!passwordMatch) {
+                        return res.status(401).json({ error: 'Invalid password.' });
+                    }
+
+                    // 5. Return success response
+                    const loggedInUser = {
+                        id: user.id,
+                        userName: user.userName,
+                        name: user.name,
+                        email: user.email,
+                        phone: user.phone
+                    };
+
+                    return res.status(200).json(
+                        new ApiResponse(200, loggedInUser, 'User logged in successfully.')
+                    );
+                } else {
+                    return res.status(401).json({ error: 'Invalid username/email.' });
+                }
+            }
+        );
+
+    } catch (error) {
+        console.error('Some Login Error: ', error);
+        return res.status(400).json({ error: error.message });
+    }
+};
+
+export { loginUser };
+
+
+
+
+
+
+
+
+
+// const loginUser = async (req, res) => {
+
+//     try {
+//         console.log('Request Body:', req.body);
+//         const { userNameOrEmail, password } = req.body;
+
+//         // 1. Basic validations
+//         if (!userNameOrEmail || !password) {
+//             return res.status(400).json({ error: 'Username/Email and password are required.' });
+//         }
+
+
+
+//         // 2. Determine if input is email or username
+//         // const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(userNameOrEmail);
+//         // let query = 'SELECT * FROM User WHERE userName = ?';
+//         // let queryParam = userNameOrEmail;
+
+//         // if (isEmail) {
+//         //     query = 'SELECT * FROM User WHERE email = ?';
+//         // }
+
+//         // 3. Fetch user from the database
+//         try {
+//             const rows = await connection.query(
+//                 'SELECT * FROM User WHERE userName = ? OR email = ?',
+//                 [userNameOrEmail, userNameOrEmail]
+//             );
+//             console.log(rows.length);
+//             // const rows = await connection.query(query, [queryParam]);
+//             if (rows) {
+//                 console.log("hi");
+//                 const user = rows[0];
+//                 console.log(user);
+//                 // 4. Compare the provided password with the hashed password
+//                 const passwordMatch = await bcrypt.compare(password, user.password);
+//                 //console.log("hello");
+
+//                 if (!passwordMatch) {
+//                     return res.status(401).json({ error: 'Invalid password.' });
+//                 }
+
+//                 // 5. Return success response
+//                 const loggedInUser = {
+//                     id: user.id,
+//                     userName: user.userName,
+//                     name: user.name,
+//                     email: user.email,
+//                     phone: user.phone
+//                 };
+
+//                 return res.status(200).json(
+//                     new ApiResponse(200, loggedInUser, 'User logged in successfully.')
+//                 );
+
+//             }
+//             else
+//                 return res.status(401).json({ error: 'Invalid username/email.' });
+//         } catch (error) {
+//             console.error('Error during user login:', error);
+//             return res.status(500).json({ error: 'Something went wrong while logging in the user.' });
+//         }
+//     } catch (error) {
+//         console.error('Some Login Error: ', error);
+//         return res.status(400).json({ error: error.message });
+//     }
+// };
+
+// export { loginUser };
 
 
 
