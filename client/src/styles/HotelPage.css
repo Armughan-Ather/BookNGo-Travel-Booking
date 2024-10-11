@@ -21,6 +21,26 @@
     font-size: 2.5rem;
     margin-bottom: 3rem;
 }
+.hotel-page {
+    margin: 0;
+    padding: 0;
+    
+}
+
+.hotel-page .hero-section {
+    margin-top: 0; /* Ensure there's no top margin */
+}
+
+.search-container {
+    margin: 0; /* Remove margin if any */
+    padding: 0; /* Remove padding if any */
+}
+
+/* Adjust the hero heading */
+.hero-heading {
+    margin: 0; /* Remove margin */
+    padding: 1rem 0; /* Adjust padding if needed */
+}
 
 /* Search container for alignment and spacing */
 .search-container {
@@ -65,7 +85,7 @@
 .input-icon {
     position: absolute;
     left: 0.7rem; /* Adjust icon position */
-    top: 32%; /* Center icon vertically */
+    top: 32% ; /* Center icon vertically */
     transform: translateY(-50%);
     color: #007bff; /* Icon color */
     font-size: 1.2rem; /* Adjust icon size */
@@ -80,7 +100,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 .clear-icon {
     position: absolute;
     right: 0.7rem; /* Adjust this value based on your layout */
-    top: 33%; /* Center it vertically */
+    top: 33% ; /* Center it vertically */
     transform: translateY(-50%);
     cursor: pointer; /* Change cursor on hover */
     color: #ff0000; /* Change color to red or any color you prefer */
@@ -213,9 +233,10 @@ input::placeholder {
     margin-bottom: 0;
 }
 
-.city-icon {
+.date-icon, .city-icon , .room-icon{
     top: 46%;
 }
+
 /* Add to your CSS file */
 
 .heroTagline {

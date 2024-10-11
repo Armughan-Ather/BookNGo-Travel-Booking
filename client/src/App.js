@@ -11,16 +11,16 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        
+        {/* pages without layout */}
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/signup" element={<SignupPage />} />
+          
         <Route element={<Layout />}> {/* Apply Layout to these routes */}
           {/* pages with layout */}
           <Route path="/" element={<HomePage />} />
           <Route path="/flights" element={<FlightPage />} />
           <Route path="/hotels" element={<HotelPage />} />
 
-          {/* pages without layout */}
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/signup" element={<SignupPage />} />
           
         </Route>
       </Routes>

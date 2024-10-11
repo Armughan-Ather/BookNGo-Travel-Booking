@@ -13,9 +13,9 @@
     z-index: 1000; /* Ensure it stays on top of other elements */
 }
 
-/* Add padding to the body to prevent overlap */
-body {
-    padding-top: 6.25rem; /* Adjust based on the height of your navbar */
+/* Add padding to the navbar container to prevent overlap */
+.custom-navbar-padding {
+    padding-top: 9.7rem; /* Add space to account for fixed navbar height */
 }
 
 /* First Row: Logo and Hamburger */

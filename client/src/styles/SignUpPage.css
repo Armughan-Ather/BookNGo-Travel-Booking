@@ -1,184 +1,113 @@
-/* General container styling */
-.container {
-  display: flex;
-  justify-content: space-between;
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+.signup-page {
   height: 100vh;
-  background-color: #f7f8fa;
-  padding: 0 2rem;
+  background-color: #f4f4f9;
 }
 
-/* Left side styling */
-.left-side {
+.left-col {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items: flex-start;
-  width: 45%;
-  padding: 2rem;
-  margin-left: 4rem;
+  align-items: start;
+  padding: 5rem;
 }
 
-.left-side > .appTitle {
-  font-size: 4rem;
-  color: #003049;
-  margin: 0;
-}
-
-.left-side > .appTagline {
-  font-size: 1.5rem;
-  color: #669bbc;
-}
-
-/* Right side styling */
-.right-side {
+.right-col {
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 45%;
-  padding: 2rem;
+  padding: 5rem;
 }
 
-/* Signup form styling */
-.signup {
+.signup-form-container {
   background-color: #fff;
-  border-radius: 1rem;
-  box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.1);
-  padding: 3rem 2rem;
+  border-radius: 0.8rem;
+  box-shadow: 0 0.4rem 0.8rem rgba(0, 0, 0, 0.1);
+  padding: 2.5rem;
   width: 100%;
-  max-width: 30rem;
-  box-sizing: border-box;
+  max-width: 28rem;
 }
 
-/* Input fields styling */
-input {
-  width: 100%;
-  padding: 1.5rem;
-  margin-bottom: 1.5rem;
-  border: 0.15rem solid #ddd;
-  border-radius: 0.6rem;
-  font-size: 1.2rem;
-  box-sizing: border-box;
-  transition: border-color 0.3s ease;
+.appTitle {
+  font-size: 5rem;
+  color: #003049;
+  text-align: left;
+  font-family: "Poppins", sans-serif;
+  font-weight: 900;
 }
 
-/* Dark grey border on focus */
-input:focus {
-  border-color: #333;
-  outline: none;
-}
-
-/* Sign Up button styling */
-.signupButton {
-  width: 100%;
-  padding: 1.5rem;
-  border: none;
-  border-radius: 0.6rem;
-  font-size: 1.2rem;
-  cursor: pointer;
-  color: #fff;
-  background-color: #28a745;
-  transition: background-color 0.3s ease;
-}
-
-.signupButton:hover {
-  background-color: #218838;
-}
-
-/* Input placeholders styling */
-::placeholder {
-  color: #999;
-}
-
-.BackloginButton {
-  background-color: #007bff;
-  width: 100%;
-  padding: 1.5rem;
-  border: none;
-  border-radius: 0.6rem;
-  color: #fff;
-  cursor: pointer;
-  font-size: 1.2rem;
+.appTagline {
+  font-size: 1.5rem;
+  color: #669bbc;
+  text-align: left;
+  font-family: "Poppins", sans-serif;
+  font-weight: 900;
   
 }
 
-.BackloginButton:hover {
-  background-color: #0056b3;
-}
-.password-container {
-  position: relative; /* Position relative for the eye icon */
-  width: 100%; /* Match the width of the input */
+.input-fields-form {
+  width: 100%;
+  padding: 1.2rem;
+  border: 0.1rem solid #ddd;
+  border-radius: 0.4rem;
+  font-size: 1rem;
+  margin-bottom: 1.5rem;
+  
 }
 
-/* Eye icon styling */
+.password-container, .confirm-password-container {
+  position: relative;
+}
 .eye-icon {
   position: absolute;
-  right: 1.5rem; /* Space from the right */
-  top: 40%; /* Center vertically */
-  transform: translateY(-50%); /* Adjust for vertical centering */
-  cursor: pointer; /* Pointer cursor for interaction */
-  color: #007bff; /* Change the icon color */
-  
+  right: 1rem;
+  top: 23%;
+  cursor: pointer;
   color: #666;
 }
 
-/* Input fields styling */
-input {
-  width: 100%; /* Change this to 100% to fit the container */
-  padding: 1.5rem; /* Add padding */
-  margin-bottom: 1.5rem; /* Space below */
-  border: 0.1rem solid #ddd; /* Border styling */
-  border-radius: 0.4rem; /* Rounded corners */
-  font-size: 1rem; /* Font size */
+.signup-button {
+  background-color: #28a745 !important; /* Green color */
+  border-color: #28a745 !important; /* Optional: matches the border with the button color */
+  
+}
+
+.signup-button:hover {
+  background-color: #218838 !important; /* Slightly darker shade for hover effect */
 }
 
 .error {
-  color: #d9534f; /* Subtle red for a more professional look */
-  font-size: 0.85rem; /* A bit smaller for error message */
-  font-weight: 600; /* Medium weight for emphasis */
-  margin-bottom: 1rem; /* Space between the message and the next element */
-  text-align: left; /* Align text to the left */
+  color: #d9534f;
+  font-size: 0.85rem;
+  font-weight: 600;
 }
 
-/* Mobile responsive styles */
+/* Responsive Design */
 @media (max-width: 768px) {
-  .container {
-      flex-direction: column; /* Stack left and right side */
-      height: auto; /* Allow height to adjust */
+  .left-col {
+    padding: 2rem;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* This will center the title and tagline vertically */
   }
 
-  .left-side {
-      align-items: center; /* Center align left-side content */
-      margin-left: 0; /* Remove margin for mobile view */
-      padding: 1rem; /* Reduce padding */
-      text-align: center; /* Center text */
+  .right-col {
+    padding: 2rem;
   }
 
-  .left-side > .appTitle {
-      font-size: 3rem; /* Smaller title for mobile */
+  .appTitle {
+    font-size: 3rem;
+    text-align: center;
   }
 
-  .left-side > .appTagline {
-      font-size: 1.2rem; /* Smaller tagline for mobile */
+  .appTagline {
+    font-size: 1.2rem;
+    text-align: center;
   }
 
-  .right-side {
-      width: 100%; /* Full width for right side */
-      padding: 1rem; /* Reduced padding */
-  }
-
-  .signup {
-      padding: 2rem; /* Adjust padding */
-      width: 90%; /* Increased form width */
-      max-width: none; /* Remove max-width restriction */
-  }
-
-  input {
-      font-size: 1rem; /* Smaller font size for mobile */
-      padding: 1rem; /* Reduced padding */
-  }
-
-  .signupButton, .BackloginButton {
-      padding: 1rem; /* Adjust button padding */
-      font-size: 1rem; /* Smaller font size */
+  .signup-form-container {
+    padding: 1.5rem;
   }
 }

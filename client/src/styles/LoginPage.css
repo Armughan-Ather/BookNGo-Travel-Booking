@@ -1,45 +1,39 @@
-/* Reset margins and padding for body and html */
-body {
-  margin: 0 !important;
-  padding: 0 !important;
-}
-/* General container styling */
-.container {
+/* General container styling for LoginPage */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+.container.login-page {
   display: flex;
   height: 100vh;
   background-color: #f4f4f9;
   padding: 0 2rem;
-  justify-content: center; /* Center the entire container horizontally */
-  align-items: center; /* Center the container vertically */
+  justify-content: center;
+  align-items: center;
 }
 
 /* Left side styling */
-.left-side {
+.container.login-page .left-side {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items: flex-start; /* Align to the left by default */
-  text-align: left; /* Left-align text */
+  align-items: flex-start;
+  text-align: left;
   width: 50%;
   padding: 2rem;
-  margin-left: 0; /* Remove margin to prevent side spacing */
 }
 
-.left-side > .appTitle {
+.container.login-page .left-side > .appTitle {
   font-size: 4rem;
   color: #003049;
   margin: 0;
-  text-align: left; /* Left align on larger screens */
 }
 
-.left-side > .appTagline {
+.container.login-page .left-side > .appTagline {
   font-size: 1.5rem;
   color: #669bbc;
-  text-align: left; /* Left align on larger screens */
 }
 
 /* Right side styling */
-.right-side {
+.container.login-page .right-side {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -48,144 +42,144 @@ body {
 }
 
 /* Login form styling */
-.login {
+.container.login-page .login {
   background-color: #fff;
   border-radius: 0.8rem;
   box-shadow: 0 0.4rem 0.8rem rgba(0, 0, 0, 0.1);
-  padding: 2.5rem;
+  padding: 4rem; /* Increased padding for form */
   width: 100%;
-  max-width: 25rem;
-  margin: 0 auto; /* Center form */
+  max-width: 35rem; /* Increased max-width for larger form */
+  margin: 0 auto;
 }
 
 /* Input fields styling */
-input {
-  width: 85%;
-  padding: 1.5rem;
-  margin-bottom: 1.5rem;
+.container.login-page .login input {
+  width: 100%; /* Full width */
+  padding: 1.4rem; /* Increased padding */
+  margin-bottom: 2rem; /* Increased margin for spacing */
   border: 0.1rem solid #ddd;
-  border-radius: 0.4rem;
-  font-size: 1rem;
-}
-
-/* Placeholder styling */
-input::placeholder {
-  font-size: 1rem; /* Default placeholder font size */
+  border-radius: 0.6rem; /* Increased border-radius */
+  font-size: 1.3rem; /* Larger font size */
+  min-height: 3.5rem; /* Increased height */
 }
 
 /* Button styling */
-button {
+.container.login-page .login button {
   width: 100%;
-  height: 100%;
-  padding: 1.5rem;
+  padding: 1.4rem; /* Larger button size */
   border: none;
-  border-radius: 0.4rem;
-  font-size: 1rem;
+  border-radius: 0.6rem; /* Increased border-radius */
+  font-size: 1.3rem; /* Larger font size */
   cursor: pointer;
   color: #fff;
-  transition: background-color 0.3s ease;
-  margin-bottom: 1rem;
+  margin-bottom: 1.2rem; /* Increased margin */
 }
-
+.input-fields-form:-webkit-autofill,
+.input-fields-form:-webkit-autofill:hover,
+.input-fields-form:-webkit-autofill:focus,
+textarea:-webkit-autofill,
+textarea:-webkit-autofill:hover,
+textarea:-webkit-autofill:focus,
+select:-webkit-autofill,
+select:-webkit-autofill:hover,
+select:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0 1000px white inset !important;
+  -webkit-text-fill-color: #000 !important;
+}
 #loginButton {
   background-color: #28a745;
-}
-
-#loginButton:hover {
-  background-color: #218838;
 }
 
 #signupButton {
   background-color: #007bff;
 }
 
-#signupButton:hover {
-  background-color: #0056b3;
-}
-
 /* Focus effect for input fields */
-form > input:focus {
+.container.login-page .login input:focus {
   border-color: grey;
   outline: none;
 }
 
 /* Error message styling */
-/* Clean error message styling */
-.error {
-  color: #d9534f; /* Subtle red for a more professional look */
-  font-size: 0.85rem; /* A bit smaller for error message */
-  font-weight: 600; /* Medium weight for emphasis */
-  margin-bottom: 1rem; /* Space between the message and the next element */
-  text-align: left; /* Align text to the left */
-}
-/* Other existing styles remain unchanged */
-
-/* Password container */
-.password-container {
-  position: relative; /* Position relative for the eye icon */
-  width: 100%; /* Match the width of the input */
+.container.login-page .login .error {
+  color: #d9534f;
+  font-size: 0.95rem; /* Increased font size */
+  font-weight: 600;
+  margin-bottom: 1rem;
 }
 
 /* Eye icon styling */
-.eye-icon {
+.container.login-page .login .eye-icon {
   position: absolute;
-  right: 1.5rem; /* Space from the right */
-  top: 40%; /* Center vertically */
-  transform: translateY(-50%); /* Adjust for vertical centering */
-  cursor: pointer; /* Pointer cursor for interaction */
-  color: #007bff; /* Change the icon color */
-  
+  right: 1.5rem;
+  top: 50%;
+  cursor: pointer;
   color: #666;
 }
 
+/* Form adjustments */
+.login-form {
+  height: auto;
+}
 
-/* Other existing styles remain unchanged */
+.input-fields-form {
+  height: 3.5rem; /* Larger input height */
+  border-radius: 1rem;
+  padding-top: 1rem;
+  font-size: 1.2rem;
+  background-color: white;
+}
+
+.button-field-form {
+  height: 3.5rem; /* Larger button size */
+  font-size: 1.2rem; /* Larger button text size */
+  margin-bottom: 1.5rem;
+  
+}
+
+/* Title and tagline styling */
+.appTitle {
+  font-family: Poppins;
+  font-weight: 900;
+  padding-left: 5rem;
+  margin-bottom: 2rem;
+}
+
+.appTagline {
+  font-family: Poppins;
+  font-weight: 900;
+  padding-left: 5rem;
+}
 
 /* Responsive Design for Mobile */
 @media (max-width: 768px) {
-  /* Adjust layout for mobile */
-  .container {
-      flex-direction: column; /* Stack elements vertically */
-      padding: 1rem;
+  .container.login-page {
+    flex-direction: column;
+    padding: 1rem;
   }
 
-  .left-side, .right-side {
-      width: 100%; /* Make full width */
-      padding: 1rem;
+  .container.login-page .left-side, 
+  .container.login-page .right-side {
+    width: 100%;
+    padding: 1rem;
   }
 
-  /* Align title and tagline to the center of the screen */
-  .left-side {
-      justify-content: flex-start; /* Push content to the top */
-      text-align: center; /* Center text */
-      align-items: center;
+  .container.login-page .left-side {
+    justify-content: flex-start;
+    text-align: center;
+    align-items: center;
   }
 
-  /* Adjust heading sizes for mobile */
-  .left-side > .appTitle {
-      font-size: 2.5rem; /* Smaller title on mobile */
-      text-align: center; /* Center text */
+  .container.login-page .left-side > .appTitle {
+    font-size: 2.5rem;
   }
 
-  .left-side > .appTagline {
-      font-size: 1.2rem; /* Adjust tagline size */
-      text-align: center; /* Center text */
+  .container.login-page .left-side > .appTagline {
+    font-size: 1.2rem;
   }
 
-  /* Adjust form size for mobile */
-  .login {
-      padding: 1.5rem;
-      max-width: 90%; /* Increase form width */
-  }
-
-  /* Placeholder size for mobile */
-  input::placeholder {
-      font-size: 0.9rem; /* Slightly smaller placeholder */
-  }
-
-  /* Adjust button padding for mobile */
-  button {
-      padding: 1rem;
+  .container.login-page .login {
+    padding: 2rem;
+    max-width: 90%;
   }
 }
-

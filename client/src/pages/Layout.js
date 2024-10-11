@@ -1,7 +1,7 @@
 import React from "react";
 import { Outlet, useLocation } from "react-router-dom";
-import Navbar from "../components/Navbar";  // Import your Navbar component
-// import Footer from "../components/Footer";  // Uncomment when you create your Footer
+import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";  // Uncomment when you create your Footer
 
 function Layout() {
     const location = useLocation();
@@ -15,8 +15,10 @@ function Layout() {
     return (
         <>
             {!hideNavbar && <Navbar />}   {/* Show Navbar unless the current path is in hideNavbar */}
-            <Outlet />                    {/* This will render the child route elements */}
-            {/* {!hideFooter && <Footer />}  Uncomment this when you create the Footer */}
+            <div className="layout-content"> {/* Add this wrapper div */}
+                <Outlet />                    {/* This will render the child route elements */}
+            </div>
+            {!hideFooter && <Footer />}  
         </>
     );
 }

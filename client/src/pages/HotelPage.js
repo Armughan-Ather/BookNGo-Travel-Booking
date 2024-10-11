@@ -183,7 +183,7 @@ import cities from 'cities.json'; // Import the cities.json dataset
 // Custom Date Picker Input
 const CustomInput = React.forwardRef(({ onClick, value, onClear, placeholder }, ref) => (
     <div className="input-container" ref={ref}>
-        <FaCalendarAlt className="input-icon" onClick={onClick} />
+        <FaCalendarAlt className="input-icon date-icon" onClick={onClick} />
         <input
             type="text"
             className="date-input"
@@ -315,7 +315,7 @@ export default function HotelPage() {
                     />
 
                     <div className="input-container">
-                        <FaBed className="input-icon" />
+                        <FaBed className="input-icon room-icon" />
                         <input
                             type="number"
                             placeholder="Rooms"

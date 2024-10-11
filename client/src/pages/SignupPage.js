@@ -1,137 +1,147 @@
-import React from "react"
-import"../styles/SignUpPage.css"
+import React, { useState } from "react";
+import { MDBContainer, MDBRow, MDBCol, MDBInput, MDBBtn, MDBTypography } from "mdb-react-ui-kit";
 import { useNavigate } from "react-router-dom";
-import { FaEye, FaEyeSlash } from "react-icons/fa"; // Import eye icons
-import axios from "axios"
-export default function SignupPage(){
-    const [signupData,setSignupData]=React.useState({
-        userID:"",
-        name:"",
-        email:"",
-        phoneNumber:"",
-        password:"",
-        
-    })
-    const [showPassword, setShowPassword] = React.useState(false); // State to toggle password visibility
-    const [errorMessage, setErrorMessage] = React.useState("");
-    
-    console.log(signupData)
-    
-    function handleChange(event){
-        const {name,value}=event.target
-        setSignupData((prevSignupData)=>{
-            return {
-                ...prevSignupData,
-                [name] : value
-            }
-        })
-    }
-    const navigate = useNavigate();
-    function returnToLogin(){
-        navigate("../login")
-    }
-    async function handleSignUp(event){
-        event.preventDefault();
-        let flag=0;
-        for(let item in signupData){
-            if(signupData[item]===""){
-                setErrorMessage("Please Enter "+item[0].toUpperCase() +item.slice(1))
-                flag=1;
-                return
-            }
-        }
-            if(flag){
-                return
-            }
-            
-            try{
-                const response=await axios.post("/api/signup",{
-                    userID:signupData.userID,
-                    name:signupData.name,
-                    email:signupData.email,
-                    phoneNumber:signupData.phoneNumber,
-                    password:signupData.password 
-                })
+import axios from "axios";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
+import "../styles/SignUpPage.css";
 
-                navigate("../login")
-            }catch(error){
-                if (error.response) {
-                    setErrorMessage(error.response.data.message || "Invalid userID or password.");
-                } else {
-                    setErrorMessage("Something went wrong. Please try again later.");
-                }
-            
-        }
-    }
-    function togglePasswordVisibility(){
-        setShowPassword(prevSetShowPassword=>!prevSetShowPassword)
-    }
-    return (
-        <div className="container">
-            <div className="left-side">
-                <h1 className="appTitle">BOOKNGO</h1>
-                <h2 className="appTagline">Book Easy, Travel Happy – Your Ultimate Travel Companion!</h2>
-            </div>
-            <div className="right-side">
-                <div className="signup">
-                    <form onSubmit={handleSignUp}>
-                        <input 
-                            type="text"
-                            placeholder="User ID"
-                            name="userID"
-                            value={signupData.userID}
-                            onChange={handleChange}
-                        />
-                        <input 
-                            type="text"
-                            placeholder="Name"
-                            name="name"
-                            value={signupData.name}
-                            onChange={handleChange}
-                        />
-                        <input 
-                            type="email"
-                            placeholder="Email"
-                            name="email"
-                            value={signupData.email}
-                            onChange={handleChange}
-                        />
-                        <input 
-                            type="number"
-                            placeholder="Phone Number"
-                            name="phoneNumber"
-                            value={signupData.phoneNumber}
-                            onChange={handleChange}
-                        />
-                        <div className="password-container">
-                            <input
-                                placeholder="Password"
-                                type={showPassword ? "text" : "password"} // Toggle between text and password
-                                name="password"
-                                value={signupData.password}
-                                onChange={handleChange}
-                            />
-                            {signupData.password && ( <div className="eye-icon" onClick={togglePasswordVisibility}>
-                                    {showPassword ? <FaEyeSlash /> : <FaEye />} {/* Toggle icon based on visibility */}
-                                </div>
-                            )}
-                        </div>
+export default function SignupPage() {
+  const [signupData, setSignupData] = useState({
+    name: "",
+    email: "",
+    phoneNo: "",
+    userName: "",
+    password: "",
+    confirmPassword: "" // Added confirmPassword field
+  });
 
-                        
-                        {/* <input
-                            type="password"
-                            placeholder="Confirm Password"
-                            name="passwordConfirm"
-                            value={signupData.passwordConfirm}
-                            onChange={handleChange} 
-                        /> */}
-                        {errorMessage && <p className="error">{errorMessage}</p>}
-                        
-                        <button className="signupButton" type="submit">Sign Up</button>
-                        <button className="BackloginButton" onClick={returnToLogin} type="button">Back to Login</button>
-                    </form>
+  const [errorMessage, setErrorMessage] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false); // Toggle for confirm password visibility
+  const navigate = useNavigate();
+
+  const handleSignup = async (event) => {
+    event.preventDefault();
+
+    if (!signupData.name || !signupData.email || !signupData.phoneNo || !signupData.userID || !signupData.password || !signupData.confirmPassword) {
+      setErrorMessage("Please fill all the fields.");
+      return;
+    }
+
+    if (signupData.password !== signupData.confirmPassword) {
+      setErrorMessage("Passwords do not match.");
+      return;
+    }
+
+    try {
+      const response = await axios.post("/api/signup", signupData);
+      if (response.data.success) {
+        navigate("/login");
+      }
+    } catch (error) {
+      setErrorMessage(error.response?.data?.message || "Something went wrong. Please try again later.");
+    }
+  };
+
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    setSignupData((prevSignupData) => ({
+      ...prevSignupData,
+      [name]: value
+    }));
+  };
+
+  const togglePasswordVisibility = () => {
+    setShowPassword((prev) => !prev);
+  };
+
+  const toggleConfirmPasswordVisibility = () => {
+    setShowConfirmPassword((prev) => !prev);
+  };
+
+  return (
+    <MDBContainer fluid className="signup-page d-flex align-items-center justify-content-center">
+      <MDBRow className="w-100">
+        <MDBCol md="6" className="left-col">
+          <MDBTypography tag="h1" className="appTitle">BOOKNGO</MDBTypography>
+          <MDBTypography tag="h2" className="appTagline">
+            Join us and start your journey today!
+          </MDBTypography>
+        </MDBCol>
+        <MDBCol md="6" className="right-col">
+          <div className="signup-form-container">
+            <form onSubmit={handleSignup} className="signup-form">
+              <MDBInput
+                label="Full Name"
+                type="text"
+                name="name"
+                value={signupData.name}
+                onChange={handleChange}
+                required
+                className="input-fields-form"
+              />
+              <MDBInput
+                label="Email"
+                type="email"
+                name="email"
+                value={signupData.email}
+                onChange={handleChange}
+                required
+                className="input-fields-form"
+              />
+              <MDBInput
+                label="Phone Number"
+                type="text"
+                name="phoneNo"
+                value={signupData.phoneNo}
+                onChange={handleChange}
+                required
+                className="input-fields-form"
+              />
+              <MDBInput
+                label="User Name"
+                type="text"
+                name="userName"
+                value={signupData.userName}
+                onChange={handleChange}
+                required
+                className="input-fields-form"
+              />
+              <div className="password-container">
+                <MDBInput
+                  label="Password"
+                  type={showPassword ? "text" : "password"}
+                  name="password"
+                  value={signupData.password}
+                  onChange={handleChange}
+                  required
+                  className="input-fields-form"
+                />
+                <div className="eye-icon" onClick={togglePasswordVisibility}>
+                  {showPassword ? <FaEyeSlash /> : <FaEye />}
                 </div>
-            </div>
-        </div>
-    )
+              </div>
+              <div className="confirm-password-container">
+                <MDBInput
+                  label="Confirm Password"
+                  type={showConfirmPassword ? "text" : "password"}
+                  name="confirmPassword"
+                  value={signupData.confirmPassword}
+                  onChange={handleChange}
+                  required
+                  className="input-fields-form"
+                />
+                <div className="eye-icon" onClick={toggleConfirmPasswordVisibility}>
+                  {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
+                </div>
+              </div>
+              {errorMessage && <p className="error">{errorMessage}</p>}
+              <MDBBtn type="submit" className="w-100 mb-4 button-field-form signup-button" >Sign Up</MDBBtn>
+              <MDBBtn type="button" className="w-100 button-field-form" onClick={() => navigate("/login")}>Back to Login</MDBBtn>
+            </form>
+          </div>
+        </MDBCol>
+      </MDBRow>
+    </MDBContainer>
+  );
 }
