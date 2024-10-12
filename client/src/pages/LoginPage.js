@@ -6,7 +6,7 @@ import { FaEye, FaEyeSlash } from "react-icons/fa";
 import "../styles/LoginPage.css"
 export default function LoginPage() {
     const [loginData, setLoginData] = React.useState({
-        userID: "",
+        userName: "",
         password: ""
     });
     const [errorMessage, setErrorMessage] = React.useState("");
@@ -16,10 +16,10 @@ export default function LoginPage() {
     async function handleLogin(event) {
         event.preventDefault();
         try {
-            if (loginData.userID === "" && loginData.password === "") {
+            if (loginData.userName === "" && loginData.password === "") {
                 setErrorMessage("Please Enter User ID And Password");
                 return;
-            } else if (loginData.userID === "") {
+            } else if (loginData.userName === "") {
                 setErrorMessage("Please Enter User ID");
                 return;
             } else if (loginData.password === "") {
@@ -27,17 +27,19 @@ export default function LoginPage() {
                 return;
             }
 
-            const response = await axios.post("/api/login", {
-                userID: loginData.userID,
+            const response = await axios.post("http://localhost:8000/api/v1/users/login", {
+                userNameOrEmail: loginData.userName,
                 password: loginData.password
             });
 
             const { token } = response.data;
             localStorage.setItem("token", token);
-            navigate("/home");
+            navigate("/");
         } catch (error) {
+            console.error('Error during signup:', error); 
+      
             if (error.response) {
-                setErrorMessage(error.response.data.message || "Invalid userID or password.");
+                setErrorMessage(error.response?.data?.error || "Invalid userID or password.");
             } else {
                 setErrorMessage("Something went wrong. Please try again later.");
             }

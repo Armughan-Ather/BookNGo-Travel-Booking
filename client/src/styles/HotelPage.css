@@ -100,7 +100,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 .clear-icon {
     position: absolute;
     right: 0.7rem; /* Adjust this value based on your layout */
-    top: 33% ; /* Center it vertically */
+    top: 50% ; /* Center it vertically */
     transform: translateY(-50%);
     cursor: pointer; /* Change cursor on hover */
     color: #ff0000; /* Change color to red or any color you prefer */

@@ -9,7 +9,7 @@ export default function SignupPage() {
   const [signupData, setSignupData] = useState({
     name: "",
     email: "",
-    phoneNo: "",
+    phone: "",
     userName: "",
     password: "",
     confirmPassword: "" // Added confirmPassword field
@@ -23,7 +23,7 @@ export default function SignupPage() {
   const handleSignup = async (event) => {
     event.preventDefault();
 
-    if (!signupData.name || !signupData.email || !signupData.phoneNo || !signupData.userID || !signupData.password || !signupData.confirmPassword) {
+    if (!signupData.name || !signupData.email || !signupData.phone || !signupData.userName || !signupData.password || !signupData.confirmPassword) {
       setErrorMessage("Please fill all the fields.");
       return;
     }
@@ -34,12 +34,15 @@ export default function SignupPage() {
     }
 
     try {
-      const response = await axios.post("/api/signup", signupData);
+      const response = await axios.post("http://localhost:8000/api/v1/users/register", signupData);
+      console.log('Response:', response); 
       if (response.data.success) {
-        navigate("/login");
+        
+        navigate("/");
       }
     } catch (error) {
-      setErrorMessage(error.response?.data?.message || "Something went wrong. Please try again later.");
+      console.error('Error during signup:', error); 
+      setErrorMessage(error.response?.data?.error || "Something went wrong. Please try again later.");
     }
   };
 
@@ -92,8 +95,8 @@ export default function SignupPage() {
               <MDBInput
                 label="Phone Number"
                 type="text"
-                name="phoneNo"
-                value={signupData.phoneNo}
+                name="phone"
+                value={signupData.phone}
                 onChange={handleChange}
                 required
                 className="input-fields-form"
