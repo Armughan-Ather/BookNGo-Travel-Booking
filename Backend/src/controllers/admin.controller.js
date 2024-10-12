@@ -1,6 +1,7 @@
 import { ApiResponse } from "../utils/ApiResponse.js";
 import bcrypt from 'bcrypt';
 import sequelize from '../config/database.js'; // Sequelize instance
+import { TIME } from "sequelize";
 
 export const loginAdmin = async (req, res) => {
     try {
@@ -26,21 +27,20 @@ export const loginAdmin = async (req, res) => {
         });
 
         // 4. Check if admin exists
-        if (admins.length > 0) {
-            const admin = admins[0];
+        if (admins) { // Check if the result is an array with at least one entry
 
             // 5. Compare the provided password with the hashed password
-            const passwordMatch = await bcrypt.compare(password, admin.password);
+            const passwordMatch = await bcrypt.compare(password, admins.password);
             if (!passwordMatch) {
                 return res.status(401).json({ error: 'Invalid password.' });
             }
 
             // 7. Return success response with admin data
             const loggedInAdmin = {
-                id: admin.id,
-                userName: admin.userName,
-                name: admin.name,
-                lastLogin: admin.lastLogin // Last login before update
+                id: admins.id,
+                userName: admins.userName,
+                name: admins.name,
+                lastLogin: admins.lastLogin // Last login before update
             };
 
             // 6. Update the last login timestamp
@@ -48,7 +48,7 @@ export const loginAdmin = async (req, res) => {
                 UPDATE Admin SET lastLogin = NOW() WHERE id = :id
             `;
             await sequelize.query(updateQuery, {
-                replacements: { id: admin.id },
+                replacements: { id: admins.id },
                 type: sequelize.QueryTypes.UPDATE
             });
 

@@ -1,5 +1,5 @@
 import sequelize from '../config/database.js'; // Sequelize instance
-import { ApiResponse } from '../utils/ApiResponse'; // Assuming you have this
+import { ApiResponse } from '../utils/ApiResponse.js'; // Assuming you have this
 
 export const searchHotels = async (req, res) => {
     try {
@@ -18,7 +18,7 @@ export const searchHotels = async (req, res) => {
         `;
 
         // 3. Execute the raw SQL query with replacements
-        const [hotels] = await sequelize.query(query, {
+        const hotels = await sequelize.query(query, {
             replacements: {
                 hotelNameOrCity: hotelNameOrCity, // Exact match
                 numberOfRooms: parseInt(numberOfRooms) || 1,
@@ -46,7 +46,7 @@ export const allHotels = async (req, res) => {
         `;
 
         // 3. Execute the raw SQL query with replacements
-        const [hotels] = await sequelize.query(query, {
+        const hotels = await sequelize.query(query, {
             replacements: {
             },
             type: sequelize.QueryTypes.SELECT

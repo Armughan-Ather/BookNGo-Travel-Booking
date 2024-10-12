@@ -16,12 +16,14 @@ app.use(cookieParser());
 
 // Routes import
 import userRouter from "./routes/user.routes.js";
+import adminRouter from "./routes/admin.routes.js";
 import hotelRouter from "./routes/hotel.routes.js";
 import airlineRouter from "./routes/airline.routes.js";
 import flightRouter from "./routes/flight.routes.js";
 
 // Routes declaration
 app.use("/api/v1/users", userRouter);
+app.use("/api/v1/admins", adminRouter);
 app.use("/api/v1/hotels", hotelRouter);
 app.use("/api/v1/airlines", airlineRouter);
 app.use("/api/v1/flights", flightRouter);
