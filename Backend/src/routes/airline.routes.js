@@ -3,6 +3,6 @@ import { allAirlines } from "../controllers/airline.controller.js";
 
 const router = Router()
 
-router.route("/airlines").post(allAirlines)
+router.route("/allAirlines").post(allAirlines)
 
 export default router;
