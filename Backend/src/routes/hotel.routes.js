@@ -4,7 +4,7 @@ import { searchHotels } from "../controllers/hotel.controller.js";
 
 const router = Router()
 
-router.route("/allHotels").post(allHotels)
+router.route("/allHotels").get(allHotels)
 router.route("/searchHotels").post(searchHotels)
 
 export default router;
