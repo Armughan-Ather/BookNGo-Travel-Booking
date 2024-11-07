@@ -16,11 +16,14 @@ export const searchFlights = async (req, res) => {
 
         // 3. Build the base query for flights
         let query = `
-            SELECT * FROM Flight
-            WHERE origin = :origin
-              AND destination = :destination
-              AND numSeats >= :numberOfSeats
-              AND departure >= :fromDateTimestamp
+            SELECT flight.id, airlineId, Airline.name, departure, destination, origin, price, status, numSeats, rating, ratingCount
+            FROM Flight, Airline
+            WHERE 
+                Airline.id = Flight.airlineId
+                AND origin = :origin
+                AND destination = :destination
+                AND numSeats >= :numberOfSeats
+                AND departure >= :fromDateTimestamp
         `;
 
         // 4. Add toDate condition if provided

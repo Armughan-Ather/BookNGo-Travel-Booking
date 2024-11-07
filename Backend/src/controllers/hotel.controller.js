@@ -10,6 +10,24 @@ export const searchHotels = async (req, res) => {
             return res.status(400).json({ error: 'Hotel name/City, room type, and number of rooms are required.' });
         }
 
+        const query1 = `
+            SELECT * FROM Hotel
+            WHERE (name = :hotelNameOrCity OR location = :hotelNameOrCity)
+        `;
+
+        // 3. Execute the raw SQL query with replacements
+        const hotels1 = await sequelize.query(query1, {
+            replacements: {
+                hotelNameOrCity: hotelNameOrCity, // Exact match
+            },
+            type: sequelize.QueryTypes.SELECT
+        });
+
+        // 4. Check if any hotels were found
+        if (hotels1.length === 0) {
+            return res.status(404).json({ error: 'We do not have any hotels in this city.' });
+        }
+
         // 2. Build the base query to find hotels based on hotel name or city
         const query = `
             SELECT * FROM Hotel

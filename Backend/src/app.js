@@ -49,15 +49,20 @@ app.use(cookieParser());
 import userRouter from "./routes/user.routes.js";
 import adminRouter from "./routes/admin.routes.js";
 import hotelRouter from "./routes/hotel.routes.js";
+import hotelReservationRouter from "./routes/hotelReservation.routes.js";
 import airlineRouter from "./routes/airline.routes.js";
 import flightRouter from "./routes/flight.routes.js";
+import flightReservationRouter from "./routes/flightReservation.routes.js";
+
 
 // Routes declaration
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/admins", adminRouter);
 app.use("/api/v1/hotels", hotelRouter);
+app.use("/api/v1/hotelReservation", hotelReservationRouter);
 app.use("/api/v1/airlines", airlineRouter);
 app.use("/api/v1/flights", flightRouter);
+app.use("/api/v1/flightReservation", flightReservationRouter);
 
 // Export app
 export { app };
