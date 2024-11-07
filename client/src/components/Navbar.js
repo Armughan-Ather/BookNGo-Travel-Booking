@@ -21,16 +21,16 @@ export default function Navbar() {
         <div className={`navbar-second-row ${menuOpen ? 'menu-open' : ''}`}>
           <div className="navbar-links-left">
             <a href="/" className="navbar-link">
-              <FaHome /> Home
+              <FaHome /> &nbsp; Home
             </a>
             <a href="/flights" className="navbar-link">
-              <FaPlane /> Flights
+              <FaPlane /> &nbsp; Flights
             </a>
             <a href="/hotels" className="navbar-link">
-              <FaBed /> Hotels
+              <FaBed /> &nbsp; Hotels
             </a>
             <a href="/packages" className="navbar-link">
-              <FaSuitcase /> Packages
+              <FaSuitcase /> &nbsp; Packages
             </a>
           </div>
 

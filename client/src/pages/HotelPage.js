@@ -278,7 +278,6 @@ export default function HotelPage() {
     const [sortOption, setSortOption] = useState('price'); // Default sort option
     const inputRef = useRef(null);
     
-    // Refs for scrolling
     const errorMessageRef = useRef(null);
     const resultsRef = useRef(null);
 
@@ -302,6 +301,7 @@ export default function HotelPage() {
     useEffect(() => {
         async function fetchHotels() {
             try {
+                console.log(response)
                 const response = await axios.get('http://localhost:8000/api/v1/hotels/allHotels');
                 const hotelNames = response.data.data.map(hotel => hotel.name);
                 setHotels(hotelNames);
@@ -372,22 +372,7 @@ export default function HotelPage() {
             document.removeEventListener('mousedown', handleClickOutside);
         };
     }, [inputRef]);
-    // useEffect(() => {
-    //     if (errorMessage && errorMessageRef.current) {
-    //         console.log("Scrolling to error message");
-    //         errorMessageRef.current.scrollIntoView({ behavior: 'smooth' });
-            
-    //     }
-    // }, [errorMessage]);
-
-    // useEffect(() => {
-    //     if (searchResults.length > 0 && resultsRef.current) {
-    //         console.log("Scrolling to results");
-    //         resultsRef.current.scrollIntoView({ behavior: 'smooth' });
-            
-    //     }
-    // }, [searchResults]);
-
+    
     async function handleHotelSearch() {
         try {
             setErrorMessage(null);
