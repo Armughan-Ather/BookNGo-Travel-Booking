@@ -6,12 +6,12 @@ import connection from '../db/connection.js';
 
 const registerUser = (req, res) => {
     console.log('Request Body:', req.body);
-    const { userName, password, name, email, phone } = req.body;
+    const { userName, password, name, email, phone, cnicOrPassport } = req.body;
 
-    console.log(userName, password, name, email, phone);
+    console.log(userName, password, name, email, phone, cnicOrPassport);
 
     // 1. Basic validations
-    if (!userName || !password || !name || !email || !phone) {
+    if (!userName || !password || !name || !email || !phone || !cnicOrPassport) {
         return res.status(400).json({ error: 'All fields are required.' });
     }
 
@@ -56,8 +56,8 @@ const registerUser = (req, res) => {
 
                 // 7. Insert new user into the database
                 connection.query(
-                    'INSERT INTO User (userName, name, password, email, phone) VALUES (?, ?, ?, ?, ?)',
-                    [userName, name, hashedPassword, email, phone],
+                    'INSERT INTO User (userName, name, password, email, phone, cnicOrPassport) VALUES (?, ?, ?, ?, ?, ?)',
+                    [userName, name, hashedPassword, email, phone, cnicOrPassport],
                     (err, result) => {
                         if (err) {
                             console.error('Error inserting user:', err);
@@ -69,7 +69,8 @@ const registerUser = (req, res) => {
                             userName,
                             name,
                             email,
-                            phone
+                            phone,
+                            cnicOrPassport
                         };
 
                         // 8. Return success response
@@ -213,7 +214,8 @@ const loginUser = async (req, res) => {
                         userName: user.userName,
                         name: user.name,
                         email: user.email,
-                        phone: user.phone
+                        phone: user.phone,
+                        cnicOrPassport: user.cnicOrPassport
                     };
 
                     return res.status(200).json(
