@@ -5,7 +5,8 @@ import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
 import '../styles/FlightPage.css';
 import axios from 'axios';
-import cities from 'cities.json'; // Adjust the path as necessary
+import cities from 'cities.json'; 
+import FlightSearchResultCard from '../components/flightSearchResultsCard.js';
 
 // Custom Date Picker Input
 const CustomInput = React.forwardRef(({ onClick, value, onClear, placeholder }, ref) => (
@@ -36,6 +37,7 @@ export default function FlightPage() {
     const [searchResults, setSearchResults] = useState([]);
     const [errorMessage, setErrorMessage] = useState("");
     const [showErrorMessage, setShowErrorMessage] = useState(true);
+    const [sortOption, setSortOption] = useState('price');
 
     const [searchData, setSearchData] = useState({
         origin: "",
@@ -142,36 +144,6 @@ export default function FlightPage() {
         }));
     }
 
-    // Fetch "From" cities from backend
-    useEffect(() => {
-        async function fetchFromCities() {
-            try {
-                const response = await axios.get('http://localhost:8000/api/v1/cities/from?search=');
-                setFromSuggestions(response.data.data);
-                setShowFromSuggestions(true);
-            } catch (error) {
-                console.error('Error fetching from cities:', error);
-            }
-        }
-
-        fetchFromCities();
-    }, []);
-
-    // Fetch "To" cities from backend
-    useEffect(() => {
-        async function fetchToCities() {
-            try {
-                const response = await axios.get('http://localhost:8000/api/v1/cities/to?search=');
-                setToSuggestions(response.data.data);
-                setShowToSuggestions(true);
-            } catch (error) {
-                console.error('Error fetching to cities:', error);
-            }
-        }
-
-        fetchToCities();
-    }, []);
-
     // Handle the airline input change
     function handleAirlineChange(e) {
         const value = e.target.value;
@@ -219,14 +191,35 @@ export default function FlightPage() {
 
             setShowErrorMessage(false);
             setSearchResults(response.data.data);
-            console.log("Search response:", response.data.data);
+            console.log("Search responsecheck:", response.data.data);
+            console.log("Airlines : ",airlineSearch);
         } catch (error) {
             setErrorMessage(error.response?.data?.error);
             setShowErrorMessage(true);
             console.error('Error searching flights!:', error.response?.data?.error);
         }
     }
-
+    function sortFlights() {
+        const sortedResults = [...searchResults];
+    
+        if (sortOption === 'price') {
+            sortedResults.sort((a, b) => {
+                if (a.price === b.price) {
+                    return new Date(a.departure) - new Date(b.departure);
+                }
+                return a.price - b.price;
+            });
+        } else if (sortOption === 'departure') {
+            sortedResults.sort((a, b) => {
+                if (new Date(a.departure) === new Date(b.departure)) {
+                    return a.price - b.price;
+                }
+                return new Date(a.departure) - new Date(b.departure);
+            });
+        }
+    
+        return sortedResults;
+    }
     // Handle click outside to close suggestions
     useEffect(() => {
         function handleClickOutside(event) {
@@ -246,7 +239,7 @@ export default function FlightPage() {
             document.removeEventListener('mousedown', handleClickOutside);
         };
     }, []);
-
+    console.log("Error msg State :",showErrorMessage)
     return (
         <div className="flight-page">
             <div className="flight-hero-section">
@@ -334,7 +327,7 @@ export default function FlightPage() {
                     <DatePicker
                         selected={searchData.departureDate2}
                         onChange={(date) => handleDateChange(date, "departureDate2")}
-                        placeholderText="Return Date"
+                        placeholderText="Departure Date"
                         dateFormat="dd/MM/yyyy"
                         customInput={<CustomInput onClear={() => handleDateChange(null, "departureDate2")} />}
                     />
@@ -361,11 +354,46 @@ export default function FlightPage() {
                     </div>
                 </div>
             </div>
-            {errorMessage && (
+            {errorMessage && showErrorMessage && (
                 <div className="error-message-hotel-search-results">
                     {errorMessage}
                 </div>
             )}
+            {!showErrorMessage && (
+                <>
+                <h2 
+                    // ref={resultsRef} 
+                className='flight-search-results-matched-head'>
+                    {searchResults.length} Results Found
+                </h2>
+                    <div className="flight-search-sort-container">
+                        <label htmlFor="sortBy">Sort by:</label>
+                        <select
+                            id="sortBy"
+                            value={sortOption}
+                            onChange={(e) => setSortOption(e.target.value)}
+                            className="flight-search-sort-dropdown"
+                        >
+                            <option value="price">Lowest Price</option>
+                            <option value="departure">Earliest Departure</option>
+                        </select>
+                    </div>
+                </>
+            )}
+
+            {!showErrorMessage && sortFlights().map((flight, index) => (
+                <FlightSearchResultCard 
+                    key={index}
+                    flightId={flight.id} 
+                    destination={flight.destination}
+                    origin={flight.origin}
+                    departure={flight.departure}
+                    price={flight.price}
+                    airline={flight.name}
+                    rating={flight.rating}
+                    ratingCount={flight.ratingCount} 
+                />
+            ))}
         </div>
     );
 }

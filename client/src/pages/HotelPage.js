@@ -277,16 +277,17 @@ export default function HotelPage() {
     const [showSuggestions, setShowSuggestions] = useState(false);
     const [sortOption, setSortOption] = useState('price'); // Default sort option
     const inputRef = useRef(null);
-    
+    const [hotelId,setHotelId]=useState(undefined);
     const errorMessageRef = useRef(null);
     const resultsRef = useRef(null);
-
+    
+    
     const [searchData, setSearchData] = useState({
         HotelOrCity: '',
         checkInDate: null,
         checkOutDate: null,
         rooms: '',
-        roomType: 'standard'
+        roomType: 'standard',
     });
 
     const indexedCities = {};
@@ -388,8 +389,13 @@ export default function HotelPage() {
                 numberOfRooms: searchData.rooms
             });
             setShowErrorMessage(false);
-            setSearchResults(response.data.data);
-
+            const result = await response.data.data;
+            
+            setSearchResults(result);
+            console.log(response.data.data)
+            console.log("Search ans:",searchResults)
+            console.log('hotel id hotel page : ',searchResults.id)
+            
         } catch (error) {
             setErrorMessage(error.response?.data?.error);
             setShowErrorMessage(true);
@@ -526,6 +532,7 @@ export default function HotelPage() {
                             roomType={searchData.roomType}
                             availability={hotel[searchData.roomType]}
                             ratingCount={hotel.ratingCount}
+                            hotelID={hotel.id}
                         />
                     ))
                 )}

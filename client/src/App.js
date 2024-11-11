@@ -8,6 +8,7 @@ import HotelPage from "./pages/HotelPage"
 import Layout from "./pages/Layout";
 import HotelReservationPage from "./pages/hotelReservationPage"
 import PaymentForm from './pages/PaymentForm';
+import FlightReservationPage from './pages/flightReservation';
 function App() {
   return (
     <BrowserRouter>
@@ -22,6 +23,7 @@ function App() {
           <Route path="/flights" element={<FlightPage />} />
           <Route path="/hotels" element={<HotelPage />} />
           <Route path="/hotels/reservation" element={<HotelReservationPage />} />
+          <Route path="/flights/reservation" element={<FlightReservationPage />} />
           <Route path='/payment' element={<PaymentForm />} />
         </Route>
       </Routes>

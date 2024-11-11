@@ -32,10 +32,11 @@ export default function LoginPage() {
                 userNameOrEmail: loginData.userName,
                 password: loginData.password
             });
-
+            console.log(response.data.data.email)
             const { token } = response.data; // Ensure username is received from the response
             login(token, loginData.userName);  // Pass token and username to set login status in context
-
+            console.log("token : ",token)
+            console.log("username : ",loginData.userName);
             // If hotel details were passed for booking, redirect with hotel details
             if (Object.keys(hotelDetails).length > 0) {
                 navigate(redirectTo, { state: hotelDetails });

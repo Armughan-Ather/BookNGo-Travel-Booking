@@ -2,6 +2,8 @@
 
 .flight-page {
     text-align: center;
+    background-color: #f7f7f7;
+    font-family: 'Poppins', sans-serif;    
 }
 
 /* Hero Section */
@@ -145,6 +147,7 @@
 .flight-search-button {
 
     background-color: #f9a825; /* Yellow color */
+    background-color: #ff9800;
     color: white;
     border: none;
     border-radius: 0.5rem;
@@ -177,6 +180,66 @@
 .flight-from-and-to > input {
     width: 100%;
 }
+.flight-search-results-matched-head {
+    font-family: 'Poppins', sans-serif;
+    font-size: 2.5rem; /* Adjust size for better visibility */
+    color: #4A90E2; /* Soft blue for consistency */
+    font-weight: 900;
+    padding-top: 4rem;
+    padding-bottom: 4rem; /* Space between heading and sort container */
+    text-align: center;
+    padding-left: 2rem; /* Align with the page's main layout */
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1); /* Add subtle shadow for depth */
+    background-color: #f7f7f7;
+    color: #333;
+    margin-bottom: 0;
+    box-shadow: 0 0.2rem 0.5rem rgba(0, 0, 0, 0.1);
+}
+.flight-search-sort-container {
+    display: flex;
+    justify-content: flex-end; /* Align to the left for consistency */
+    align-items: center;
+    gap: 1rem; /* Space between elements */
+    margin-bottom: 1.5rem; /* Space between sort box and hotel cards */
+    padding-left: 2rem;
+    
+    background-color: #f7f7f7; /* Light background for contrast */
+    border-radius: 0.5rem;
+    padding: 1rem; /* Increase padding for space */
+    box-shadow: 0 0.2rem 0.5rem rgba(0, 0, 0, 0.1); /* Soft shadow for depth */
+    margin-top: 0;
+    
+}
+
+.flight-search-sort-container label {
+    font-family: 'Poppins', sans-serif;
+    font-weight: bold;
+    color: #333; /* Dark color for readability */
+    font-size: 1rem;
+}
+
+/* Sort dropdown styling */
+.flight-search-sort-dropdown {
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    border: 1px solid #ddd;
+    font-size: 1rem;
+    background-color: white; /* Clean background */
+    color: #333; /* Text color for readability */
+    box-shadow: 0 0.2rem 0.5rem rgba(0, 0, 0, 0.1); /* Add subtle shadow */
+    transition: border-color 0.3s ease;
+}
+
+.flight-search-sort-dropdown:focus {
+    outline: none;
+    border-color: #4A90E2; /* Consistent focus color */
+}
+
+/* Add a hover effect to the dropdown */
+.flight-search-sort-dropdown:hover {
+    border-color: #007bff; /* Darker blue on hover */
+}
+
 /* Responsive Styles */
 @media (max-width: 968px) {
     .flight-input-container input,

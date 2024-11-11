@@ -72,7 +72,7 @@ export default function HotelReservationPage() {
             }));
         }
     }
-
+    console.log("hotel details in reservation page : ",hotelDetails)
     React.useEffect(() => {
         calculateTotalPrice();
     }, [reservationData.startDate, reservationData.endDate, reservationData.numberOfRooms]);
@@ -84,6 +84,7 @@ export default function HotelReservationPage() {
             bookingType: 'Hotel',
             amount: reservationData.totalPrice,
             bookingDetails: {
+                HotelId:hotelDetails.hotelId,
                 hotelName: hotelDetails.hotelName,
                 location: hotelDetails.location,
                 roomType: hotelDetails.roomType,
@@ -91,10 +92,11 @@ export default function HotelReservationPage() {
                 duration: duration,
                 startDate:reservationData.startDate,
                 endDate:reservationData.endDate
+                
             },
             userName:user?.username
         };
-    
+        console.log(bookingData)
         navigate('/payment', { state: bookingData });
     }
 

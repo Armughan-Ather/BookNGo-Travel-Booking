@@ -6,18 +6,21 @@ import { IoMdStar } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from '../Context/AuthContext';  // Import the useAuth hook
 
-export default function HotelCard({ name, location, rating, priceStandard, priceDeluxe, roomType, availability, ratingCount }) {
+export default function HotelCard({ name, location, rating, priceStandard, priceDeluxe, roomType, availability, ratingCount,hotelID }) {
     const navigate = useNavigate();
     const { user, isAuthenticated } = useAuth();  // Use the useAuth hook to check auth status
 
     function handleBookings() {
         const hotelDetails = {
+            hotelId:hotelID,
             hotelName: name,
             location: location,
             roomType: roomType,
             price: roomType === 'standard' ? priceStandard : priceDeluxe,
-            availability: availability
+            availability: availability,
+            
         };
+        console.log("card hotel id : ",hotelDetails)
 
         if (isAuthenticated) {
             // If the user is logged in, redirect to the reservation page with hotel details

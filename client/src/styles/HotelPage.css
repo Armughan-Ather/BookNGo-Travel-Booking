@@ -4,6 +4,8 @@
 .hotel-page {
     padding-top: 8.3rem; /* Adjusted to give enough space below the navbar */
     text-align: center;
+    background-color: #f7f7f7;
+    font-family: 'Poppins', sans-serif;    
 }
 
 /* Hero section styling */

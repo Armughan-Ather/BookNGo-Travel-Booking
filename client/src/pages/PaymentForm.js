@@ -187,45 +187,61 @@ export default function PaymentForm() {
         </>
       );
     }
+    else if(type === 'Flight') {
+      return (
+        <>
+          <p><strong>Airline :</strong> {details.airlineName}</p>
+          <p><strong>Flight From :</strong> {details.origin}</p>
+          <p><strong>Flight To :</strong> {details.destination}</p>
+          <p><strong>Departure Time :</strong> {details.departureTime}</p>
+          <p><strong>Travellers :</strong> {details.travellers} </p>
+        </>
+      );
+    }
     return <p>{details}</p>;
   };
 
   const makeReservations = async () => {
     const selectedCardDetails = cardDetails.find(card => card.type === selectedCard);
-
+  
     if (!selectedCardDetails) {
       alert("Please select a card to confirm the payment.");
       return;
     }
-
-    const reservationData = {
-      bookingType,
-      amount,
-      bookingDetails,
-      userName
-    //   card: {
-    //     type: selectedCardDetails.type,
-    //     number: selectedCardDetails.number,
-    //     expiry: {
-    //       month: selectedCardDetails.expiryMM,
-    //       year: selectedCardDetails.expiryYYYY,
-    //     },
-    //     cvv: selectedCardDetails.cvv,
-    //   },
-    };
-
+  
+    let reservationData;
+    let apiEndpoint;
+  
+    if (bookingType === 'Hotel') {
+      reservationData = {
+        hotelId: bookingDetails.HotelId,
+        userName: userName,
+        reservationDate: bookingDetails.startDate,
+        endDate: bookingDetails.endDate,
+        noOfRooms: bookingDetails.numberOfRooms,
+        type: bookingDetails.roomType,
+      };
+      apiEndpoint = 'http://localhost:8000/api/v1/hotelReservation/reserveHotelRoom';
+    } else if (bookingType === 'Flight') {
+      reservationData = {
+        flightId: bookingDetails.flightId,
+        userName: userName,
+        seats:bookingDetails.travellers
+      };
+      apiEndpoint = 'http://localhost:8000/api/v1/flightReservation/reserveFlight';
+    }
+    console.log("reservation data :",reservationData)
     try {
-      const response = await axios.post('http://localhost:8000/api/v1/hotels/reservation', reservationData); // Replace with your actual endpoint
+      const response = await axios.post(apiEndpoint, reservationData);
       if (response.status === 200) {
         alert("Reservation confirmed!");
-        // Optionally, redirect or update the UI based on successful reservation
       }
     } catch (error) {
-      console.error("Error reserving hotel:", error);
+      console.error("Error making reservation:", error.response?.data?.error);
       alert("There was an error confirming your reservation. Please try again.");
     }
   };
-
+  
   return (
     <MDBContainer fluid className="payment-form-container">
       <MDBCard>
