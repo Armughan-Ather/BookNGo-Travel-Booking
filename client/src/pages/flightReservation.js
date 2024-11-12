@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState,useContext } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import '../styles/flightReservationPage.css';
-
+import { AuthContext } from '../Context/AuthContext';
 export default function FlightReservationPage() {
+    const { user} = useContext(AuthContext);
     const navigate = useNavigate();
     const location = useLocation();
     const flightDetails = location.state;
@@ -45,7 +46,7 @@ export default function FlightReservationPage() {
                 travellers: travellers,
                 flightId:flightDetails.flightId
             },
-            userName: localStorage.getItem('username')
+            userName: user?.username
         };
         console.log("flight reservation booking data: ",bookingData)
         navigate('/payment', { state: bookingData });
@@ -59,7 +60,7 @@ export default function FlightReservationPage() {
                     <label>Signed In As</label>
                     <input
                         type="text"
-                        value={localStorage.getItem('username') || ""}
+                        value={user?.username || ""}
                         readOnly
                         className="flight-reservation-comp-input-readonly"
                     />

@@ -34,22 +34,26 @@ export default function LoginPage() {
                 userNameOrEmail: loginData.userName,
                 password: loginData.password
             });
-            console.log(response.data.data.email);
-            const { token } = response.data; // Ensure username is received from the response
-            login(token, loginData.userName);  // Pass token and username to set login status in context
-            console.log("token : ", token);
-            console.log("username : ", loginData.userName);
 
-            // Redirect to the intended page with additional state if applicable
-            if (Object.keys(hotelDetails).length > 0) {
-                // Hotel reservation
-                navigate(redirectTo, { state: hotelDetails });
-            } else if (Object.keys(flightDetails).length > 0) {
-                // Flight reservation
-                navigate(redirectTo, { state: flightDetails });
+            const { token } = response.data.data; // Get token from response
+            if (token) {
+                // Pass only the token to the login function
+                login(token);
+                console.log("Login successful. Token: ", token);
+
+                // Redirect to the intended page with additional state if applicable
+                if (Object.keys(hotelDetails).length > 0) {
+                    // Hotel reservation
+                    navigate(redirectTo, { state: hotelDetails });
+                } else if (Object.keys(flightDetails).length > 0) {
+                    // Flight reservation
+                    navigate(redirectTo, { state: flightDetails });
+                } else {
+                    // No reservation details, just redirect to the default route
+                    navigate(redirectTo);
+                }
             } else {
-                // No reservation details, just redirect to the default route
-                navigate(redirectTo);
+                setErrorMessage("Login failed. Please try again.");
             }
         } catch (error) {
             console.error('Error during login:', error);

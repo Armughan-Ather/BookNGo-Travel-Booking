@@ -8,7 +8,7 @@ export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const navigate = useNavigate();
-  const { isAuthenticated, logout } = useContext(AuthContext); // Use isAuthenticated from context
+  const { user, isAuthenticated, logout } = useContext(AuthContext); // Use user and isAuthenticated from context
 
   // Reference to the profile dropdown menu for detecting clicks outside
   const profileMenuRef = useRef(null);
@@ -23,6 +23,7 @@ export default function Navbar() {
   const handleLogin = () => {
     navigate('/login');  // Redirect to the login page if the user is not logged in
   };
+  console.log("nav bar user : ",user)
 
   // Handle clicks outside the profile menu to close the dropdown
   useEffect(() => {
@@ -79,7 +80,7 @@ export default function Navbar() {
                   className="profile-container"
                   onClick={() => setProfileOpen((prevState) => !prevState)}
                 >
-                  <FaUser /> <span className='profile-container-text-item'>Profile</span>
+                  <FaUser /> <span className='profile-container-text-item'>{user.username}</span>
                 </div>
                 <div
                   className={`dropdown-menu ${profileOpen ? 'active' : ''}`}

@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState,useContext } from 'react';
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
 import { FaCalendarAlt, FaBed, FaTimes } from 'react-icons/fa';
 import '../styles/hotelReservationPage.css';
-import { useAuth } from '../Context/AuthContext'; // Import the useAuth hook
+import { AuthContext } from '../Context/AuthContext'; 
 import { useLocation, useNavigate } from 'react-router-dom';
 
 const CustomInput = React.forwardRef(({ onClick, value, onClear, placeholder }, ref) => (
@@ -24,11 +24,11 @@ const CustomInput = React.forwardRef(({ onClick, value, onClear, placeholder }, 
 ));
 
 export default function HotelReservationPage() {
-    const { user } = useAuth(); // Access user from auth context
+    const { user} = useContext(AuthContext);
     const location = useLocation();
     const navigate = useNavigate(); // useNavigate to redirect to payment page
     const hotelDetails = location.state;
-
+    console.log("reseve hotel user:",user);
     const [reservationData, setReservationData] = useState({
         startDate: null,
         endDate: null,

@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
+import axios from "axios"; // For making API calls
 
 export const AuthContext = createContext();
 
@@ -12,36 +13,71 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Simulating an auth check on mount (you might replace this with an actual API call)
+  async function settingUser() {
+    const storedToken = localStorage.getItem("token");
+
+    if (!storedToken) {
+      console.log("No token found, stopping loading...");
+      setLoading(false); // No token, stop loading and return early
+      return;
+    }
+
+    try {
+      const response = await axios.post(
+        "http://localhost:8000/api/v1/users/authenticate",
+        { token: storedToken }
+      );
+      console.log("Auth context:", response.data);
+      setUser({ token: storedToken, username: response.data.data });
+    } catch (error) {
+      console.error("Error authenticating user:", error);
+      setUser({ token: storedToken }); // In case of failure, still set the token
+    } finally {
+      setLoading(false); // Ensure loading is false no matter what
+    }
+  }
+
+  // Simulating an auth check on mount
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
-    const storedUsername = localStorage.getItem("username"); // Fetch username from local storage
 
-    if (storedToken && storedUsername) {
-      setUser({ token: storedToken, username: storedUsername }); // Use actual username from local storage
+    if (storedToken === null) {
+      console.log("Stored token is null, no API call needed.");
+      setLoading(false); // If there's no token, stop loading
+    } else {
+      console.log("Stored token found:", storedToken);
+      settingUser(); // Call the async function to authenticate the user
     }
-    setLoading(false); // Stop loading after check
-  }, []);
+  }, []); // This effect runs only once when the component mounts
 
-  const login = (token, username) => {
+  const login = async (token) => {
+    // Save the token to localStorage
     localStorage.setItem("token", token);
-    localStorage.setItem("username", username); // Store username in local storage
-    setUser({ token, username }); // Set user with token and username
-};
 
-
+    // Send a POST request to authenticate the user with the token
+    try {
+      const response = await axios.post(
+        "http://localhost:8000/api/v1/users/authenticate",
+        { token }
+      );
+      console.log("Auth context:", response.data);
+      setUser({ token, username: response.data.data });
+    } catch (error) {
+      console.error("Error authenticating user:", error);
+      setUser({ token }); // In case of failure, still set the token
+    }
+  };
 
   const logout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("username"); // Remove username from local storage
-    setUser(null);
+    localStorage.removeItem("token"); // Remove token from localStorage
+    setUser(null); // Clear the user state
   };
 
   const value = {
     user,
     login,
     logout,
-    isAuthenticated: !!user
+    isAuthenticated: !!user,
   };
 
   return (

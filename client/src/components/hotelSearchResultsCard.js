@@ -1,14 +1,14 @@
-import React from 'react';
+import React,{useContext}from 'react';
 import { MDBCard, MDBCardBody, MDBCardImage, MDBCardText, MDBCardTitle, MDBBtn } from 'mdb-react-ui-kit';
 import '../styles/hotelSearchResultsCard.css';
 import defaultHotelImsg from "../images/hotelSearchResult.jpg";
 import { IoMdStar } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from '../Context/AuthContext';  // Import the useAuth hook
+import { AuthContext } from '../Context/AuthContext';
 
 export default function HotelCard({ name, location, rating, priceStandard, priceDeluxe, roomType, availability, ratingCount,hotelID }) {
     const navigate = useNavigate();
-    const { user, isAuthenticated } = useAuth();  // Use the useAuth hook to check auth status
+    const { user, isAuthenticated } = useContext(AuthContext);  // Use the useAuth hook to check auth status
 
     function handleBookings() {
         const hotelDetails = {
@@ -22,7 +22,7 @@ export default function HotelCard({ name, location, rating, priceStandard, price
         };
         console.log("card hotel id : ",hotelDetails)
 
-        if (isAuthenticated) {
+        if (user) {
             // If the user is logged in, redirect to the reservation page with hotel details
             navigate("/hotels/reservation", { state: hotelDetails });
         } else {

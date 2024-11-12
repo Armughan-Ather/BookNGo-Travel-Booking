@@ -1,4 +1,4 @@
-import React from 'react';
+import React,{useContext} from 'react';
 import { useNavigate } from 'react-router-dom';
 import { MDBCard, MDBCardBody, MDBCardTitle, MDBCardText, MDBBtn, MDBIcon } from 'mdb-react-ui-kit';
 import { MdFlightTakeoff, MdFlightLand } from 'react-icons/md';
@@ -6,11 +6,11 @@ import { RiStarSFill, RiStarHalfSFill, RiStarLine } from 'react-icons/ri';
 import { TbLineDotted } from "react-icons/tb";
 import { IoIosPin } from "react-icons/io";
 import '../styles/flightSearchResultsCard.css';
-import { useAuth } from '../Context/AuthContext';  // Import the AuthContext hook
+import { AuthContext } from '../Context/AuthContext';
 
 export default function FlightSearchResultCard(props) {
     const navigate = useNavigate();
-    const { user, isAuthenticated } = useAuth();  // Get authentication status from context
+    const { user, isAuthenticated } = useContext(AuthContext); // Get authentication status from context
 
     // Calculate stars
     let fullStars = Math.floor(props.rating);
@@ -27,6 +27,7 @@ export default function FlightSearchResultCard(props) {
     for (let i = 0; i < emptyStars; i++) {
         stars.push(<RiStarLine key={`empty-${i}`} className="flight-search-results-comp-stars-not-filled" />);
     }
+    
 
     // Handle booking navigation
     const handleBooking = () => {
