@@ -44,10 +44,11 @@ export default function SignupPage() {
       console.log('Response:', response);
 
       if (response.data.success) {
-        const { token } = response.data; // Assuming the API returns a token after successful signup
+        alert("Successfully Signed Up! Kindly Login");
+        //const { token } = response.data; // Assuming the API returns a token after successful signup
         //localStorage.setItem("username", signupData.userName); // Store username in local storage
-        login(token,signupData.userName); // Log the user in automatically by setting token in context
-        navigate("/"); // Redirect the user to home or the page you prefer
+        //login(token,signupData.userName); // Log the user in automatically by setting token in context
+        navigate("/login"); // Redirect the user to home or the page you prefer
       }
     } catch (error) {
       console.error('Error during signup:', error);
