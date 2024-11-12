@@ -9,6 +9,7 @@ endDate DATE DEFAULT CURRENT_TIMESTAMP,
 status VARCHAR(50) NOT NULL DEFAULT 'Booked',
 noOfDays INT NOT NULL,
 noOfRooms INT NOT NULL DEFAULT 1,
+bill INT NOT NULL,
 type ENUM('Standard', 'Deluxe') NOT NULL DEFAULT 'Standard',
 FOREIGN KEY (hotelId) REFERENCES Hotel(id),
 FOREIGN KEY (userId) REFERENCES User(id)

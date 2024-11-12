@@ -1,7 +1,7 @@
 import { ApiResponse } from "../utils/ApiResponse.js";
 import bcrypt from 'bcrypt';
 import connection from '../db/connection.js';
-
+import jwt from 'jsonwebtoken';
 
 
 const registerUser = (req, res) => {
@@ -172,11 +172,7 @@ export { registerUser };
 //     }
 // };
 
-
-
-
 const loginUser = async (req, res) => {
-
     try {
         console.log('Request Body:', req.body);
         const { userNameOrEmail, password } = req.body;
@@ -198,9 +194,7 @@ const loginUser = async (req, res) => {
 
                 // 3. Check if user exists
                 if (rows.length > 0) {
-                    console.log("hi");
                     const user = rows[0];
-                    console.log(user);
 
                     // 4. Compare the provided password with the hashed password
                     const passwordMatch = await bcrypt.compare(password, user.password);
@@ -208,14 +202,20 @@ const loginUser = async (req, res) => {
                         return res.status(401).json({ error: 'Invalid password.' });
                     }
 
-                    // 5. Return success response
+                    // 5. Create a token using the user ID
+                    const token = jwt.sign({ id: user.id }, process.env.ACCESS_TOKEN_SECRET, {
+                        expiresIn: process.env.ACCESS_TOKEN_EXPIRY  // Token expires in 1 hour
+                    });
+
+                    // 6. Return success response with token
                     const loggedInUser = {
                         id: user.id,
                         userName: user.userName,
                         name: user.name,
                         email: user.email,
                         phone: user.phone,
-                        cnicOrPassport: user.cnicOrPassport
+                        cnicOrPassport: user.cnicOrPassport,
+                        token  // Include the token in the response
                     };
 
                     return res.status(200).json(
@@ -234,6 +234,68 @@ const loginUser = async (req, res) => {
 };
 
 export { loginUser };
+
+
+// FINAL WITHOUT TOKEN
+// const loginUser = async (req, res) => {
+
+//     try {
+//         console.log('Request Body:', req.body);
+//         const { userNameOrEmail, password } = req.body;
+
+//         // 1. Basic validations
+//         if (!userNameOrEmail || !password) {
+//             return res.status(400).json({ error: 'Username/Email and password are required.' });
+//         }
+
+//         // 2. Fetch user from the database using a parameterized query
+//         connection.query(
+//             'SELECT * FROM User WHERE userName = ? OR email = ?',
+//             [userNameOrEmail, userNameOrEmail],
+//             async (error, rows) => {
+//                 if (error) {
+//                     console.error('Error during user login:', error);
+//                     return res.status(500).json({ error: 'Something went wrong while logging in the user.' });
+//                 }
+
+//                 // 3. Check if user exists
+//                 if (rows.length > 0) {
+//                     console.log("hi");
+//                     const user = rows[0];
+//                     console.log(user);
+
+//                     // 4. Compare the provided password with the hashed password
+//                     const passwordMatch = await bcrypt.compare(password, user.password);
+//                     if (!passwordMatch) {
+//                         return res.status(401).json({ error: 'Invalid password.' });
+//                     }
+
+//                     // 5. Return success response
+//                     const loggedInUser = {
+//                         id: user.id,
+//                         userName: user.userName,
+//                         name: user.name,
+//                         email: user.email,
+//                         phone: user.phone,
+//                         cnicOrPassport: user.cnicOrPassport
+//                     };
+
+//                     return res.status(200).json(
+//                         new ApiResponse(200, loggedInUser, 'User logged in successfully.')
+//                     );
+//                 } else {
+//                     return res.status(401).json({ error: 'Invalid username/email.' });
+//                 }
+//             }
+//         );
+
+//     } catch (error) {
+//         console.error('Some Login Error: ', error);
+//         return res.status(400).json({ error: error.message });
+//     }
+// };
+
+// export { loginUser };
 
 
 
@@ -485,3 +547,45 @@ export { loginUser };
 // };
 
 // export { registerUser };
+
+
+
+
+const authenticateUser = (req, res) => {
+    // const authHeader = req.headers['authorization'];
+    // const token = authHeader && authHeader.split(' ')[1]; // Expecting token in "Bearer <token>" format
+    const { token } = req.body;
+
+    if (!token) {
+        return res.status(401).json({ error: 'Access denied. No token provided.' });
+    }
+
+    // Verify and decode the token
+    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
+        if (err) {
+            return res.status(403).json({ error: 'Invalid or expired token.' });
+        }
+
+        const userId = decoded.id; // Extract user ID from the decoded token
+
+        // Query the database to check if the user exists
+        connection.query('SELECT userName FROM User WHERE id = ?', [userId], (error, results) => {
+            if (error) {
+                console.error('Database error:', error);
+                return res.status(500).json({ error: 'Database error occurred.' });
+            }
+
+            if (results.length === 0) {
+                return res.status(404).json({ error: 'User not found.' });
+            }
+
+            // If user exists, respond with the username
+            const userName = results[0].userName;
+            return res.status(200).json(
+                new ApiResponse(200, userName, 'User authenticated successfully.')
+            );
+        });
+    });
+};
+
+export { authenticateUser };
