@@ -17,8 +17,10 @@ export default function LoginPage() {
     const location = useLocation();
     const { login } = useContext(AuthContext); // Get login function from context
 
+    // Get the redirect target and any potential details passed in state
     const redirectTo = location.state?.redirectTo || "/";  // Default to home if no intended route
     const hotelDetails = location.state?.hotelDetails || {};  // Get hotel details if passed
+    const flightDetails = location.state?.flightDetails || {};  // Get flight details if passed
 
     async function handleLogin(event) {
         event.preventDefault();
@@ -32,16 +34,21 @@ export default function LoginPage() {
                 userNameOrEmail: loginData.userName,
                 password: loginData.password
             });
-            console.log(response.data.data.email)
+            console.log(response.data.data.email);
             const { token } = response.data; // Ensure username is received from the response
             login(token, loginData.userName);  // Pass token and username to set login status in context
-            console.log("token : ",token)
-            console.log("username : ",loginData.userName);
-            // If hotel details were passed for booking, redirect with hotel details
+            console.log("token : ", token);
+            console.log("username : ", loginData.userName);
+
+            // Redirect to the intended page with additional state if applicable
             if (Object.keys(hotelDetails).length > 0) {
+                // Hotel reservation
                 navigate(redirectTo, { state: hotelDetails });
+            } else if (Object.keys(flightDetails).length > 0) {
+                // Flight reservation
+                navigate(redirectTo, { state: flightDetails });
             } else {
-                // Redirect to the intended page or home
+                // No reservation details, just redirect to the default route
                 navigate(redirectTo);
             }
         } catch (error) {
@@ -67,7 +74,6 @@ export default function LoginPage() {
     }
 
     const togglePasswordVisibility = () => {
-        
         setShowPassword((prev) => !prev);
     };
 
@@ -103,7 +109,7 @@ export default function LoginPage() {
                                     required
                                     className="input-fields-form"
                                 />
-                                <div className="eye-icon" onClick={togglePasswordVisibility} style={{ position: 'absolute', right: '1rem', top: '43%', cursor: 'pointer', color: '#666' }}>
+                                <div className="eye-icon" onClick={togglePasswordVisibility} style={{ position: 'absolute', right: '1rem', top: '20%', cursor: 'pointer', color: '#666' }}>
                                     {showPassword ? <FaEyeSlash /> : <FaEye />}
                                 </div>
                             </div>

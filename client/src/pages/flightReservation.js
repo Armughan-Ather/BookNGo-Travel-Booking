@@ -113,7 +113,7 @@ export default function FlightReservationPage() {
 
                 {travellerDetails.map((traveller, index) => (
                     <div key={index} className="flight-reservation-comp-traveller-info">
-                        <h4>Traveller {index + 1}</h4>
+                        <label className='flight-reservation-comp-traveller-head'>Traveller {index + 1}</label>
                         <div className="flight-reservation-comp-traveller-row">
                             <input
                                 type="text"

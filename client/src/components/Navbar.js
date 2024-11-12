@@ -1,10 +1,46 @@
-import React, { useState } from 'react';
+import React, { useState, useContext, useEffect, useRef } from 'react';
 import { FaHome, FaPlane, FaBed, FaSuitcase, FaUser } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
+import { AuthContext } from '../Context/AuthContext';  // Assuming you have this context set up
 import '../styles/Navbar.css';
 
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
+  const navigate = useNavigate();
+  const { isAuthenticated, logout } = useContext(AuthContext); // Use isAuthenticated from context
+
+  // Reference to the profile dropdown menu for detecting clicks outside
+  const profileMenuRef = useRef(null);
+  const profileRef = useRef(null);  // Reference to the profile container
+
+  // Handle logout functionality
+  const handleLogout = () => {
+    logout();  // Call logout to update context and clear any stored tokens
+    navigate('/');  // Redirect to the login page
+  };
+
+  const handleLogin = () => {
+    navigate('/login');  // Redirect to the login page if the user is not logged in
+  };
+
+  // Handle clicks outside the profile menu to close the dropdown
+  useEffect(() => {
+    // Function to close the dropdown if the click is outside
+    const handleClickOutside = (event) => {
+      if (profileMenuRef.current && !profileMenuRef.current.contains(event.target) && !profileRef.current.contains(event.target)) {
+        setProfileOpen(false); // Close the dropdown if clicked outside
+      }
+    };
+
+    // Attach event listener for clicks on the document
+    document.addEventListener('mousedown', handleClickOutside);
+
+    // Clean up the event listener when the component unmounts
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   return (
     <div className="custom-navbar-padding"> {/* Apply padding class here */}
@@ -17,7 +53,7 @@ export default function Navbar() {
           </div>
         </div>
 
-        {/* Second Row: Navigation links on left and Profile on right */}
+        {/* Second Row: Navigation links on left and Profile/Login on right */}
         <div className={`navbar-second-row ${menuOpen ? 'menu-open' : ''}`}>
           <div className="navbar-links-left">
             <a href="/" className="navbar-link">
@@ -34,16 +70,29 @@ export default function Navbar() {
             </a>
           </div>
 
-          {/* Profile Section */}
-          <div
-            className="navbar-profile"
-            onClick={() => setProfileOpen((prevState) => !prevState)}
-          >
-            <FaUser /> Profile
-            <div className={`dropdown-menu ${profileOpen ? 'active' : ''}`}>
-              <a href="/edit-user-profile">Edit Profile</a>
-              <a href="/logout">Logout</a>
-            </div>
+          {/* Conditional Rendering for Profile or Login */}
+          <div className="navbar-profile" ref={profileRef}>
+            {isAuthenticated ? (
+              // If user is logged in, show Profile dropdown
+              <>
+                <div
+                  className="profile-container"
+                  onClick={() => setProfileOpen((prevState) => !prevState)}
+                >
+                  <FaUser /> <span className='profile-container-text-item'>Profile</span>
+                </div>
+                <div
+                  className={`dropdown-menu ${profileOpen ? 'active' : ''}`}
+                  ref={profileMenuRef} // Attach the ref to the dropdown menu
+                >
+                  <a href="/profile">View Profile</a>
+                  <a href="/edit-user-profile">Edit Profile</a>
+                  <a href="#" onClick={handleLogout}>Logout</a> {/* Trigger logout here */}
+                </div>
+              </>
+            ) : (
+              <div onClick={handleLogin} className="profile-container"><FaUser /> <span className='profile-container-text-item'>Login</span></div>
+            )}
           </div>
         </div>
       </nav>

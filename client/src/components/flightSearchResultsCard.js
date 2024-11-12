@@ -6,9 +6,11 @@ import { RiStarSFill, RiStarHalfSFill, RiStarLine } from 'react-icons/ri';
 import { TbLineDotted } from "react-icons/tb";
 import { IoIosPin } from "react-icons/io";
 import '../styles/flightSearchResultsCard.css';
+import { useAuth } from '../Context/AuthContext';  // Import the AuthContext hook
 
 export default function FlightSearchResultCard(props) {
     const navigate = useNavigate();
+    const { user, isAuthenticated } = useAuth();  // Get authentication status from context
 
     // Calculate stars
     let fullStars = Math.floor(props.rating);
@@ -28,19 +30,24 @@ export default function FlightSearchResultCard(props) {
 
     // Handle booking navigation
     const handleBooking = () => {
-        console.log("card flight id: ",props.flightId)
-        navigate('/flights/reservation', {
-            state: {
-                airline: props.airline,
-                origin: props.origin,
-                destination: props.destination,
-                departure: props.departure,
-                price: props.price,
-                flightId:props.flightId
-            }
-        });
+        const flightDetails = {
+            airline: props.airline,
+            origin: props.origin,
+            destination: props.destination,
+            departure: props.departure,
+            price: props.price,
+            flightId: props.flightId
+        };
+
+        // Check if the user is authenticated
+        if (isAuthenticated) {
+            // If logged in, pass the flight details to the reservation page
+            navigate('/flights/reservation', { state: flightDetails });
+        } else {
+            // If not logged in, redirect to login page and pass flight details with state
+            navigate('/login', { state: { redirectTo: '/flights/reservation', flightDetails } });
+        }
     };
-    
 
     return (
         <MDBCard className="flight-search-results-comp-card shadow-sm">
