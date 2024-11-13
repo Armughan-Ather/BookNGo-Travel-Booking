@@ -3,6 +3,92 @@ import bcrypt from 'bcrypt';
 import sequelize from '../config/database.js'; // Sequelize instance
 import { TIME } from "sequelize";
 
+export const updateFlightReservationStatuses = async (req, res) => {
+    try {
+        const currentDateTime = new Date().toISOString(); // Get the current date and time in 'yyyy-mm-ddTHH:MM:SS' format
+
+        // Step 1: Update "Booked" to "Availed" in FlightReservation where the flight's departure is past the current date and time
+        const updateToAvailedReservationQuery = `
+            UPDATE FlightReservation AS fr
+            JOIN Flight AS f ON fr.flightId = f.id
+            SET fr.status = 'Availed'
+            WHERE fr.status = 'Booked' AND f.departure <= :currentDateTime
+        `;
+
+        await sequelize.query(updateToAvailedReservationQuery, {
+            replacements: { currentDateTime },
+            type: sequelize.QueryTypes.UPDATE,
+        });
+
+        // Step 2: Update "Scheduled" to "Fulfilled" in Flight where the departure is past the current date and time
+        const updateToFulfilledFlightQuery = `
+            UPDATE Flight
+            SET status = 'Fulfilled'
+            WHERE status = 'Scheduled' AND departure <= :currentDateTime
+        `;
+
+        await sequelize.query(updateToFulfilledFlightQuery, {
+            replacements: { currentDateTime },
+            type: sequelize.QueryTypes.UPDATE,
+        });
+
+        return res.status(200).json({ message: 'Flight reservation statuses updated successfully.' });
+    } catch (error) {
+        console.error('Error updating flight and reservation statuses:', error);
+        return res.status(500).json({ error: 'An error occurred while updating flight and reservation statuses.' });
+    }
+};
+
+
+export const updateHotelReservationStatuses = async (req, res) => {
+    try {
+        const currentDate = new Date().toISOString().split('T')[0]; // Get the current date in 'yyyy-mm-dd' format
+
+        // Step 1: Update "Booked" to "Availing" for reservations with reservationDate <= currentDate and status "Booked"
+        const updateToAvailingQuery = `
+            UPDATE HotelReservation
+            SET status = 'Availing'
+            WHERE status = 'Booked' AND reservationDate <= :currentDate
+        `;
+
+        await sequelize.query(updateToAvailingQuery, {
+            replacements: { currentDate },
+            type: sequelize.QueryTypes.UPDATE,
+        });
+
+        // Step 2: Update "Availing" to "Availed" for reservations with endDate < currentDate and status "Availing"
+        const updateToAvailedQuery = `
+            UPDATE HotelReservation
+            SET status = 'Availed'
+            WHERE status = 'Availing' AND endDate < :currentDate
+        `;
+
+        await sequelize.query(updateToAvailedQuery, {
+            replacements: { currentDate },
+            type: sequelize.QueryTypes.UPDATE,
+        });
+
+        return res.status(200).json({ message: 'Hotel reservation statuses updated successfully.' });
+    } catch (error) {
+        console.error('Error updating reservation statuses:', error);
+        return res.status(500).json({ error: 'An error occurred while updating reservation statuses.' });
+    }
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 export const loginAdmin = async (req, res) => {
     try {
         console.log('Request Body:', req.body);
