@@ -7,6 +7,8 @@ import '../styles/FlightPage.css';
 import axios from 'axios';
 import cities from 'cities.json'; 
 import FlightSearchResultCard from '../components/flightSearchResultsCard.js';
+import { format } from 'date-fns';
+import { toZonedTime } from 'date-fns-tz';  
 
 // Custom Date Picker Input
 const CustomInput = React.forwardRef(({ onClick, value, onClear, placeholder }, ref) => (
@@ -76,7 +78,16 @@ export default function FlightPage() {
 
         fetchAirlines();
     }, []);
-
+    function formatDepartureTime(departure) {
+        const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;  // Get the user's time zone
+        const date = new Date(departure);  // Convert to Date object (UTC time)
+    
+        // Convert UTC time to the user's local time zone
+        const zonedDate = toZonedTime(date, userTimeZone);  // Use toZonedTime instead of utcToZonedTime
+    
+        // Format the date in "dd/MM/yyyy HH:mm" format
+        return format(zonedDate, 'HH:mm dd/MM/yyyy');
+    }
     // Handle city input change for "From" and "To"
     function handleCityChange(event, type) {
         const { value } = event.target;
@@ -199,27 +210,64 @@ export default function FlightPage() {
             console.error('Error searching flights!:', error.response?.data?.error);
         }
     }
+    const formatDate = (date) => {
+        if (!date) return '';
+        return new Date(date).toLocaleDateString('en-GB'); // "dd/MM/yyyy" format
+    };
     function sortFlights() {
         const sortedResults = [...searchResults];
     
         if (sortOption === 'price') {
+            // Sort by price, then by departure time if prices are equal
             sortedResults.sort((a, b) => {
-                if (a.price === b.price) {
-                    return new Date(a.departure) - new Date(b.departure);
+                const priceA = a.price;
+                const priceB = b.price;
+    
+                if (priceA === priceB) {
+                    const departureA = new Date(a.departure);
+                    const departureB = new Date(b.departure);
+                    return departureA.getTime() - departureB.getTime();
                 }
-                return a.price - b.price;
+    
+                return priceA - priceB;
             });
         } else if (sortOption === 'departure') {
+            // Sort by departure time, then by price if departure times are equal
             sortedResults.sort((a, b) => {
-                if (new Date(a.departure) === new Date(b.departure)) {
-                    return a.price - b.price;
+                const departureA = new Date(a.departure);
+                const departureB = new Date(b.departure);
+                const departureComparison = departureA.getTime() - departureB.getTime();
+    
+                if (departureComparison === 0) {
+                    const priceA = a.price;
+                    const priceB = b.price;
+                    return priceA - priceB;
                 }
-                return new Date(a.departure) - new Date(b.departure);
+    
+                return departureComparison;
+            });
+        } else if (sortOption === 'rating') {
+            // Sort by rating, then by price if ratings are equal
+            sortedResults.sort((a, b) => {
+                const ratingA = a.rating || 0;  // Default to 0 if no rating is available
+                const ratingB = b.rating || 0;
+    
+                if (ratingA === ratingB) {
+                    // Tie-break by price if ratings are the same
+                    const priceA = a.price;
+                    const priceB = b.price;
+                    return priceA - priceB;
+                }
+    
+                // Sort by rating in descending order
+                return ratingB - ratingA;
             });
         }
     
         return sortedResults;
     }
+    
+    
     // Handle click outside to close suggestions
     useEffect(() => {
         function handleClickOutside(event) {
@@ -376,6 +424,7 @@ export default function FlightPage() {
                         >
                             <option value="price">Lowest Price</option>
                             <option value="departure">Earliest Departure</option>
+                            <option value="rating">Highest Ratings</option>
                         </select>
                     </div>
                 </>
@@ -387,7 +436,7 @@ export default function FlightPage() {
                     flightId={flight.id} 
                     destination={flight.destination}
                     origin={flight.origin}
-                    departure={flight.departure}
+                    departure={formatDepartureTime(flight.departure)}
                     price={flight.price}
                     airline={flight.name}
                     rating={flight.rating}

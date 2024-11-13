@@ -6,7 +6,7 @@ import { IoMdStar } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from '../Context/AuthContext';
 
-export default function HotelCard({ name, location, rating, priceStandard, priceDeluxe, roomType, availability, ratingCount,hotelID }) {
+export default function HotelCard({ name, location, rating, priceStandard, priceDeluxe, roomType, availability, ratingCount,hotelID,rooms,checkInDate,checkOutDate}) {
     const navigate = useNavigate();
     const { user, isAuthenticated } = useContext(AuthContext);  // Use the useAuth hook to check auth status
 
@@ -18,7 +18,9 @@ export default function HotelCard({ name, location, rating, priceStandard, price
             roomType: roomType,
             price: roomType === 'standard' ? priceStandard : priceDeluxe,
             availability: availability,
-            
+            rooms:rooms,
+            checkInDate:checkInDate,
+            checkOutDate:checkOutDate     
         };
         console.log("card hotel id : ",hotelDetails)
 

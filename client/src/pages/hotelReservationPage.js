@@ -6,23 +6,6 @@ import '../styles/hotelReservationPage.css';
 import { AuthContext } from '../Context/AuthContext'; 
 import { useLocation, useNavigate } from 'react-router-dom';
 
-const CustomInput = React.forwardRef(({ onClick, value, onClear, placeholder }, ref) => (
-    <div className="hotel-reservation-input-container" ref={ref}>
-        <FaCalendarAlt className="hotel-reservation-input-icon hotel-reservation-date-icon" onClick={onClick} />
-        <input
-            type="text"
-            className="hotel-reservation-date-input"
-            placeholder={value || placeholder}
-            value={value}
-            readOnly
-            onClick={onClick}
-        />
-        {value && (
-            <FaTimes className="hotel-reservation-clear-icon" onClick={onClear} />
-        )}
-    </div>
-));
-
 export default function HotelReservationPage() {
     const { user} = useContext(AuthContext);
     const location = useLocation();
@@ -30,42 +13,28 @@ export default function HotelReservationPage() {
     const hotelDetails = location.state;
     console.log("reseve hotel user:",user);
     const [reservationData, setReservationData] = useState({
-        startDate: null,
-        endDate: null,
-        numberOfRooms: 1,
+        startDate: hotelDetails.checkInDate,
+        endDate: hotelDetails.checkOutDate,
+        numberOfRooms: hotelDetails.rooms,
         totalPrice: 0,
     });
-
-    function handleDateChange(date, name) {
-        setReservationData(prevState => ({
-            ...prevState,
-            [name]: date
-        }));
-        
-    }
-
-    function handleChange(event) {
-        const { name, value } = event.target;
-        setReservationData(prevState => ({
-            ...prevState,
-            [name]: value
-        }));
-        
-    }
-
+    
     function calculateTotalPrice() {
         if (reservationData.startDate && reservationData.endDate) {
             const timeDiff = Math.abs(reservationData.endDate - reservationData.startDate);
             const dayCount = Math.ceil(timeDiff / (1000 * 3600 * 24));
             const pricePerNight =  hotelDetails.price;
             console.log("price per night : ",pricePerNight)
-            const totalPrice = pricePerNight * dayCount * reservationData.numberOfRooms;
+            let totalPrice = pricePerNight * dayCount * hotelDetails?.rooms;
+            if(dayCount===0){
+                totalPrice=pricePerNight*hotelDetails.rooms;     
+            }
             setReservationData(prevState => ({
                 ...prevState,
                 totalPrice: totalPrice
             }));
         }
-        else if(reservationData.startDate===null || reservationData.endDate===null || reservationData.numberOfRooms===0){
+        else if(reservationData.startDate===null || reservationData.endDate===null || hotelDetails?.rooms===0){
             setReservationData(prevState => ({
                 ...prevState,
                 totalPrice: 0
@@ -75,8 +44,11 @@ export default function HotelReservationPage() {
     console.log("hotel details in reservation page : ",hotelDetails)
     React.useEffect(() => {
         calculateTotalPrice();
-    }, [reservationData.startDate, reservationData.endDate, reservationData.numberOfRooms]);
-
+    }, []);
+    const formatDate = (date) => {
+        if (!date) return '';
+        return new Date(date).toLocaleDateString('en-GB'); // "dd/MM/yyyy" format
+    };
     function handleReservation() {
         const duration = Math.ceil(Math.abs(reservationData.endDate - reservationData.startDate) / (1000 * 3600 * 24));
     
@@ -144,22 +116,20 @@ export default function HotelReservationPage() {
                         </div>
                         <div className="hotel-reservation-detail">
                             <label className='date-reservations-label-hotel-reservations'>Reservation Start Date</label>
-                            <DatePicker
-                                selected={reservationData.startDate}
-                                onChange={(date) => handleDateChange(date, "startDate")}
-                                placeholderText="Select Start Date"
-                                customInput={<CustomInput onClear={() => handleDateChange(null, "startDate")} />}
-                                dateFormat="dd/MM/yyyy"
+                            <input
+                                type="text"
+                                value={formatDate(reservationData.startDate)}
+                                readOnly
+                                className="hotel-reservation-input-field hotel-reservation-input-field-view-only"
                             />
                         </div>
                         <div className="hotel-reservation-detail">
                             <label className='date-reservations-label-hotel-reservationsv2'>Reservation End Date</label>
-                            <DatePicker
-                                dateFormat="dd/MM/yyyy"
-                                selected={reservationData.endDate}
-                                onChange={(date) => handleDateChange(date, "endDate")}
-                                placeholderText="Select End Date"
-                                customInput={<CustomInput onClear={() => handleDateChange(null, "endDate")} />}
+                            <input
+                                type="text"
+                                value={formatDate(reservationData.endDate)}
+                                readOnly
+                                className="hotel-reservation-input-field hotel-reservation-input-field-view-only"
                             />
                         </div>
                         <div className="hotel-reservation-detail">
@@ -167,9 +137,10 @@ export default function HotelReservationPage() {
                             <input
                                 type="number"
                                 name="numberOfRooms"
-                                value={reservationData.numberOfRooms}
-                                onChange={handleChange}
-                                className="hotel-reservation-input-field"
+                                value={hotelDetails?.rooms || 0}
+                                //onChange={handleChange}
+                                readOnly
+                                className="hotel-reservation-input-field hotel-reservation-input-field-view-only"
                             />
                         </div>
                         <div className="hotel-reservation-detail">

@@ -82,7 +82,7 @@ export default function FlightSearchResultCard(props) {
                 {/* Flight Information */}
                 <MDBCardText className="flight-search-results-comp-card-info">
                     <span className="flight-search-results-comp-departure">
-                        <MDBIcon fas icon="clock" className="me-2" /> Departure: {props.departure}
+                        <MDBIcon fas icon="clock" className="me-2" /> Departure Time : {props.departure}
                     </span>
                     <span className="flight-search-results-comp-price">
                         <MDBIcon fas icon="dollar-sign" className="me-2" /> <span className='flight-search-results-comp-price-value'>{props.price}</span>

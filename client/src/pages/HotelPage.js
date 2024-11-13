@@ -60,7 +60,6 @@ export default function HotelPage() {
     useEffect(() => {
         async function fetchHotels() {
             try {
-                console.log(response)
                 const response = await axios.get('http://localhost:8000/api/v1/hotels/allHotels');
                 const hotelNames = response.data.data.map(hotel => hotel.name);
                 setHotels(hotelNames);
@@ -102,8 +101,7 @@ export default function HotelPage() {
                 const hotelSuggestions = hotels.filter(hotel =>
                     hotel.toLowerCase().includes(input)
                 ).slice(0, 4);
-
-                const combinedSuggestions = [value,...hotelSuggestions, ...citySuggestions].slice(0, 5);
+                const combinedSuggestions = [value,...hotelSuggestions, ...citySuggestions].slice(0, 6);
                 setSuggestions(combinedSuggestions);
                 setShowSuggestions(true);
             } else {
@@ -161,26 +159,43 @@ export default function HotelPage() {
         }
     }
     
-    
+    console.log(searchData)
 
     // Sort results based on selected option
     function handleSortChange(e) {
         const option = e.target.value;
         setSortOption(option);
-
+    
         const sortedResults = [...searchResults].sort((a, b) => {
             if (option === 'price') {
-                return a[`pricePerNight${searchData.roomType.charAt(0).toUpperCase() + searchData.roomType.slice(1)}`] - 
-                       b[`pricePerNight${searchData.roomType.charAt(0).toUpperCase() + searchData.roomType.slice(1)}`];
+                // Sort by price first
+                const priceA = a[`pricePerNight${searchData.roomType.charAt(0).toUpperCase() + searchData.roomType.slice(1)}`];
+                const priceB = b[`pricePerNight${searchData.roomType.charAt(0).toUpperCase() + searchData.roomType.slice(1)}`];
+                
+                if (priceA === priceB) {
+                    // If prices are equal, sort by rating
+                    return b.rating - a.rating;
+                }
+                return priceA - priceB;
             } else if (option === 'rating') {
+                // Sort by rating first
+                const ratingA = a.rating;
+                const ratingB = b.rating;
+                
+                if (ratingA === ratingB) {
+                    // If ratings are equal, sort by price
+                    const priceA = a[`pricePerNight${searchData.roomType.charAt(0).toUpperCase() + searchData.roomType.slice(1)}`];
+                    const priceB = b[`pricePerNight${searchData.roomType.charAt(0).toUpperCase() + searchData.roomType.slice(1)}`];
+                    return priceA - priceB;
+                }
                 return b.rating - a.rating;
             }
-            return 0;
+            return 0; // Default return if no sorting option is selected
         });
-
+    
         setSearchResults(sortedResults);
     }
-
+    
     return (
         <div className="hotel-page">
             <div className="hero-section">
@@ -291,6 +306,9 @@ export default function HotelPage() {
                             availability={hotel[searchData.roomType]}
                             ratingCount={hotel.ratingCount}
                             hotelID={hotel.id}
+                            rooms={searchData.rooms}
+                            checkInDate={searchData.checkInDate}
+                            checkOutDate={searchData.checkOutDate}
                         />
                     ))
                 )}

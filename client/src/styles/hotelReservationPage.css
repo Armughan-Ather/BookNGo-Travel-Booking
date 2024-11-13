@@ -50,7 +50,11 @@
     background-color: #f7f9fc;
     color: #333;
 }
-
+.hotel-reservation-input-field:focus{
+    outline: none;
+    border-color: #f9a825 !important; /* Yellow/orangish color on focus */
+    border-width: 0.14rem;
+}
 .hotel-reservation-input-field-view-only {
     cursor: not-allowed;
     background-color: #e9ecef; /* Light background for read-only fields */
