@@ -1,0 +1,30 @@
+.view-user-profile-comp-container {
+    padding: 2rem;
+  }
+  
+  .view-user-profile-comp-heading {
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+    font-weight: 600;
+  }
+  
+  .view-user-profile-comp-card {
+    padding: 1rem;
+    border-radius: 0.5rem;
+  }
+  
+  .view-user-profile-comp-card-title {
+    font-size: 1.25rem;
+    font-weight: bold;
+  }
+  
+  .view-user-profile-comp-label {
+    font-weight: bold;
+  }
+  
+  .view-user-profile-comp-button-group {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+  

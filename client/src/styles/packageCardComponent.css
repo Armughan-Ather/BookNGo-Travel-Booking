@@ -1,0 +1,23 @@
+.packages-results-card-comp-card {
+    width: 300px;
+  }
+  
+  .packages-results-card-comp-img {
+    height: 200px;
+    object-fit: cover;
+  }
+  
+  .packages-results-card-comp-title {
+    font-size: 1.25rem;
+    margin-bottom: 0.75rem;
+  }
+  
+  .packages-results-card-comp-text {
+    font-size: 1rem;
+    margin-bottom: 1rem;
+  }
+  
+  .packages-results-card-comp-book-button {
+    background-color: #007bff;
+  }
+  

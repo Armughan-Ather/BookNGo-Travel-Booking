@@ -41,6 +41,8 @@ import SignupPage from "./pages/SignupPage";
 import HomePage from "./pages/HomePage";
 import FlightPage from "./pages/FlightPage";  
 import HotelPage from "./pages/HotelPage";
+import PackagesPage from './pages/packagePage';
+import ProfilePage from './pages/profilePage';
 import Layout from "./pages/Layout";
 import HotelReservationPage from './pages/hotelReservationPage';
 import PaymentForm from './pages/PaymentForm';
@@ -60,7 +62,7 @@ function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/flights" element={<FlightPage />} />
           <Route path="/hotels" element={<HotelPage />} />
-
+          <Route path='packages' element={<PackagesPage/>} />
           {/* Protected Routes */}
           <Route 
             path="/hotels/reservation" 
@@ -72,7 +74,12 @@ function App() {
           />
           <Route
            path='/payment' 
-           element={<ProtectedRoute><PaymentForm /></ProtectedRoute>} />
+           element={<ProtectedRoute><PaymentForm /></ProtectedRoute>} 
+           />
+           <Route
+           path='/profile' 
+           element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} 
+           />
         </Route>
       </Routes>
     </BrowserRouter>
