@@ -53,6 +53,8 @@ import hotelReservationRouter from "./routes/hotelReservation.routes.js";
 import airlineRouter from "./routes/airline.routes.js";
 import flightRouter from "./routes/flight.routes.js";
 import flightReservationRouter from "./routes/flightReservation.routes.js";
+import cancelledFlightReservationRouter from "./routes/cancelledFlightReservation.routes.js";
+import cancelledHotelReservationRouter from "./routes/cancelledHotelReservation.routes.js";
 
 
 // Routes declaration
@@ -63,6 +65,8 @@ app.use("/api/v1/hotelReservation", hotelReservationRouter);
 app.use("/api/v1/airlines", airlineRouter);
 app.use("/api/v1/flights", flightRouter);
 app.use("/api/v1/flightReservation", flightReservationRouter);
+app.use("/api/v1/cancelledFlightReservation", cancelledFlightReservationRouter);
+app.use("/api/v1/cancelledHotelReservation", cancelledHotelReservationRouter);
 
 // Export app
 export { app };
