@@ -42,8 +42,8 @@ export const searchAvailableHotels = async (req, res) => {
         const query = `
             SELECT h.*, 
                    (h.${roomType} - COALESCE(SUM(CASE 
-                        WHEN (hr.reservationDate <= :endDate AND hr.endDate >= :reservationDate) 
-                        THEN hr.${roomType} ELSE 0 END), 0)) AS availableRooms
+                        WHEN (hr.reservationDate <= :endDate AND hr.endDate >= :reservationDate AND hr.type = :roomType) 
+                        THEN hr.noOfRooms ELSE 0 END), 0)) AS availableRooms
             FROM Hotel h
             LEFT JOIN HotelReservation hr ON hr.hotelId = h.id
             WHERE (h.name = :hotelNameOrCity OR h.location = :hotelNameOrCity)
@@ -57,6 +57,7 @@ export const searchAvailableHotels = async (req, res) => {
             replacements: {
                 hotelNameOrCity: hotelNameOrCity, // Exact match
                 numberOfRooms: parseInt(numberOfRooms) || 1,
+                roomType: roomType, // Add roomType to the query
                 reservationDate: reservationStartDate.toISOString().split('T')[0], // Date format 'yyyy-mm-dd'
                 endDate: reservationEndDate.toISOString().split('T')[0], // Date format 'yyyy-mm-dd'
             },
