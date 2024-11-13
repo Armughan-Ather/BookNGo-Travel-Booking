@@ -12,23 +12,19 @@ export default function ProfilePage() {
 
   const [hotelBookings, setHotelBookings] = useState([]);
   const [flightBookings, setFlightBookings] = useState([]);
-  const [packageBookings, setPackageBookings] = useState([]);
   
   
   
   useEffect(() => {
     if (userName) {
-      axios.post('/api/getUserHotels', { userName })
+      axios.post('http://localhost:8000/api/v1/users/getUserFlightReservationHistory', { userName })
         .then(response => setHotelBookings(response.data.data))
         .catch(error => console.error('Error fetching hotel bookings:', error));
 
-      axios.post('/api/getUserFlights', { userName })
+      axios.post('http://localhost:8000/api/v1/users/getUserHotelReservationHistory', { userName })
         .then(response => setFlightBookings(response.data.data))
         .catch(error => console.error('Error fetching flight bookings:', error));
 
-      axios.post('/api/getUserPackages', { userName })
-        .then(response => setPackageBookings(response.data.data))
-        .catch(error => console.error('Error fetching package bookings:', error));
     }
   }, [userName]);
 
@@ -64,10 +60,7 @@ export default function ProfilePage() {
           <h3 className="view-user-profile-comp-heading">Flight Bookings</h3>
           {flightBookings.map(booking => renderBookingCard(booking, 'Flight'))}
         </MDBCol>
-        <MDBCol md="4">
-          <h3 className="view-user-profile-comp-heading">Package Bookings</h3>
-          {packageBookings.map(booking => renderBookingCard(booking, 'Package'))}
-        </MDBCol>
+        
       </MDBRow>
     </MDBContainer>
   );

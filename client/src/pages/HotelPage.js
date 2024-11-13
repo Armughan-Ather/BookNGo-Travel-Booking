@@ -8,6 +8,7 @@ import { MdOutlineAddLocation } from "react-icons/md";
 import cities from 'cities.json';
 import axios from "axios";
 import HotelCard from '../components/hotelSearchResultsCard';
+import { addDays } from 'date-fns';
 
 const CustomInput = React.forwardRef(({ onClick, value, onClear, placeholder }, ref) => (
     <div className="input-container" ref={ref}>
@@ -38,7 +39,9 @@ export default function HotelPage() {
     const [hotelId,setHotelId]=useState(undefined);
     const errorMessageRef = useRef(null);
     const resultsRef = useRef(null);
-    
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Set time to 00:00:00 for comparison
+
     
     const [searchData, setSearchData] = useState({
         HotelOrCity: '',
@@ -138,11 +141,28 @@ export default function HotelPage() {
                 setShowErrorMessage(true);
                 return;
             }
+            else if(searchData.rooms==='' ||searchData.rooms===''){
+                setErrorMessage("Please enter number of rooms.");
+                setShowErrorMessage(true);
+                return;
+            }
+            else if(searchData.checkInDate===null || searchData.checkOutDate===null){
+                setErrorMessage("Please enter reservation start and end dates.");
+                setShowErrorMessage(true);
+                return;
+            }
+            else if (searchData.checkOutDate < searchData.checkInDate) {
+                setErrorMessage("Check-Out Date cannot be before the Check-In Date.");
+                setShowErrorMessage(true);
+                return;
+            }
 
-            const response = await axios.post('http://localhost:8000/api/v1/hotels/searchHotels', {
+            const response = await axios.post('http://localhost:8000/api/v1/hotels/searchAvailableHotels', {
                 hotelNameOrCity: searchData.HotelOrCity,
                 roomType: searchData.roomType,
-                numberOfRooms: searchData.rooms
+                numberOfRooms: searchData.rooms,
+                reservationDate:searchData.checkInDate,
+                endDate:searchData.checkOutDate
             });
             setShowErrorMessage(false);
             const result = await response.data.data;
@@ -159,8 +179,7 @@ export default function HotelPage() {
         }
     }
     
-    console.log(searchData)
-
+   
     // Sort results based on selected option
     function handleSortChange(e) {
         const option = e.target.value;
@@ -230,6 +249,7 @@ export default function HotelPage() {
                         onChange={(date) => handleDateChange(date, "CheckInDate")}
                         placeholderText="Check-In Date"
                         dateFormat="dd/MM/yyyy"
+                        minDate={today}
                         customInput={<CustomInput onClear={() => handleDateChange(null, "CheckInDate")} />}
                     />
 
@@ -238,6 +258,7 @@ export default function HotelPage() {
                         onChange={(date) => handleDateChange(date, "CheckOutDate")}
                         placeholderText="Check-Out Date"
                         dateFormat="dd/MM/yyyy"
+                        minDate={searchData.checkInDate || today}
                         customInput={<CustomInput onClear={() => handleDateChange(null, "CheckOutDate")} />}
                         name="checkOutDate"
                     />
