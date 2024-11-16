@@ -1,30 +1,152 @@
 .view-user-profile-comp-container {
-    padding: 2rem;
+    padding: 3rem 2rem;
+    max-width: 900px;
+    margin: auto;
+    font-family: 'Poppins', sans-serif;
+  }
+  
+  .view-user-profile-comp-section {
+    margin-bottom: 3rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 2px solid #eee;
   }
   
   .view-user-profile-comp-heading {
-    font-size: 1.5rem;
+    font-size: 2rem; /* Increased heading size */
+    color: #343a40;
     margin-bottom: 1.5rem;
-    font-weight: 600;
+    font-weight: 700;
+    text-align: center;
   }
   
   .view-user-profile-comp-card {
-    padding: 1rem;
-    border-radius: 0.5rem;
+    margin-bottom: 1.5rem;
+    border: none;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.3s ease;
+  }
+  
+  .view-user-profile-comp-card:hover {
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
   }
   
   .view-user-profile-comp-card-title {
-    font-size: 1.25rem;
-    font-weight: bold;
+    font-size: 1.4rem; /* Increased card title size */
+    color: #007bff;
+    margin-bottom: 1rem;
   }
   
-  .view-user-profile-comp-label {
-    font-weight: bold;
+  .view-user-profile-comp-icon,.view-user-profile-comp-icon-text-space  {
+    font-size: 1.2rem; /* Increased icon size */
+    margin-right: 0.5rem;
+    color: #007bff;
+    vertical-align: middle; /* Ensures proper vertical alignment */
   }
-  
-  .view-user-profile-comp-button-group {
-    display: flex;
-    gap: 1rem;
+  .view-user-profile-comp-icon-main{
+    font-size: 1.2rem; /* Increased icon size */
+    margin-right: 0.5rem;
+    color: #007bff;
+    vertical-align: middle;
+  }
+  .view-user-profile-comp-dollar-icon{
+    color: green;
+  }
+  .view-user-profile-comp-margin-above{
     margin-top: 1rem;
+    background-color: rgb(255, 11, 11) !important;
+  }
+  .view-user-profile-comp-bill-container{
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+  }
+  .view-user-profile-comp-margin-right{
+    margin-right: 3rem;
+  }
+  .view-user-profile-comp-row {
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center; /* Ensures proper vertical alignment */
+  }
+  
+  .view-user-profile-comp-row .text-end {
+    text-align: right;
+  }
+  
+  .view-user-profile-comp-row .text-center {
+    text-align: center;
+  }
+  
+  .view-user-profile-comp-rating {
+    display: flex;
+    justify-content: center;
+    margin-top: 1rem;
+  }
+  
+  .view-user-profile-comp-stars {
+    font-size: 1.5rem; /* Increased size of stars */
+    color: #ff9800; /* Gold color for filled stars */
+    cursor: pointer;
+    margin: 0 5px;
+  }
+  
+  .view-user-profile-comp-stars-not-filled {
+    font-size: 1.5rem; /* Increased size of empty stars */
+    color: #ccc; /* Light grey color for empty stars */
+    cursor: pointer;
+    margin: 0 5px;
+  }
+  
+  .view-user-profile-comp-star:hover {
+    color: #ff9800; /* Lighter gold color on hover */
+  }
+  
+  .view-user-profile-comp-button-group .btn {
+    font-size: 0.85rem;
+    padding: 0.4rem 0.8rem;
+  }
+  
+  /* Style the Cancel Reservation Button */
+  .view-user-profile-comp-cancel-btn {
+    background-color: #e74c3c; /* Red color for cancel button */
+    color: #fff;
+    border: none;
+    padding: 0.8rem 1.6rem; /* Increased padding */
+    font-size: 1.1rem; /* Increased font size */
+    border-radius: 8px; /* More rounded corners */
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .view-user-profile-comp-icon-text-space{
+    margin-right: 0.5rem;
+    color: #007bff;
+  }
+  .view-user-profile-comp-cancel-btn:hover {
+    background-color: #c0392b; /* Darker red on hover */
+    transform: scale(1.05); /* Slight scale effect on hover */
+  }
+  
+  .view-user-profile-comp-cancel-btn:active {
+    background-color: #b03a2e; /* Even darker red when clicked */
+    transform: scale(1); /* Reset scale on active */
+  }
+  
+  .view-user-profile-comp-cancel-btn:focus {
+    outline: none; /* Remove focus outline for a cleaner look */
+  }
+  
+  /* Ensure vertical alignment of icons and text */
+  .view-user-profile-comp-row .align-middle {
+    display: flex;
+    align-items: center; /* Vertical center alignment */
+  }
+  
+  /* Additional styles for better layout */
+  .view-user-profile-comp-row .view-user-profile-comp-icon {
+    margin-right: 10px; /* Increased margin between icon and text */
+    font-size: 1.8rem; /* Slightly larger icons */
   }
   

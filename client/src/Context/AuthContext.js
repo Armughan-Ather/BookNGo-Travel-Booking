@@ -12,7 +12,7 @@ export const useAuth = () => {
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-
+  
   async function settingUser() {
     const storedToken = localStorage.getItem("token");
 
@@ -30,6 +30,10 @@ export const AuthProvider = ({ children }) => {
       console.log("Auth context:", response.data);
       setUser({ token: storedToken, username: response.data.data });
     } catch (error) {
+      if(error.response.data.error=='Invalid or expired token.'){
+        logout();
+        return;
+      }
       console.error("Error authenticating user:", error);
       setUser({ token: storedToken }); // In case of failure, still set the token
     } finally {
@@ -71,6 +75,7 @@ export const AuthProvider = ({ children }) => {
   const logout = () => {
     localStorage.removeItem("token"); // Remove token from localStorage
     setUser(null); // Clear the user state
+    
   };
 
   const value = {
