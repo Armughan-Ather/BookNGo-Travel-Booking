@@ -1,6 +1,74 @@
 import sequelize from '../config/database.js'; // Sequelize instance
 import { ApiResponse } from '../utils/ApiResponse.js'; // Assuming you have this
 
+export const updateHotelRating = async (req, res) => {
+    const { hotelId, rating } = req.body;
+
+    if (!hotelId || rating === undefined) {
+        return res.status(400).json({ error: 'Hotel ID and rating are required.' });
+    }
+
+    try {
+        // Start a transaction
+        const transaction = await sequelize.transaction();
+
+        try {
+            // Fetch the current rating and ratingCount for the hotel
+            const [hotel] = await sequelize.query(
+                'SELECT rating, ratingCount FROM Hotel WHERE id = :hotelId',
+                {
+                    type: sequelize.QueryTypes.SELECT,
+                    replacements: { hotelId },
+                    transaction,
+                }
+            );
+
+            if (!hotel) {
+                return res.status(404).json({ error: 'Hotel not found.' });
+            }
+
+            const { rating: currentRating, ratingCount: currentRatingCount } = hotel;
+
+            // Calculate the new rating and ratingCount
+            const newRatingCount = currentRatingCount + 1;
+            const newRating = (currentRating * currentRatingCount + rating) / newRatingCount;
+
+            // Update the hotel record with the new values
+            await sequelize.query(
+                'UPDATE Hotel SET rating = :newRating, ratingCount = :newRatingCount WHERE id = :hotelId',
+                {
+                    type: sequelize.QueryTypes.UPDATE,
+                    replacements: {
+                        newRating,
+                        newRatingCount,
+                        hotelId,
+                    },
+                    transaction,
+                }
+            );
+
+            // Commit the transaction
+            await transaction.commit();
+
+            //   return res.status(200).json({
+            //     message: 'Rating updated successfully.',
+            //     hotelId,
+            //     updatedRating: parseFloat(newRating.toFixed(2)), // Formatting to two decimal places
+            //     updatedRatingCount: newRatingCount,
+            //   });
+            return res.status(200).json(new ApiResponse(200, { updatedRating: parseFloat(newRating.toFixed(1)) }, 'Rating updated successfully.'));
+        } catch (err) {
+            // Rollback the transaction in case of an error
+            await transaction.rollback();
+            throw err;
+        }
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ error: 'Failed to update hotel rating. Please try again later.' });
+    }
+};
+
+
 export const searchAvailableHotels = async (req, res) => {
     try {
         const { hotelNameOrCity, roomType, numberOfRooms, reservationDate, endDate } = req.body;
