@@ -5,6 +5,6 @@ import { updateAirlineRating } from "../controllers/airline.controller.js";
 const router = Router()
 
 router.route("/allAirlines").get(allAirlines)
-router.route("/updateAirlineRating").get(updateAirlineRating)
+router.route("/updateAirlineRating").post(updateAirlineRating)
 
 export default router;

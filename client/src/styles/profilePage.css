@@ -1,16 +1,19 @@
+/* Base Container */
 .view-user-profile-comp-container {
     padding: 3rem 2rem;
-    max-width: 900px;
+    max-width: 56.25rem; /* 900px in rem */
     margin: auto;
     font-family: 'Poppins', sans-serif;
   }
   
+  /* Section for Profile */
   .view-user-profile-comp-section {
     margin-bottom: 3rem;
     padding-bottom: 1.5rem;
     border-bottom: 2px solid #eee;
   }
   
+  /* Heading */
   .view-user-profile-comp-heading {
     font-size: 2rem; /* Increased heading size */
     color: #343a40;
@@ -19,50 +22,62 @@
     text-align: center;
   }
   
+  /* Card Styling */
   .view-user-profile-comp-card {
     margin-bottom: 1.5rem;
     border: none;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.1);
     transition: box-shadow 0.3s ease;
   }
   
   .view-user-profile-comp-card:hover {
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 0.375rem 0.75rem rgba(0, 0, 0, 0.15);
   }
   
+  /* Card Title */
   .view-user-profile-comp-card-title {
     font-size: 1.4rem; /* Increased card title size */
     color: #007bff;
     margin-bottom: 1rem;
   }
   
-  .view-user-profile-comp-icon,.view-user-profile-comp-icon-text-space  {
-    font-size: 1.2rem; /* Increased icon size */
-    margin-right: 0.5rem;
-    color: #007bff;
-    vertical-align: middle; /* Ensures proper vertical alignment */
-  }
-  .view-user-profile-comp-icon-main{
+  /* Icons */
+  .view-user-profile-comp-icon,
+  .view-user-profile-comp-icon-text-space {
     font-size: 1.2rem; /* Increased icon size */
     margin-right: 0.5rem;
     color: #007bff;
     vertical-align: middle;
   }
-  .view-user-profile-comp-dollar-icon{
+  
+  .view-user-profile-comp-icon-main {
+    font-size: 1.2rem;
+    margin-right: 0.5rem;
+    color: #007bff;
+    vertical-align: middle;
+  }
+  
+  /* Bill Icon */
+  .view-user-profile-comp-dollar-icon {
     color: green;
   }
-  .view-user-profile-comp-margin-above{
+  
+  /* Cancel Button Styling */
+  .view-user-profile-comp-margin-above {
     margin-top: 1rem;
     background-color: rgb(255, 11, 11) !important;
   }
-  .view-user-profile-comp-bill-container{
+  
+  .view-user-profile-comp-bill-container {
     display: flex;
     align-items: center;
     justify-content: flex-end;
   }
-  .view-user-profile-comp-margin-right{
+  
+  .view-user-profile-comp-margin-right {
     margin-right: 3rem;
   }
+  
   .view-user-profile-comp-row {
     margin-bottom: 1rem;
     display: flex;
@@ -77,6 +92,7 @@
     text-align: center;
   }
   
+  /* Rating Stars */
   .view-user-profile-comp-rating {
     display: flex;
     justify-content: center;
@@ -87,14 +103,14 @@
     font-size: 1.5rem; /* Increased size of stars */
     color: #ff9800; /* Gold color for filled stars */
     cursor: pointer;
-    margin: 0 5px;
+    margin: 0 0.3125rem; /* 5px in rem */
   }
   
   .view-user-profile-comp-stars-not-filled {
     font-size: 1.5rem; /* Increased size of empty stars */
     color: #ccc; /* Light grey color for empty stars */
     cursor: pointer;
-    margin: 0 5px;
+    margin: 0 0.3125rem; /* 5px in rem */
   }
   
   .view-user-profile-comp-star:hover {
@@ -120,10 +136,7 @@
     align-items: center;
     justify-content: center;
   }
-  .view-user-profile-comp-icon-text-space{
-    margin-right: 0.5rem;
-    color: #007bff;
-  }
+  
   .view-user-profile-comp-cancel-btn:hover {
     background-color: #c0392b; /* Darker red on hover */
     transform: scale(1.05); /* Slight scale effect on hover */
@@ -144,9 +157,103 @@
     align-items: center; /* Vertical center alignment */
   }
   
-  /* Additional styles for better layout */
   .view-user-profile-comp-row .view-user-profile-comp-icon {
-    margin-right: 10px; /* Increased margin between icon and text */
+    margin-right: 0.625rem; /* Increased margin between icon and text */
     font-size: 1.8rem; /* Slightly larger icons */
+  }
+  
+  /* Modal Message Styling */
+  .view-user-profile-comp-modal-body p {
+    text-align: center;
+    font-size: 1.2rem;
+    padding: 1.25rem; /* 20px in rem */
+    color: #333;
+  }
+  
+  /* Modal Styling */
+  .view-user-profile-comp-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  }
+  
+  .view-user-profile-comp-modal .modal-content {
+    background: white;
+    padding: 1.25rem; /* 20px in rem */
+    border-radius: 8px;
+    width: 18.75rem; /* 300px in rem */
+    box-shadow: 0 0.125rem 0.625rem rgba(0, 0, 0, 0.3);
+  }
+  
+  /* Responsive Media Queries */
+  @media (max-width: 768px) {
+    .view-user-profile-comp-container {
+      padding: 2rem 1rem;
+    }
+  
+    .view-user-profile-comp-heading {
+      font-size: 1.75rem;
+    }
+  
+    .view-user-profile-comp-card-title {
+      font-size: 1.25rem;
+    }
+  
+    .view-user-profile-comp-icon {
+      font-size: 1rem;
+    }
+  
+    .view-user-profile-comp-rating {
+      flex-direction: column;
+      align-items: center;
+    }
+  
+    .view-user-profile-comp-stars {
+      font-size: 1.2rem; /* Adjust star size for mobile */
+    }
+  
+    .view-user-profile-comp-cancel-btn {
+      padding: 0.6rem 1.2rem;
+      font-size: 1rem;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .view-user-profile-comp-container {
+      padding: 1.5rem;
+    }
+  
+    .view-user-profile-comp-heading {
+      font-size: 1.5rem;
+    }
+  
+    .view-user-profile-comp-card-title {
+      font-size: 1.1rem;
+    }
+  
+    .view-user-profile-comp-icon {
+      font-size: 1rem;
+    }
+  
+    .view-user-profile-comp-rating {
+      flex-direction: column;
+      align-items: center;
+    }
+  
+    .view-user-profile-comp-stars {
+      font-size: 1.2rem;
+    }
+  
+    .view-user-profile-comp-cancel-btn {
+      padding: 0.5rem 1rem;
+      font-size: 0.9rem;
+    }
   }
   

@@ -1,9 +1,9 @@
 import React, { useEffect, useState, useContext } from 'react';
 import axios from 'axios';
-import { MDBContainer, MDBCard, MDBCardBody, MDBCardTitle, MDBBtn, MDBRow, MDBCol, MDBModal, MDBModalBody, MDBModalFooter } from 'mdb-react-ui-kit';
-import { FaPlane, FaCalendarAlt, FaUser, FaHotel, FaDollarSign, FaRegCalendarCheck, FaTimesCircle } from 'react-icons/fa';
-import { RiStarSFill, RiStarHalfSFill, RiStarLine } from 'react-icons/ri'; // For Star Ratings
-import '../styles/profilePage.css'; 
+import { MDBContainer, MDBCard, MDBCardBody, MDBCardTitle, MDBBtn, MDBRow, MDBCol, MDBModalBody, MDBModalFooter,MDBModalHeader } from 'mdb-react-ui-kit';
+import { FaPlane, FaCalendarAlt, FaUser, FaHotel, FaDollarSign, FaRegCalendarCheck} from 'react-icons/fa';
+import { RiStarSFill, RiStarHalfSFill, RiStarLine } from 'react-icons/ri'; 
+import '../styles/profilePage.css';
 import { AuthContext } from '../Context/AuthContext';
 
 export default function ProfilePage() {
@@ -12,26 +12,32 @@ export default function ProfilePage() {
 
   const [hotelBookings, setHotelBookings] = useState([]);
   const [flightBookings, setFlightBookings] = useState([]);
-  const [modalVisible, setModalVisible] = useState(false); // State for modal visibility
-  const [modalMessage, setModalMessage] = useState(''); // State for modal message content
+  const [modalVisible, setModalVisible] = useState(false); 
+  const [modalMessage, setModalMessage] = useState(''); 
 
   // State to handle ratings
   const [flightUserRating, setFlightUserRating] = useState({});
   const [hotelUserRating, setHotelUserRating] = useState({});
   const [flightHoveredRating, setFlightHoveredRating] = useState({});
   const [hotelHoveredRating, setHotelHoveredRating] = useState({});
-
+  const [temp,setTemp]=useState(false);
   useEffect(() => {
-    if (username) {
-      axios.post('http://localhost:8000/api/v1/users/getUserHotelReservationHistory', { username })
-        .then(response => setHotelBookings(response.data.hotelReservations || []))
-        .catch(error => console.error('Error fetching hotel bookings:', error));
+    const fetchBookingHistory = async () => {
+      if (username) {
+        try {
+          const hotelResponse = await axios.post('http://localhost:8000/api/v1/users/getUserHotelReservationHistory', { username });
+          setHotelBookings(hotelResponse.data.hotelReservations || []);
+          
+          const flightResponse = await axios.post('http://localhost:8000/api/v1/users/getUserFlightReservationHistory', { username });
+          setFlightBookings(flightResponse.data.flightReservations || []);
+        } catch (error) {
+          console.error('Error fetching bookings:', error);
+        }
+      }
+    };
 
-      axios.post('http://localhost:8000/api/v1/users/getUserFlightReservationHistory', { username })
-        .then(response => setFlightBookings(response.data.flightReservations || []))
-        .catch(error => console.error('Error fetching flight bookings:', error));
-    }
-  }, [username]);
+    fetchBookingHistory();
+  }, [temp]);
 
   // Function to render the stars for ratings
   const renderStars = (rating, bookingId, type) => {
@@ -65,68 +71,74 @@ export default function ProfilePage() {
   };
 
   // Handle rating submission for each booking (flight or hotel)
-  const handleStarClick = (rating, bookingId, type) => {
-    if (type === 'flight') {
-      setFlightUserRating({ ...flightUserRating, [bookingId]: rating });
-      // Send rating to the backend for flight booking
-      axios.post('http://localhost:8000/api/v1/rateBooking', {
-        bookingId,
-        rating,
-        type: 'flight',
-      }).then(response => {
-        console.log('Flight rating submitted successfully:', response.data);
-      }).catch(error => {
-        console.error('Error submitting flight rating:', error);
-      });
-    } else if (type === 'hotel') {
-      setHotelUserRating({ ...hotelUserRating, [bookingId]: rating });
-      // Send rating to the backend for hotel booking
-      axios.post('http://localhost:8000/api/v1/rateBooking', {
-        bookingId,
-        rating,
-        type: 'hotel',
-      }).then(response => {
-        console.log('Hotel rating submitted successfully:', response.data);
-      }).catch(error => {
-        console.error('Error submitting hotel rating:', error);
-      });
+  const handleStarClick = async (rating, bookingId, type, id) => {
+    try {
+      if (type === 'flight') {
+        setFlightUserRating(prev => ({ ...prev, [bookingId]: rating }));
+
+        
+        const response = await axios.post('http://localhost:8000/api/v1/airlines/updateAirlineRating', {
+          airlineId: id,
+          rating,
+        });
+      } else if (type === 'hotel') {
+        setHotelUserRating(prev => ({ ...prev, [bookingId]: rating }));
+
+        const response = await axios.post('http://localhost:8000/api/v1/hotels/updateHotelRating', {
+          hotelId: id,
+          rating,
+        });
+      }
+      setModalMessage('Ratings updated successfully. Thanks for your review.');
+      setModalVisible(true);
+      setTemp((prev)=>!prev);
+    } catch (error) {
+      setModalMessage('Failed to submit your rating. Please try again later.');
+      setModalVisible(true);
     }
   };
 
-  // Handle cancellation request
   const handleCancelation = async (bookingId, type) => {
-    setModalVisible(true); // Show the modal while processing
     try {
+        
       const response = await axios.post(type === 'flight'
-        ? '/api/v1/cancelledFlightReservation'
-        : 'http://localhost:8000/api/v1/cancelledHotelReservation', 
+        ? 'http://localhost:8000/api/v1/cancelledFlightReservation/cancelFlightReservation'
+        : 'http://localhost:8000/api/v1/cancelledHotelReservation/cancelHotelReservation',
         { reservationId: bookingId });
 
-      if (response.data.refundAmount) {
-        setModalMessage(`Cancellation Request Accepted. Refund amount of $${response.data.refundAmount} will be refunded in the next 7 business days.`);
-      } else {
-        setModalMessage(`Cancellation Request Rejected. Reason: ${response.data.message || 'Unknown error.'}`);
+      if (response.data.data) {
+        setModalVisible(true); 
+    
+        setModalMessage(`Cancellation Request Accepted. Refund amount of $${response.data.data} will be refunded in the next 7 business days.`);
       }
+      console.log('checking refund amt :',response.data) 
+      setTemp((prev)=>!prev);
     } catch (error) {
-      setModalMessage('Cancellation Request Rejected. Failed to cancel the booking. Please try again later.');
+        console.log('cancelation error : ',error)
+        setModalVisible(true); 
+    
+        setModalMessage(`Cancellation Request Rejected.${error?.response.data.error || 'Unknown error.'}`);
+        
     }
   };
-
-  // Handle modal close
+  
   const handleModalClose = () => {
-    setModalVisible(false); // Hide the modal after clicking "OK"
-  };
+    setModalVisible(false);
+    setModalMessage('')
+};
 
-  // Function to render booking cards (flight or hotel)
   const renderBookingCard = (booking, type) => {
-    const isUpcoming = new Date(booking.date || booking.departure) > new Date();
-    const bookingDate = new Date(booking.departure || booking.reservationDate).toLocaleString();
+    if(booking.reservationStatus==='Cancelled'){
+        return null;
+    }
+    //const bookingDate = new Date(booking.flightDepartureTime || booking.reservationStartDate).toLocaleString();
+    const bookingDate = booking.flightDepartureTime || booking.reservationStartDate;
+    
     const formattedDate = bookingDate === 'Invalid Date' ? 'N/A' : bookingDate;
-    const bookingId = booking.id;
-
+    const bookingId = booking.reservationId;
+    
     const isFlight = type === 'flight';
 
-    // Determine the hover and rating for the specific booking
     const currentRating = isFlight
       ? (flightHoveredRating[bookingId] !== undefined ? flightHoveredRating[bookingId] : flightUserRating[bookingId] || 0)
       : (hotelHoveredRating[bookingId] !== undefined ? hotelHoveredRating[bookingId] : hotelUserRating[bookingId] || 0);
@@ -141,7 +153,7 @@ export default function ProfilePage() {
               {isFlight ? (
                 <>
                   <FaPlane className="view-user-profile-comp-icon-main" />
-                  <strong>{booking.name}</strong> | From <strong>{booking.origin}</strong> to <strong>{booking.destination}</strong>
+                  <strong>{booking.airlineName}</strong> | From <strong>{booking.flightOrigin}</strong> to <strong>{booking.flightDestination}</strong>
                 </>
               ) : (
                 <>
@@ -156,26 +168,27 @@ export default function ProfilePage() {
             <MDBCol size="2" className='align-middle'>
               {isFlight ? (
                 <>
-                  <FaUser className='view-user-profile-comp-icon-text-space'/> Seats: {booking.seats}
+                  <FaUser className='view-user-profile-comp-icon-text-space'/> Seats: {booking.reservedSeats}
                 </>
               ) : (
                 <>
-                  <FaRegCalendarCheck className='view-user-profile-comp-icon-text-space'/>  {booking.type} Room 
+                  <FaRegCalendarCheck className='view-user-profile-comp-icon-text-space'/>  {booking.reservationRooms + ' '+ booking.reservationType} Room 
                 </>
               )}
             </MDBCol>
             <MDBCol size="2" className="text-end view-user-profile-comp-bill-container">
-              <FaDollarSign className='view-user-profile-comp-dollar-icon' /> <span className='view-user-profile-comp-margin-right'>{booking.bill}</span>
+              <FaDollarSign className='view-user-profile-comp-dollar-icon' /> <span className='view-user-profile-comp-margin-right'>{booking.reservationBill}</span>
             </MDBCol>
           </MDBRow>
 
           <MDBRow className="view-user-profile-comp-row text-center">
             <MDBCol>
-              {isUpcoming ? (
+              {booking.reservationStatus==='Booked' && (
                 <MDBBtn color="danger" size="sm" className='view-user-profile-comp-margin-above' onClick={() => handleCancelation(bookingId, type)}>
                   Cancel Reservation
                 </MDBBtn>
-              ) : (
+              )}  
+              {booking.reservationStatus==='Availed' && (
                 <div className="view-user-profile-comp-rating">
                   {renderStars(currentRating, bookingId, type).map((star, index) => (
                     <span
@@ -183,7 +196,10 @@ export default function ProfilePage() {
                       className="view-user-profile-comp-star"
                       onMouseEnter={() => handleStarHover(index + 1, bookingId, type)}
                       onMouseLeave={() => handleStarHover(0, bookingId, type)}
-                      onClick={() => handleStarClick(index + 1, bookingId, type)}
+                      onClick={type === 'flight'
+                        ? () => handleStarClick(index + 1, bookingId, type, booking.airlineId)
+                        : () => handleStarClick(index + 1, bookingId, type, booking.hotelId)
+                      }
                     >
                       {star}
                     </span>
@@ -217,15 +233,19 @@ export default function ProfilePage() {
         )}
       </section>
 
-      {/* Modal for Cancellation Status */}
-      <MDBModal show={modalVisible} onHide={handleModalClose}>
-        <MDBModalBody>
-          <p>{modalMessage}</p>
-        </MDBModalBody>
-        <MDBModalFooter>
-          <MDBBtn color="primary" onClick={handleModalClose}>OK</MDBBtn>
-        </MDBModalFooter>
-      </MDBModal>
+      {modalVisible && (
+        <div className="view-user-profile-comp-modal">
+          <div className="modal-content">
+            <MDBModalHeader toggle={handleModalClose}><strong>Confirmation</strong></MDBModalHeader>
+            <MDBModalBody>
+              <p>{modalMessage}</p>
+            </MDBModalBody>
+            <MDBModalFooter>
+              <MDBBtn color="primary" onClick={handleModalClose}>OK</MDBBtn>
+            </MDBModalFooter>
+          </div>
+        </div>
+      )}
     </MDBContainer>
   );
 }
