@@ -1,119 +1,3 @@
-// import React, { useState } from 'react';
-// import {
-//   MDBBtn,
-//   MDBCard,
-//   MDBCardBody,
-//   MDBCol,
-//   MDBContainer,
-//   MDBIcon,
-//   MDBRadio,
-//   MDBRow,
-// } from 'mdb-react-ui-kit';
-// import '../styles/PaymentForm.css';
-// import { useLocation } from 'react-router-dom';
-
-// export default function PaymentForm() {
-//   const location = useLocation();
-//   const [selectedCard, setSelectedCard] = useState('visa');
-//   const { bookingType, amount, bookingDetails } = location.state; // Extract data from state
-
-//   const handleCardSelection = (cardType) => {
-//     setSelectedCard(cardType);
-//   };
-
-//   // Function to format booking details based on type
-//   const formatBookingDetails = (type, details) => {
-//     if (type === 'Hotel') {
-//       return (
-//         <>
-//           <p>Hotel Name: {details.hotelName}</p>
-//           <p>Location: {details.location}</p>
-//           <p>Room Type: {details.roomType}</p>
-//           <p>Number of Rooms: {details.numberOfRooms}</p>
-//           <p>Duration: {details.duration} days</p>
-//         </>
-//       );
-//     } 
-//     // Add additional formatting logic for Flight and Package bookings if needed
-//     return <p>{details}</p>; // Fallback for other types
-//   };
-
-//   return (
-//     <MDBContainer fluid className="payment-form-container">
-//       <MDBCard>
-//         <MDBCardBody>
-//           <MDBRow className="d-flex justify-content-center pb-5">
-//             <MDBCol md="7" xl="5" className="mb-4 mb-md-0">
-//               <h4 className="booking-type">{bookingType} Payment</h4>
-//               <h4 className="text-success">${amount}</h4>
-//               <h5>Booking Summary</h5>
-//               {formatBookingDetails(bookingType, bookingDetails)}
-
-//               <div className="d-flex flex-column pt-3">
-//                 <p className="text-primary add-payment-option">
-//                   <MDBIcon fas icon="plus-circle" className="text-primary pe-1" />
-//                   Add payment card
-//                 </p>
-
-//                 {/* Payment Card Options */}
-//                 <div className="payment-card-option">
-//                   <MDBRadio
-//                     name="radioCard"
-//                     checked={selectedCard === 'visa'}
-//                     onClick={() => handleCardSelection('visa')}
-//                   />
-//                   <div className="rounded border payment-card-details">
-//                     <MDBIcon fab icon="cc-visa" size="lg" className="text-primary pe-2" />
-//                     <span>Visa Debit Card</span>
-//                     <span className="ms-auto">************3456</span>
-//                   </div>
-//                 </div>
-
-//                 <div className="payment-card-option">
-//                   <MDBRadio
-//                     name="radioCard"
-//                     checked={selectedCard === 'mastercard'}
-//                     onClick={() => handleCardSelection('mastercard')}
-//                   />
-//                   <div className="rounded border payment-card-details">
-//                     <MDBIcon fab icon="cc-mastercard" size="lg" className="text-dark pe-2" />
-//                     <span>Mastercard Office</span>
-//                     <span className="ms-auto">************1038</span>
-//                   </div>
-//                 </div>
-
-//                 <MDBBtn block size="lg" className="proceed-payment-btn">
-//                   Confirm Payment
-//                 </MDBBtn>
-//               </div>
-//             </MDBCol>
-
-//             <MDBCol md="5" xl="4" offsetXl="1">
-//               <div className="cancel-link-container">
-//                 <a href="#!">Cancel and return to website</a>
-//               </div>
-
-//               <div className="rounded order-recap">
-//                 <h4>Order Recap</h4>
-//                 <div className="recap-row">
-//                   <MDBCol size="8">Booking Type</MDBCol>
-//                   <div className="ms-auto">{bookingType}</div>
-//                 </div>
-//                 <div className="recap-row">
-//                   <MDBCol size="8">Total Amount</MDBCol>
-//                   <div className="ms-auto">${amount}</div>
-//                 </div>
-//               </div>
-//             </MDBCol>
-//           </MDBRow>
-//         </MDBCardBody>
-//       </MDBCard>
-//     </MDBContainer>
-//   );
-// }
-
-
-
 import React, { useState } from 'react';
 import {
   MDBBtn,
@@ -124,7 +8,6 @@ import {
   MDBIcon,
   MDBRadio,
   MDBRow,
-  MDBModal,
   MDBModalHeader,
   MDBModalBody,
   MDBModalFooter,
@@ -133,14 +16,19 @@ import {
 import '../styles/PaymentForm.css';
 import { useLocation } from 'react-router-dom';
 import axios from 'axios';
+import { useNavigate } from "react-router-dom";
 
 export default function PaymentForm() {
   const location = useLocation();
-  const [selectedCard, setSelectedCard] = useState('visa');
-  const { bookingType, amount, bookingDetails,userName } = location.state;
+  const { bookingType, amount, bookingDetails, userName } = location.state;
   const [modalOpen, setModalOpen] = useState(false);
+  const [responseModalOpen, setResponseModalOpen] = useState(false); // New state for response modal
+  const [responseMessage, setResponseMessage] = useState(''); // Store the message for the response modal
   const [cardDetails, setCardDetails] = useState([]);
+  const [selectedCard, setSelectedCard] = useState('visa');
   const [newCard, setNewCard] = useState({ type: 'visa', number: '', expiryMM: '', expiryYYYY: '', cvv: '' });
+  const navigate=useNavigate();
+ 
 
   const handleCardSelection = (cardType) => {
     setSelectedCard(cardType);
@@ -148,6 +36,13 @@ export default function PaymentForm() {
 
   const toggleModal = () => {
     setModalOpen((prevState) => !prevState);
+  };
+
+  const toggleResponseModal = () => {
+    setResponseModalOpen(!responseModalOpen);
+    if(responseMessage=='Reservation confirmed!Thanks for choosing us!'){
+      navigate('/')
+    }
   };
 
   const handleAddCard = () => {
@@ -186,15 +81,14 @@ export default function PaymentForm() {
           <p><strong>Duration:</strong> {details.duration} days</p>
         </>
       );
-    }
-    else if(type === 'Flight') {
+    } else if (type === 'Flight') {
       return (
         <>
           <p><strong>Airline :</strong> {details.airlineName}</p>
           <p><strong>Flight From :</strong> {details.origin}</p>
           <p><strong>Flight To :</strong> {details.destination}</p>
           <p><strong>Departure Time :</strong> {details.departureTime}</p>
-          <p><strong>Travellers :</strong> {details.travellers} </p>
+          <p><strong>Travellers :</strong> {details.travellers}</p>
         </>
       );
     }
@@ -203,15 +97,16 @@ export default function PaymentForm() {
 
   const makeReservations = async () => {
     const selectedCardDetails = cardDetails.find(card => card.type === selectedCard);
-  
+
     if (!selectedCardDetails) {
-      alert("Please select a card to confirm the payment.");
+      setResponseMessage("Please select a card to confirm the payment.");
+      toggleResponseModal();
       return;
     }
-  
+
     let reservationData;
     let apiEndpoint;
-  
+
     if (bookingType === 'Hotel') {
       reservationData = {
         hotelId: bookingDetails.HotelId,
@@ -226,22 +121,24 @@ export default function PaymentForm() {
       reservationData = {
         flightId: bookingDetails.flightId,
         userName: userName,
-        seats:bookingDetails.travellers
+        seats: bookingDetails.travellers,
       };
       apiEndpoint = 'http://localhost:8000/api/v1/flightReservation/reserveFlight';
     }
-    console.log("reservation data :",reservationData)
+
     try {
       const response = await axios.post(apiEndpoint, reservationData);
       if (response.status === 200) {
-        alert("Reservation confirmed!");
+        setResponseMessage("Reservation confirmed!Thanks for choosing us!");
+        toggleResponseModal();
       }
     } catch (error) {
       console.error("Error making reservation:", error.response?.data?.error);
-      alert("There was an error confirming your reservation. Please try again.");
+      setResponseMessage("There was an error confirming your reservation. Please try again.");
+      toggleResponseModal();
     }
   };
-  
+
   return (
     <MDBContainer fluid className="payment-form-container">
       <MDBCard>
@@ -271,7 +168,7 @@ export default function PaymentForm() {
                       <MDBIcon fab icon={`cc-${card.type}`} size="lg" className="text-dark pe-2" />
                       <span>{`${card.type.charAt(0).toUpperCase() + card.type.slice(1)} Card`}</span>
                       <span className="ms-auto">{`************${card.number.slice(-4)}`}</span>
-                      <MDBBtn 
+                      <MDBBtn
                         className="remove-card-btn"
                         onClick={() => handleRemoveCard(index)}
                       >
@@ -375,7 +272,21 @@ export default function PaymentForm() {
           </div>
         </div>
       )}
+
+      {/* Modal for reservation response */}
+      {responseModalOpen && (
+        <div className="custom-modal">
+          <div className="modal-content">
+            {/* <MDBModalHeader toggle={toggleResponseModal}>Response</MDBModalHeader> */}
+            <MDBModalBody>
+              <strong>{responseMessage}</strong>
+            </MDBModalBody>
+            <MDBModalFooter>
+              <MDBBtn onClick={toggleResponseModal}>OK</MDBBtn>
+            </MDBModalFooter>
+          </div>
+        </div>
+      )}
     </MDBContainer>
   );
 }
-

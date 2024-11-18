@@ -27,10 +27,10 @@ export const AuthProvider = ({ children }) => {
         "http://localhost:8000/api/v1/users/authenticate",
         { token: storedToken }
       );
-      console.log("Auth context:", response.data);
-      setUser({ token: storedToken, username: response.data.data });
+      console.log("Auth context:", response?.data);
+      setUser({ token: storedToken, username: response?.data?.data });
     } catch (error) {
-      if(error.response.data.error=='Invalid or expired token.'){
+      if(error?.response?.data?.error=='Invalid or expired token.'){
         logout();
         return;
       }

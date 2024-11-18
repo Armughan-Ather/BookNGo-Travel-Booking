@@ -36,6 +36,7 @@
 
 import './styles/App.css';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import AboutPage from './pages/AboutPage';
 import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
 import HomePage from "./pages/HomePage";
@@ -48,6 +49,8 @@ import HotelReservationPage from './pages/hotelReservationPage';
 import PaymentForm from './pages/PaymentForm';
 import FlightReservationPage from './pages/flightReservation';
 import ProtectedRoute from './components/ProtectedRoute'; 
+import PageNotFound from './pages/NotFound/PageNotFound';
+
 
 function App() {
   return (
@@ -62,7 +65,9 @@ function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/flights" element={<FlightPage />} />
           <Route path="/hotels" element={<HotelPage />} />
-          <Route path='packages' element={<PackagesPage/>} />
+          <Route path='/packages' element={<PackagesPage/>} />
+          <Route path='/about' element={<AboutPage/>} />
+          
           {/* Protected Routes */}
           <Route 
             path="/hotels/reservation" 
@@ -80,7 +85,13 @@ function App() {
            path='/profile' 
            element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} 
            />
+
+            
         </Route>
+        <Route element={<Layout />}>
+          <Route path='*' element={<PageNotFound/>} />
+        </Route>
+        
       </Routes>
     </BrowserRouter>
   );

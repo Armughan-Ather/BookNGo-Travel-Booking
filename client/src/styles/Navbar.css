@@ -1,7 +1,7 @@
 .custom-navbar {
     
     width: 100%;
-    background-color: #2C3E50; /* Dark Blue */
+    /* background-color: #2C3E50;  */
     color: #ECF0F1; /* Light Grey */
     display: flex;
     flex-direction: column;
@@ -17,6 +17,7 @@
 /* Add padding to the navbar container to prevent overlap */
 .custom-navbar-padding {
     padding-top: 9.7rem; /* Add space to account for fixed navbar height */
+    
 }
 
 /* First Row: Logo and Hamburger */
@@ -26,12 +27,15 @@
     align-items: center;
     padding: 1rem 1.5rem; /* Add horizontal padding to prevent corner overlap */
     background-color: #34495E; /* Slightly lighter blue */
+    background-color: #001f3f;
+    
 }
 
 .navbar-logo {
     font-size: 2.5rem; /* Slightly bigger for better visibility */
     font-weight: bold;
     color: #ECF0F1; /* Light Grey */
+    color: white;
 }
 
 .hamburger-icon {
@@ -50,6 +54,12 @@
     background-color: #2C3E50; /* Dark Blue */
     flex-wrap: wrap;
     transition: all 0.3s ease; /* Smooth transition on resize */
+    background-color: #001f3f;
+    
+    border: 0.1rem solid white;
+    border-left: none;
+    border-right: none;
+    border-bottom: none;
 }
 
 /* Left-side links */
@@ -66,10 +76,11 @@
     align-items: center;
     padding: 0.5rem;
     transition: all 0.3s ease; /* Smooth hover transition */
+    color: white;
 }
 
 .navbar-links-left a:hover {
-    background-color: #1ABC9C; /* Turquoise accent for hover */
+    background-color: #1ABC9C;
     color: #fff; /* White text on hover */
     border-radius: 0.3125rem; /* 5px to rem */
 }

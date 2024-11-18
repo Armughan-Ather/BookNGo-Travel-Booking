@@ -5,9 +5,15 @@ import { FaPlane, FaCalendarAlt, FaUser, FaHotel, FaDollarSign, FaRegCalendarChe
 import { RiStarSFill, RiStarHalfSFill, RiStarLine } from 'react-icons/ri'; 
 import '../styles/profilePage.css';
 import { AuthContext } from '../Context/AuthContext';
+import { useNavigate } from "react-router-dom";
+
 
 export default function ProfilePage() {
-  const { user } = useContext(AuthContext);
+  const { user,isAuthenticated } = useContext(AuthContext);
+  const navigate = useNavigate();
+  if(!isAuthenticated){
+    navigate('/');
+  }
   const username = user?.username;
 
   const [hotelBookings, setHotelBookings] = useState([]);

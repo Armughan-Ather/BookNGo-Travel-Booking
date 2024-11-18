@@ -3,7 +3,7 @@ import { MDBFooter, MDBContainer, MDBRow, MDBCol, MDBIcon } from 'mdb-react-ui-k
 import 'mdb-react-ui-kit/dist/css/mdb.min.css';
 export default function Footer() {
   return (
-    <MDBFooter style={{ backgroundColor: '#001f3f', color: '#ffffff' }} className='text-center text-lg-start text-muted'>
+    <MDBFooter style={{ backgroundColor: '#001f3f', color: '#ffffff',fontFamily:'Poppins' }} className='text-center text-lg-start text-muted'>
       <section className='d-flex justify-content-center justify-content-lg-between p-4 border-bottom' style={{ borderColor: '#17a2b8' }}>
         <div className='me-5 d-none d-lg-block'>
           <span style={{ color: '#f8f9fa' }}>Get connected with us on social networks:</span>
@@ -25,7 +25,7 @@ export default function Footer() {
           <a href='' className='me-4 text-reset'>
             <MDBIcon style={{ color: '#17a2b8' }} fab icon='linkedin' />
           </a>
-          <a href='' className='me-4 text-reset'>
+          <a target='_blank' href='https://github.com/Armughan-Ather/BookNGo-Database-Project' className='me-4 text-reset'>
             <MDBIcon style={{ color: '#17a2b8' }} fab icon='github' />
           </a>
         </div>
@@ -37,55 +37,57 @@ export default function Footer() {
             <MDBCol md='3' lg='4' xl='3' className='mx-auto mb-4'>
               <h6 className='text-uppercase fw-bold mb-4' style={{ color: '#17a2b8' }}>
                 <MDBIcon icon='gem' className='me-3' />
-                Company name
+                BookNGo
               </h6>
               <p style={{ color: '#f8f9fa' }}>
-                Here you can use rows and columns to organize your footer content. Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+              Whether you're planning your next vacation, a business trip, or a last-minute getaway, BookNGo is here to make it happen. Your journey begins with us.
               </p>
             </MDBCol>
 
             <MDBCol md='2' lg='2' xl='2' className='mx-auto mb-4'>
-              <h6 className='text-uppercase fw-bold mb-4' style={{ color: '#17a2b8' }}>Products</h6>
-              <p>
-                <a href='#!' className='text-reset' style={{ color: '#f8f9fa' }}>
-                  Angular
+              <h6 className='text-uppercase fw-bold mb-4' style={{ color: '#17a2b8' }}>Services</h6>
+              <p style={{ color: '#f8f9fa' }}>
+                <a href='/packages' className='text-reset' >
+                  Packages
+                </a>
+              </p>
+              <p style={{ color: '#f8f9fa' }}>
+                <a href='/flights' className='text-reset' style={{ color: '#f8f9fa' }}>
+                  Flights
+                </a>
+              </p>
+              <p style={{ color: '#f8f9fa' }}>
+                <a href='/hotels' className='text-reset' style={{ color: '#f8f9fa' }}>
+                  Hotels
                 </a>
               </p>
               <p>
-                <a href='#!' className='text-reset' style={{ color: '#f8f9fa' }}>
-                  React
-                </a>
-              </p>
-              <p>
-                <a href='#!' className='text-reset' style={{ color: '#f8f9fa' }}>
-                  Vue
-                </a>
-              </p>
-              <p>
-                <a href='#!' className='text-reset' style={{ color: '#f8f9fa' }}>
+                {/* <a href='#!' className='text-reset' style={{ color: '#f8f9fa' }}>
                   Laravel
-                </a>
+                </a> */}
               </p>
             </MDBCol>
 
             <MDBCol md='3' lg='2' xl='2' className='mx-auto mb-4'>
               <h6 className='text-uppercase fw-bold mb-4' style={{ color: '#17a2b8' }}>Useful links</h6>
-              <p>
-                <a href='#!' className='text-reset' style={{ color: '#f8f9fa' }}>
-                  Pricing
+              <p style={{ color: '#f8f9fa' }}>
+                <a href='/' className='text-reset' style={{ color: '#f8f9fa' }}>
+                  Home
                 </a>
               </p>
-              <p>
-                <a href='#!' className='text-reset' style={{ color: '#f8f9fa' }}>
-                  Settings
+              <p style={{ color: '#f8f9fa' }}>
+                <a href='/profile' className='text-reset' style={{ color: '#ffffff' }}>
+                  Reservation History
                 </a>
               </p>
-              <p>
-                <a href='#!' className='text-reset' style={{ color: '#f8f9fa' }}>
-                  Orders
+              <p style={{ color: '#f8f9fa' }}>
+                <a href='/about' className='text-reset' style={{ color: '#f8f9fa' }}>
+                  About Us
                 </a>
               </p>
-              <p>
+              
+              
+              <p style={{ color: '#f8f9fa' }}>
                 <a href='#!' className='text-reset' style={{ color: '#f8f9fa' }}>
                   Help
                 </a>
@@ -94,29 +96,38 @@ export default function Footer() {
 
             <MDBCol md='4' lg='3' xl='3' className='mx-auto mb-md-0 mb-4'>
               <h6 className='text-uppercase fw-bold mb-4' style={{ color: '#17a2b8' }}>Contact</h6>
-              <p>
+              <p style={{ color: '#f8f9fa' }}>
                 <MDBIcon icon='home' className='me-2' style={{ color: '#17a2b8' }} />
-                New York, NY 10012, US
+                Fast University Karachi
               </p>
-              <p>
+              <p style={{ color: '#f8f9fa' }}>
                 <MDBIcon icon='envelope' className='me-3' style={{ color: '#17a2b8' }} />
-                info@example.com
+                k224416@nu.edu.pk
               </p>
-              <p>
+              <p style={{ color: '#f8f9fa' }}>
+                <MDBIcon icon='envelope' className='me-3' style={{ color: '#17a2b8' }} />
+                k224611@nu.edu.pk
+              </p>
+              <p style={{ color: '#f8f9fa' }}>
+                <MDBIcon icon='envelope' className='me-3' style={{ color: '#17a2b8' }} />
+                k224643@nu.edu.pk
+              </p>
+              {/* <p>
                 <MDBIcon icon='phone' className='me-3' style={{ color: '#17a2b8' }} /> + 01 234 567 88
               </p>
               <p>
                 <MDBIcon icon='print' className='me-3' style={{ color: '#17a2b8' }} /> + 01 234 567 89
-              </p>
+              </p> */}
             </MDBCol>
           </MDBRow>
         </MDBContainer>
       </section>
 
       <div className='text-center p-4' style={{ backgroundColor: '#17a2b8', color: '#ffffff' }}>
-        © 2024 Copyright:
-        <a className='text-reset fw-bold' href='https://mdbootstrap.com/' style={{ color: '#ffffff' }}>
-          MDBootstrap.com
+        © 2024 Copyright : 
+        
+        <a className='text-reset fw-bold' href='/' style={{ color: '#ffffff',marginLeft:'0.5rem' }}>
+          BOOKNGO
         </a>
       </div>
     </MDBFooter>
