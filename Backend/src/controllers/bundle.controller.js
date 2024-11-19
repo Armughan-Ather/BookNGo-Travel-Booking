@@ -8,11 +8,15 @@ export const searchValidBundles = async (req, res) => {
             SELECT b.id AS bundleId, b.flightId, b.flightIdRet, b.hotelId, b.discount,
                    f.departure AS onwardDate, f.numSeats AS onwardSeats,
                    fr.departure AS returnDate, fr.numSeats AS returnSeats,
-                   h.name AS hotelName, h.location AS hotelCity, h.standard AS totalStandardRooms, h.deluxe AS totalDeluxeRooms
+                   h.name AS hotelName, h.location AS hotelCity, h.standard AS totalStandardRooms, h.deluxe AS totalDeluxeRooms,
+                   fa.name AS onwardAirline, fra.name AS returnAirline, f.origin AS origin, f.destination AS destination,
+                   (h.rating+fa.rating+fra.rating)/3 AS avgRating
             FROM Bundle b
             LEFT JOIN Hotel h ON b.hotelId = h.id
             LEFT JOIN Flight f ON b.flightId = f.id
+            JOIN Airline fa ON f.airlineId = fa.id
             LEFT JOIN Flight fr ON b.flightIdRet = fr.id
+            JOIN Airline fra ON fr.airlineId = fra.id
             WHERE (
                 f.numSeats > 0 -- Onward flight must have seats
                 AND fr.numSeats > 0 -- Return flight must have seats
