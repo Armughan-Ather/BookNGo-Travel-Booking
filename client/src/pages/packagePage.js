@@ -1,16 +1,17 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import axios from 'axios';
 import PackageCardComponent from '../components/PackageCardComponent';
+import { MDBInput } from 'mdb-react-ui-kit';
 import '../styles/packagesPage.css';
 
 export default function PackagesPage() {
   const [packages, setPackages] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
-    // Fetch package data from the backend on initial render
     const fetchPackages = async () => {
       try {
-        const response = await axios.get('/api/packages');  // Adjust endpoint as needed
+        const response = await axios.get('http://localhost:8000/api/v1/bundle/searchValidBundles');
         setPackages(response.data.data);
       } catch (error) {
         console.error('Error fetching packages:', error);
@@ -20,13 +21,61 @@ export default function PackagesPage() {
     fetchPackages();
   }, []);
 
+  // Memoize filtered packages
+  const filteredPackages = useMemo(() => {
+    if (!searchTerm) return packages;
+
+    const term = searchTerm.toLowerCase();
+    return packages.filter((pkg) => {
+      const origin = pkg.origin?.toLowerCase() || '';
+      const destination = pkg.destination?.toLowerCase() || '';
+      const hotelName = pkg.hotelName?.toLowerCase() || '';
+      return origin.includes(term) || destination.includes(term) || hotelName.includes(term);
+    });
+  }, [searchTerm, packages]);
+
+  const handleSearchChange = (event) => {
+    setSearchTerm(event.target.value);
+  };
+
   return (
     <div className="bookngo-packages-page-container">
-      <h1 className="bookngo-packages-title">Available Packages</h1>
+      <h1 className="bookngo-packages-title">Discover Your Perfect Package</h1>
+      {/* <p className="bookngo-packages-subtitle">
+        Search for exciting travel packages tailored to your dream destinations.
+      </p> */}
+
+      <div className="bookngo-packages-search-container">
+        <MDBInput
+          label="Search Packages"
+          id="search-packages"
+          type="text"
+          value={searchTerm}
+          onChange={handleSearchChange}
+          className="bookngo-packages-search-bar"
+          placeholder="Search by origin, destination, or hotel name"
+        />
+      </div>
+
       <div className="bookngo-packages-card-container">
-        {packages.map((pkg, index) => (
-          <PackageCardComponent key={index} packageData={pkg} />
-        ))}
+        {filteredPackages.length > 0 ? (
+          filteredPackages.map((pkg, index) => (
+            <PackageCardComponent
+              key={index}
+              packageData={pkg}
+              returnDate={pkg.returnDate}
+              departureDate={pkg.onwardDate}
+              Rating={3.5}
+              origin={pkg.origin}
+              destination={pkg.destination}
+              hotelName={pkg.hotelName}
+            />
+          ))
+        ) : (
+          <p className="bookngo-packages-no-results">
+            No packages match your search. Please try a different term.
+          </p>
+        )}
       </div>
     </div>
   );
