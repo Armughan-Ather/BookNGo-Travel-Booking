@@ -2,7 +2,7 @@ import sequelize from '../config/database.js'; // Sequelize instance
 import { ApiResponse } from '../utils/ApiResponse.js'; // Assuming you have this
 
 export const updateAirlineRating = async (req, res) => {
-    const { airlineId, rating } = req.body;
+    const { flightReservationId, airlineId, rating } = req.body;
 
     if (!airlineId || rating === undefined) {
         return res.status(400).json({ error: 'Airline ID and rating are required.' });
@@ -46,6 +46,19 @@ export const updateAirlineRating = async (req, res) => {
                     transaction,
                 }
             );
+
+            await sequelize.query(
+                'UPDATE FlightReservation SET status = "Rated" WHERE id = :flightReservationId',
+                {
+                    type: sequelize.QueryTypes.UPDATE,
+                    replacements: {
+                        flightReservationId,
+                    },
+                    transaction,
+                }
+            );
+
+
 
             // Commit the transaction
             await transaction.commit();
