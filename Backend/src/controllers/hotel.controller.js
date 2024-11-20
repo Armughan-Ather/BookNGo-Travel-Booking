@@ -2,7 +2,7 @@ import sequelize from '../config/database.js'; // Sequelize instance
 import { ApiResponse } from '../utils/ApiResponse.js'; // Assuming you have this
 
 export const updateHotelRating = async (req, res) => {
-    const { hotelId, rating } = req.body;
+    const { hotelReservationId, hotelId, rating } = req.body;
 
     if (!hotelId || rating === undefined) {
         return res.status(400).json({ error: 'Hotel ID and rating are required.' });
@@ -42,6 +42,17 @@ export const updateHotelRating = async (req, res) => {
                         newRating,
                         newRatingCount,
                         hotelId,
+                    },
+                    transaction,
+                }
+            );
+
+            await sequelize.query(
+                'UPDATE HotelReservation SET status = "Rated" WHERE id = :hotelReservationId',
+                {
+                    type: sequelize.QueryTypes.UPDATE,
+                    replacements: {
+                        hotelReservationId,
                     },
                     transaction,
                 }

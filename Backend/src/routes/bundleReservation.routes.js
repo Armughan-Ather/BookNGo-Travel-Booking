@@ -3,6 +3,6 @@ import { reserveBundle } from "../controllers/bundleReservation.controller.js";
 
 const router = Router()
 
-router.route("/reserveBundle").get(reserveBundle)
+router.route("/reserveBundle").post(reserveBundle)
 
 export default router;

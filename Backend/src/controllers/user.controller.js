@@ -127,6 +127,91 @@ export const getUserFlightReservationHistory = async (req, res) => {
     }
 };
 
+export const getUserBundleReservationHistory = async (req, res) => {
+    try {
+        const { username } = req.body;
+
+        // Validate input
+        if (!username) {
+            return res.status(400).json({ error: 'Username is required.' });
+        }
+
+        // Step 1: Fetch all bundle reservations for the user along with associated flight and hotel reservations
+        const bundleHistoryQuery = `
+            SELECT
+                br.id AS bundleReservationId,
+                br.status AS bundleStatus,
+                br.bill AS bundleBill,
+
+                hr.id AS hotelReservationId,
+                h.id AS hotelId,
+                h.name AS hotelName,
+                h.location AS hotelLocation,
+                hr.type AS hotelReservationType,
+                hr.noOfRooms AS hotelReservationRooms,
+                hr.bill AS hotelReservationBill,
+                hr.reservationDate AS hotelReservationStartDate,
+                hr.endDate AS hotelReservationEndDate,
+                hr.bookingDate AS bundleBookingDate,
+                hr.status AS hotelReservationStatus,
+
+                fr1.id AS outwardFlightReservationId,
+                fr1.bill AS outwardFlightBill,
+                fr1.seats AS seats,
+                fr1.status AS outwardFlightStatus,
+                fl1.id AS outwardFlightId,
+                fl1.origin AS outwardFlightOrigin,
+                fl1.destination AS outwardFlightDestination,
+                fl1.departure AS outwardFlightDepartureTime,
+                fl1.price AS outwardFlightPrice,
+                fl1.status AS outwardFlightStatus,
+                a1.id AS outwardAirlineId,
+                a1.name AS outwardAirlineName,
+
+                fr2.id AS returnFlightReservationId,
+                fr2.bill AS returnFlightBill,
+                fr2.seats AS returnFlightSeats,
+                fr2.status AS returnFlightStatus,
+                fl2.id AS returnFlightId,
+                fl2.origin AS returnFlightOrigin,
+                fl2.destination AS returnFlightDestination,
+                fl2.departure AS returnFlightDepartureTime,
+                fl2.price AS returnFlightPrice,
+                fl2.status AS returnFlightStatus,
+                a2.id AS returnAirlineId,
+                a2.name AS returnAirlineName
+
+            FROM BundleReservation br
+            JOIN User u ON br.userId = u.id
+            LEFT JOIN FlightReservation fr1 ON br.flightReservationId = fr1.id
+            LEFT JOIN Flight fl1 ON fr1.flightId = fl1.id
+            LEFT JOIN Airline a1 ON fl1.airlineId = a1.id
+            LEFT JOIN FlightReservation fr2 ON br.flightReservationIdRet = fr2.id
+            LEFT JOIN Flight fl2 ON fr2.flightId = fl2.id
+            LEFT JOIN Airline a2 ON fl2.airlineId = a2.id
+            LEFT JOIN HotelReservation hr ON br.hotelReservationId = hr.id
+            LEFT JOIN Hotel h ON hr.hotelId = h.id
+            WHERE u.username = :username
+        `;
+
+        const bundleReservations = await sequelize.query(bundleHistoryQuery, {
+            replacements: { username },
+            type: sequelize.QueryTypes.SELECT,
+        });
+
+        // Check if any bundle reservations found
+        if (!bundleReservations || bundleReservations.length === 0) {
+            return res.status(404).json({ error: 'No bundle reservations found for this user.' });
+        }
+
+        return res.status(200).json({ bundleReservations });
+    } catch (error) {
+        console.error('Error fetching bundle reservation history:', error);
+        return res.status(500).json({ error: 'An error occurred while fetching bundle reservation history.' });
+    }
+};
+
+
 // export const getUserFlightReservationHistory = async (req, res) => {
 //     try {
 //         const { username } = req.body;

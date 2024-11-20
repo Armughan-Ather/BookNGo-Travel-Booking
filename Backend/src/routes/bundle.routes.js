@@ -4,7 +4,7 @@ import { getBundleCost } from "../controllers/bundle.controller.js";
 
 const router = Router()
 
-router.route("/getBundleCost").get(getBundleCost)
+router.route("/getBundleCost").post(getBundleCost)
 router.route("/searchValidBundles").get(searchValidBundles)
 
 export default router;

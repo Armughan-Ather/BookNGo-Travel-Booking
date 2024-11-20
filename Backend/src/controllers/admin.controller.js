@@ -75,6 +75,73 @@ export const updateHotelReservationStatuses = async (req, res) => {
     }
 };
 
+export const updateBundleReservationStatuses = async (req, res) => {
+    try {
+        const currentDateTime = new Date().toISOString(); // Current timestamp in 'yyyy-mm-ddTHH:MM:SS' format
+        const currentDate = currentDateTime.split('T')[0]; // Extract current date in 'yyyy-mm-dd' format
+
+        // Step 1: Update the status of associated FlightReservation and HotelReservation
+        // Flight: Update "Booked" to "Availed" for past flights
+        const updateFlightReservationsQuery = `
+            UPDATE FlightReservation AS fr
+            JOIN Flight AS f ON fr.flightId = f.id
+            SET fr.status = 'Availed'
+            WHERE fr.status = 'Booked' AND f.departure <= :currentDateTime
+        `;
+
+        await sequelize.query(updateFlightReservationsQuery, {
+            replacements: { currentDateTime },
+            type: sequelize.QueryTypes.UPDATE,
+        });
+
+        // Hotel: Update "Booked" to "Availing" for ongoing reservations and "Availing" to "Availed" for completed ones
+        const updateHotelToAvailingQuery = `
+            UPDATE HotelReservation
+            SET status = 'Availing'
+            WHERE status = 'Booked' AND reservationDate <= :currentDate
+        `;
+        const updateHotelToAvailedQuery = `
+            UPDATE HotelReservation
+            SET status = 'Availed'
+            WHERE status = 'Availing' AND endDate < :currentDate
+        `;
+
+        await sequelize.query(updateHotelToAvailingQuery, {
+            replacements: { currentDate },
+            type: sequelize.QueryTypes.UPDATE,
+        });
+
+        await sequelize.query(updateHotelToAvailedQuery, {
+            replacements: { currentDate },
+            type: sequelize.QueryTypes.UPDATE,
+        });
+
+        // Step 2: Update "BundleReservation" status based on associated reservations
+
+        // Step 1: Update "BundleReservation" statuses based on hotel reservation start and end dates
+        const updateBundleReservationQuery = `
+            UPDATE BundleReservation AS br
+            LEFT JOIN HotelReservation hr ON br.hotelReservationId = hr.id
+            SET br.status = 
+                CASE 
+                    WHEN hr.reservationDate > ? THEN 'Booked'
+                    WHEN hr.reservationDate <= ? AND hr.endDate >= ? THEN 'Availing'
+                    WHEN hr.endDate < ? THEN 'Availed'
+                    ELSE br.status
+                END
+        `;
+
+        await sequelize.query(updateBundleReservationQuery, {
+            replacements: [currentDate, currentDate, currentDate, currentDate],
+            type: sequelize.QueryTypes.UPDATE,
+        });
+
+        return res.status(200).json({ message: 'Bundle reservation statuses updated successfully.' });
+    } catch (error) {
+        console.error('Error updating bundle reservation statuses:', error);
+        return res.status(500).json({ error: 'An error occurred while updating bundle reservation statuses.' });
+    }
+};
 
 
 

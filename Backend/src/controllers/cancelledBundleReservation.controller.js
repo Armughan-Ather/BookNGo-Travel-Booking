@@ -14,10 +14,9 @@ export const cancelBundleReservation = async (req, res) => {
 
         // 2. Fetch bundle reservation details
         const bundleQuery = `
-            SELECT br.id AS bundleReservationId, br.userId, b.hotelId, b.flightId, b.flightIdRet
+            SELECT hotelReservationId, flightReservationId, flightReservationIdRet
             FROM BundleReservation br
-            INNER JOIN Bundle b ON br.bundleId = b.id
-            WHERE br.id = :bundleReservationId AND br.status = 'Booked'
+            WHERE id = :bundleReservationId AND status = 'Booked'
         `;
 
         const [bundleReservation] = await sequelize.query(bundleQuery, {
@@ -30,26 +29,30 @@ export const cancelBundleReservation = async (req, res) => {
             return res.status(404).json({ error: 'No booked bundle found with the given ID.' });
         }
 
-        const { userId, hotelId, flightId, flightIdRet } = bundleReservation;
+        console.log(bundleReservation);
+        const { hotelReservationId, flightReservationId, flightReservationIdRet } = bundleReservation;
 
         // 3. Fetch related flight and hotel reservations
         const reservationsQuery = `
-            SELECT 'Flight' AS type, id AS reservationId, bill, departure AS reservationDate
-            FROM FlightReservation 
-            WHERE userId = :userId AND flightId IN (:flightId, :flightIdRet) AND status = 'Booked'
-            
+            SELECT 'Flight' AS type, fr.id AS reservationId, bill, f.departure AS reservationDate
+            FROM FlightReservation fr
+            join Flight f ON f.id=fr.flightId
+            WHERE fr.id IN (:flightReservationId, :flightReservationIdRet) AND fr.status = 'Booked'
+
             UNION ALL
 
             SELECT 'Hotel' AS type, id AS reservationId, bill, reservationDate
             FROM HotelReservation 
-            WHERE userId = :userId AND hotelId = :hotelId AND status = 'Booked'
+            WHERE id = :hotelReservationId AND status = 'Booked'
         `;
 
         const reservations = await sequelize.query(reservationsQuery, {
-            replacements: { userId, flightId, flightIdRet, hotelId },
+            replacements: { flightReservationId, flightReservationIdRet, hotelReservationId },
             type: sequelize.QueryTypes.SELECT,
             transaction,
         });
+
+        console.log(reservations);
 
         if (reservations.length !== 3) {
             return res.status(400).json({
@@ -66,7 +69,13 @@ export const cancelBundleReservation = async (req, res) => {
             // Determine refund based on cancellation policy
             totalBill += bill;
             const refund = calculateRefund(bill, reservationDate); // Assuming this helper function exists
+            if (refund === 0) {
+                return res.status(400).json({
+                    error: 'Cannot cancel reservation 1 day before.',
+                });
+            }
             totalRefund += refund;
+            const temp = bill - refund;
 
             if (type === 'Flight') {
                 // Update flight reservation status
@@ -80,13 +89,14 @@ export const cancelBundleReservation = async (req, res) => {
                     transaction,
                 });
 
+
                 // Insert into CancelledFlightReservation
                 const insertCancelledFlightQuery = `
-                    INSERT INTO CancelledFlightReservation (flightReservationId, bill)
-                    VALUES (:reservationId, :refund)
+                    INSERT INTO CancelledFlightReservation (id, bill)
+                    VALUES (:reservationId, :temp)
                 `;
                 await sequelize.query(insertCancelledFlightQuery, {
-                    replacements: { reservationId, refund },
+                    replacements: { reservationId, temp },
                     transaction,
                 });
             } else if (type === 'Hotel') {
@@ -104,10 +114,10 @@ export const cancelBundleReservation = async (req, res) => {
                 // Insert into CancelledHotelReservation
                 const insertCancelledHotelQuery = `
                     INSERT INTO CancelledHotelReservation (id, bill)
-                    VALUES (:reservationId, :refund)
+                    VALUES (:reservationId, :temp)
                 `;
                 await sequelize.query(insertCancelledHotelQuery, {
-                    replacements: { reservationId, refund },
+                    replacements: { reservationId, temp },
                     transaction,
                 });
             }
