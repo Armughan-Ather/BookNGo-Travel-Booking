@@ -3,6 +3,6 @@ import { cancelBundleReservation } from "../controllers/cancelledBundleReservati
 
 const router = Router()
 
-router.route("/cancelBundleReservation").get(cancelBundleReservation)
+router.route("/cancelBundleReservation").post(cancelBundleReservation)
 
 export default router;

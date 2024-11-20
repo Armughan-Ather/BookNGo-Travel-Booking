@@ -1,10 +1,12 @@
 import mysql from 'mysql';
 import { createTableAdmin } from "../models/admin.model.js";
 import { createTableAirline } from "../models/airline.model.js";
-import { createTableBundle } from "../models/bundle.model.js";
 import { createTableFlight } from "../models/flight.model.js";
 import { createTableFlightReservation } from "../models/flightReservation.model.js";
 import { createTableCancelledFlightReservation } from "../models/cancelledFlightReservation.model.js";
+import { createTableBundle } from "../models/bundle.model.js";
+import { createTableBundleReservation } from "../models/bundleReservation.model.js";
+import { createTableCancelledBundleReservation } from "../models/cancelledBundleReservation.model.js";
 import { createTableCancelledHotelReservation } from "../models/cancelledHotelReservation.model.js";
 import { createTableHotel } from "../models/hotel.model.js";
 import { createTableHotelReservation } from "../models/hotelReservation.model.js";
@@ -38,7 +40,10 @@ export const setupDatabase = async () => {
             createTableHotelReservation,
             createTableBundle,
             createTableCancelledFlightReservation,
-            createTableCancelledHotelReservation
+            createTableCancelledHotelReservation,
+            createTableBundle,
+            createTableBundleReservation,
+            createTableCancelledBundleReservation
         ];
 
         // Execute each table creation query
