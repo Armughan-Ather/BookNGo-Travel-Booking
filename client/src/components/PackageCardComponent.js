@@ -38,7 +38,7 @@ const PackageCardComponent = React.memo((props) => {
     <MDBCard className="packages-results-card-comp-card">
       <MDBCardBody>
         <MDBCardTitle className="packages-results-card-comp-title">
-          {props.origin} ➡ {props.destination}
+          {props.origin} To {props.destination}
         </MDBCardTitle>
         <MDBCardText className="packages-results-card-comp-text">
           <strong>Onboard Date:</strong> {formatDate(props.departureDate)}
