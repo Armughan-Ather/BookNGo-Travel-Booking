@@ -88,10 +88,10 @@ export const searchValidBundles = async (req, res) => {
 };
 
 export const getBundleCost = async (req, res) => {
-    const { userName, bundleId, seats, noOfRooms, roomType } = req.body;
+    const { bundleId, seats, noOfRooms, roomType } = req.body;
 
     try {
-        if (!userName || !bundleId || !seats || !noOfRooms || !roomType) {
+        if (!bundleId || !seats || !noOfRooms || !roomType) {
             return res.status(400).json({ error: 'bundleId, seats, noOfRooms, and roomType are required.' });
         }
 
@@ -106,18 +106,6 @@ export const getBundleCost = async (req, res) => {
         }
 
         const { flightId, flightIdRet, hotelId, discount } = bundle;
-
-        // Fetch user details
-        const [user] = await sequelize.query(
-            `SELECT id FROM User WHERE userName = ?`,
-            { replacements: [userName], type: sequelize.QueryTypes.SELECT }
-        );
-
-        if (!user) {
-            return res.status(400).json({ error: 'User not found' });
-        }
-
-        const userId = user.id;
 
         // Fetch onward flight details
         const [onwardFlight] = await sequelize.query(
