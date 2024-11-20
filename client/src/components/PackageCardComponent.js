@@ -1,12 +1,35 @@
-import React from 'react';
+import React,{useContext} from 'react';
 import { MDBCard, MDBCardBody, MDBCardTitle, MDBCardText, MDBBtn } from 'mdb-react-ui-kit';
 import { RiStarSFill, RiStarHalfSFill, RiStarLine } from 'react-icons/ri';
+import { AuthContext } from '../Context/AuthContext';
+import { useNavigate } from 'react-router-dom';
 import '../styles/packageCardComponent.css';
 
 // Wrap the component with React.memo
 const PackageCardComponent = React.memo((props) => {
-  // Convert ISO date format to local date string
-  const formatDate = (isoDate) => new Date(isoDate).toLocaleString();
+  const { user, isAuthenticated } = useContext(AuthContext); // Get authentication status from context
+  const navigate = useNavigate();
+  const handleBookNow = () => {
+    if (!isAuthenticated) {
+      alert('Please log in to book a package.');
+      navigate('/login');
+      return;
+    }
+
+    // Navigate to booking page with bundleId in state
+    navigate('/packages/details', {
+      state: { pkgData: props.pkgData },
+    });
+  };
+
+  const formatDate = (isoDate) =>
+    new Date(isoDate).toLocaleString(undefined, {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    });
 
   // Calculate number of days
   const calculateDays = (start, end) => {
@@ -41,25 +64,36 @@ const PackageCardComponent = React.memo((props) => {
           {props.origin} To {props.destination}
         </MDBCardTitle>
         <MDBCardText className="packages-results-card-comp-text">
-          <strong>Onboard Date:</strong> {formatDate(props.departureDate)}
-          <br />
-          <strong>Departure Airline:</strong> {props.departureAirline}
-          <br />
-          <strong>Hotel Name:</strong> {props.hotelName}
-          <br />
-          <strong>Return Date:</strong> {formatDate(props.returnDate)}
-          <br />
-          <strong>Return Airline:</strong> {props.returnAirline}
-          <br />
-          <strong>No. of Days:</strong> {noOfDays}
-          <br />
+          <div className="packages-results-card-comp-section">
+            <strong>Onboard Date:</strong>
+            <span>{formatDate(props.departureDate)}</span>
+          </div>
+          <div className="packages-results-card-comp-section">
+            <strong>Departure Airline:</strong>
+            <span>{props.departureAirline}</span>
+          </div>
+          <div className="packages-results-card-comp-section">
+            <strong>Hotel Name:</strong>
+            <span>{props.hotelName}</span>
+          </div>
+          <div className="packages-results-card-comp-section">
+            <strong>Return Date:</strong>
+            <span>{formatDate(props.returnDate)}</span>
+          </div>
+          <div className="packages-results-card-comp-section">
+            <strong>Return Airline:</strong>
+            <span>{props.returnAirline}</span>
+          </div>
+          <div className="packages-results-card-comp-section">
+            <strong>Duration:</strong>
+            <span>{noOfDays} {noOfDays > 1 ? 'days' : 'day'}</span>
+          </div>
           <div className="packages-results-card-comp-ratings-container">{stars}</div>
         </MDBCardText>
-        <MDBBtn className="packages-results-card-comp-book-button">Book Now</MDBBtn>
+        <MDBBtn className="packages-results-card-comp-book-button" onClick={handleBookNow}>Book Now</MDBBtn>
       </MDBCardBody>
     </MDBCard>
   );
 });
 
-// Export the memoized component
 export default PackageCardComponent;

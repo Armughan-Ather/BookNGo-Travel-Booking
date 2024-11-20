@@ -50,7 +50,7 @@ import PaymentForm from './pages/PaymentForm';
 import FlightReservationPage from './pages/flightReservation';
 import ProtectedRoute from './components/ProtectedRoute'; 
 import PageNotFound from './pages/NotFound/PageNotFound';
-
+import PackageDetails from './pages/PackageDetails.js';
 
 function App() {
   return (
@@ -67,7 +67,8 @@ function App() {
           <Route path="/hotels" element={<HotelPage />} />
           <Route path='/packages' element={<PackagesPage/>} />
           <Route path='/about' element={<AboutPage/>} />
-          
+          <Route path='/packages/details' element={<packageDetails />} />
+
           {/* Protected Routes */}
           <Route 
             path="/hotels/reservation" 
@@ -85,6 +86,7 @@ function App() {
            path='/profile' 
            element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} 
            />
+           
 
             
         </Route>

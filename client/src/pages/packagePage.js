@@ -26,11 +26,22 @@ export default function PackagesPage() {
     if (!searchTerm) return packages;
 
     const term = searchTerm.toLowerCase();
+
     return packages.filter((pkg) => {
       const origin = pkg.origin?.toLowerCase() || '';
       const destination = pkg.destination?.toLowerCase() || '';
       const hotelName = pkg.hotelName?.toLowerCase() || '';
-      return origin.includes(term) || destination.includes(term) || hotelName.includes(term);
+
+      // Check for 'City1 to City2' format
+      const formattedRoute = `${origin} to ${destination}`;
+
+      // Match search term with origin, destination, hotel name, or formatted route
+      return (
+        origin.includes(term) ||
+        destination.includes(term) ||
+        hotelName.includes(term) ||
+        formattedRoute.includes(term)
+      );
     });
   }, [searchTerm, packages]);
 
@@ -40,11 +51,6 @@ export default function PackagesPage() {
 
   return (
     <div className="bookngo-packages-page-container">
-      <h1 className="bookngo-packages-title">Discover Your Perfect Package</h1>
-      {/* <p className="bookngo-packages-subtitle">
-        Search for exciting travel packages tailored to your dream destinations.
-      </p> */}
-
       <div className="bookngo-packages-search-container">
         <MDBInput
           label="Search Packages"
@@ -53,7 +59,7 @@ export default function PackagesPage() {
           value={searchTerm}
           onChange={handleSearchChange}
           className="bookngo-packages-search-bar"
-          placeholder="Search by origin, destination, or hotel name"
+          placeholder="Search by origin, destination, hotelName or 'Karachi to Lahore'"
         />
       </div>
 
@@ -65,10 +71,12 @@ export default function PackagesPage() {
               packageData={pkg}
               returnDate={pkg.returnDate}
               departureDate={pkg.onwardDate}
-              Rating={3.5}
+              Rating={pkg.avgRating}
               origin={pkg.origin}
               destination={pkg.destination}
               hotelName={pkg.hotelName}
+              departureAirline={pkg.onwardAirline}
+              returnAirline={pkg.returnAirline}
             />
           ))
         ) : (
