@@ -3,6 +3,7 @@ import { ApiResponse } from '../utils/ApiResponse.js'; // Assuming you have this
 
 export const updateAirlineRating = async (req, res) => {
     const { flightReservationId, airlineId, rating } = req.body;
+    const ratingInt = parseInt(rating);
 
     if (!airlineId || rating === undefined) {
         return res.status(400).json({ error: 'Airline ID and rating are required.' });
@@ -31,7 +32,7 @@ export const updateAirlineRating = async (req, res) => {
 
             // Calculate the new rating and ratingCount
             const newRatingCount = currentRatingCount + 1;
-            const newRating = (currentRating * currentRatingCount + rating) / newRatingCount;
+            const newRating = (currentRating * currentRatingCount + ratingInt) / newRatingCount;
 
             // Update the airline record with the new values
             await sequelize.query(
@@ -52,7 +53,7 @@ export const updateAirlineRating = async (req, res) => {
                 {
                     type: sequelize.QueryTypes.UPDATE,
                     replacements: {
-                        flightReservationId,
+                        flightReservationId: flightReservationId,
                     },
                     transaction,
                 }
@@ -63,7 +64,7 @@ export const updateAirlineRating = async (req, res) => {
             // Commit the transaction
             await transaction.commit();
 
-            return res.status(200).json(new ApiResponse(200, { updatedRating: parseFloat(newRating.toFixed(1)) }, 'Rating updated successfully.'));
+            return res.status(200).json(new ApiResponse(200, { newRating }, 'Rating updated successfully.'));
         } catch (err) {
             // Rollback the transaction in case of an error
             await transaction.rollback();
