@@ -1,6 +1,43 @@
 import sequelize from '../config/database.js'; // Sequelize instance
 import { ApiResponse } from '../utils/ApiResponse.js'; // Assuming you have this
 
+export const updateBundleRating = async (req, res) => {
+    const { bundleReservationId } = req.body;
+
+    if (!bundleReservationId) {
+        return res.status(400).json({ error: 'bundleReservationId is required.' });
+    }
+
+    try {
+        // Start a transaction
+        const transaction = await sequelize.transaction();
+
+        try {
+            await sequelize.query(
+                'UPDATE BundleReservation SET status = "Rated" WHERE id = :bundleReservationId',
+                {
+                    type: sequelize.QueryTypes.UPDATE,
+                    replacements: {
+                        bundleReservationId: bundleReservationId,
+                    },
+                    transaction,
+                }
+            );
+
+            await transaction.commit();
+
+            return res.status(200).json(new ApiResponse(200, null, 'bundle rating updated successfully.'));
+        } catch (err) {
+            await transaction.rollback();
+            throw err;
+        }
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ error: 'Failed to update bundle rating. Please try again later.' });
+    }
+};
+
+
 export const searchValidBundles = async (req, res) => {
     try {
         // Fetch all bundles with flight and hotel details
