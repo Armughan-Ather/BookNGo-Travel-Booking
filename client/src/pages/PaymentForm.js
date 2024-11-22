@@ -91,6 +91,22 @@ export default function PaymentForm() {
           <p><strong>Travellers :</strong> {details.travellers}</p>
         </>
       );
+    } else if (type === 'Package') {
+      return (
+        <>
+          <p><strong className='payment-important-head-title'>Origin:</strong> {details.origin}
+          {/* <strong className='payment-important-head-title payment-spacing-summary-details'>Destination:</strong> {details.destination} */}
+          </p>
+          <p><strong className='payment-important-head-title'>Destination:</strong> {details.destination}</p>
+          <p><strong className='payment-important-head-title'>Departure Airline:</strong> {details.onwardAirline}</p>
+          <p><strong className='payment-important-head-title'>Departure Time:</strong> {details.onwardDate}</p>
+          <p><strong className='payment-important-head-title'>Return Airline:</strong> {details.returnAirline}</p>
+          <p><strong className='payment-important-head-title'>Return Time:</strong> {details.returnDate}</p>
+          <p><strong className='payment-important-head-title'>Hotel Name:</strong> {details.hotelName}</p>
+          <p><strong className='payment-important-head-title'>Room Type:</strong> {details.roomType}</p>
+          <p><strong className='payment-important-head-title'>Number of Rooms:</strong> {details.numberOfRooms}</p>
+        </>
+      );
     }
     return <p>{details}</p>;
   };
@@ -124,7 +140,18 @@ export default function PaymentForm() {
         seats: bookingDetails.travellers,
       };
       apiEndpoint = 'http://localhost:8000/api/v1/flightReservation/reserveFlight';
+    } else if (bookingType === 'Package') {
+      reservationData = {
+        bundleId: bookingDetails.bundleId,
+        userName: userName,
+        seats: bookingDetails.numberOfSeats,
+        noOfRooms: bookingDetails.numberOfRooms,
+        roomType: bookingDetails.roomType,
+      };
+      console.log('reservation Data : ',reservationData)
+      apiEndpoint = 'http://localhost:8000/api/v1/bundleReservation/reserveBundle';
     }
+    
 
     try {
       const response = await axios.post(apiEndpoint, reservationData);
@@ -138,7 +165,7 @@ export default function PaymentForm() {
       toggleResponseModal();
     }
   };
-
+  
   return (
     <MDBContainer fluid className="payment-form-container">
       <MDBCard>
@@ -146,9 +173,29 @@ export default function PaymentForm() {
           <MDBRow className="d-flex justify-content-center pb-5">
             <MDBCol md="7" xl="5" className="mb-4 mb-md-0">
               <h4 className="booking-type">{bookingType} Payment</h4>
-              <h4 className="text-success">${amount}</h4>
-              <h5>Booking Summary</h5>
+              <h4 className="text-success"><strong>${amount}</strong></h4>
+              <h5 className='booking-type'>Booking Summary :</h5>
               {formatBookingDetails(bookingType, bookingDetails)}
+
+              
+            </MDBCol>
+
+            <MDBCol md="5" xl="4">
+              <div className="cancel-link-container">
+                <a href="/">Cancel and return to website</a>
+              </div>
+
+              <div className="rounded order-recap ">
+                <h4 className='booking-type'>Order Recap</h4>
+                <div className="recap-row">
+                  <MDBCol size="8" className='booking-type'>Booking Type</MDBCol>
+                  <div className="ms-auto"><strong>{bookingType}</strong></div>
+                </div>
+                <div className="recap-row">
+                  <MDBCol size="8" className='booking-type'>Total Amount</MDBCol>
+                  <div className="ms-auto"><strong>${amount}</strong></div>
+                </div>
+              </div>
 
               <div className="d-flex flex-column pt-3">
                 <p className="text-primary add-payment-option" onClick={toggleModal}>
@@ -181,24 +228,6 @@ export default function PaymentForm() {
                 <MDBBtn block size="lg" className="proceed-payment-btn" onClick={makeReservations}>
                   Confirm Payment
                 </MDBBtn>
-              </div>
-            </MDBCol>
-
-            <MDBCol md="5" xl="4">
-              <div className="cancel-link-container">
-                <a href="/hotels">Cancel and return to website</a>
-              </div>
-
-              <div className="rounded order-recap">
-                <h4>Order Recap</h4>
-                <div className="recap-row">
-                  <MDBCol size="8">Booking Type</MDBCol>
-                  <div className="ms-auto">{bookingType}</div>
-                </div>
-                <div className="recap-row">
-                  <MDBCol size="8">Total Amount</MDBCol>
-                  <div className="ms-auto">${amount}</div>
-                </div>
               </div>
             </MDBCol>
           </MDBRow>

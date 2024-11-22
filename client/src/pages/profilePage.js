@@ -18,6 +18,7 @@ export default function ProfilePage() {
 
   const [hotelBookings, setHotelBookings] = useState([]);
   const [flightBookings, setFlightBookings] = useState([]);
+  const [packageBookings,setPackageBookings]=useState([]);
   const [modalVisible, setModalVisible] = useState(false); 
   const [modalMessage, setModalMessage] = useState(''); 
 
@@ -26,6 +27,9 @@ export default function ProfilePage() {
   const [hotelUserRating, setHotelUserRating] = useState({});
   const [flightHoveredRating, setFlightHoveredRating] = useState({});
   const [hotelHoveredRating, setHotelHoveredRating] = useState({});
+  const [packageHoveredRating, setPackageHoveredRating] = useState({});
+  const [packageUserRating, setPackageUserRating] = useState({});
+  
   const [temp,setTemp]=useState(false);
   useEffect(() => {
     const fetchBookingHistory = async () => {
@@ -36,6 +40,9 @@ export default function ProfilePage() {
           
           const flightResponse = await axios.post('http://localhost:8000/api/v1/users/getUserFlightReservationHistory', { username });
           setFlightBookings(flightResponse.data.flightReservations || []);
+        
+          const packageResponse = await axios.post('http://localhost:8000/api/v1/users/getUserBundleReservationHistory',{username})
+          setPackageBookings(packageResponse.data.bundleReservations || [])
         } catch (error) {
           console.error('Error fetching bookings:', error);
         }
@@ -44,14 +51,27 @@ export default function ProfilePage() {
 
     fetchBookingHistory();
   }, [temp]);
-
+  const convertToLocalTime = (utcTime) => {
+    const date = new Date(utcTime);
+    return date.toLocaleString('default', {
+        year: 'numeric',
+        month: 'long',  // "November"
+        day: 'numeric',
+        hour: 'numeric',
+        minute: 'numeric',
+        second: 'numeric',
+        hour12: true    // 12-hour format, set to false for 24-hour
+    });
+};
   // Function to render the stars for ratings
   const renderStars = (rating, bookingId, type) => {
     const fullStars = Math.floor(rating);
     const emptyStars = 5 - Math.ceil(rating);
     const halfStars = rating % 1 > 0 ? 1 : 0;
-
     let stars = [];
+    if(rating > 0){
+      console.log('current type is : ',type)
+    }
     for (let i = 0; i < fullStars; i++) {
       stars.push(<RiStarSFill key={`full-${type}-${bookingId}-${i}`} className="view-user-profile-comp-stars" />);
     }
@@ -73,8 +93,14 @@ export default function ProfilePage() {
       setFlightHoveredRating(prev => ({ ...prev, [bookingId]: rating }));
     } else if (type === 'hotel') {
       setHotelHoveredRating(prev => ({ ...prev, [bookingId]: rating }));
+    } else if (type === 'package') {
+      // Add logic for package ratings
+      setPackageHoveredRating(prev => ({ ...prev, [bookingId]: rating }));
+      console.log('package star hover : ',packageHoveredRating)
     }
+    
   };
+  
 
   // Handle rating submission for each booking (flight or hotel)
   const handleStarClick = async (rating, bookingId, type, id) => {
@@ -94,6 +120,20 @@ export default function ProfilePage() {
           hotelId: id,
           rating,
         });
+      
+      }
+      else if (type === 'package') {
+        try {
+          const response = await axios.post('http://localhost:8000/api/v1/packages/updatePackageRating', {
+            packageId: id,
+            rating,
+          });
+          setPackageUserRating(prev => ({ ...prev, [bookingId]: rating }));
+
+          setTemp((prev) => !prev);
+        } catch (error) {
+          console.error('Error updating package rating:', error);
+        }
       }
       setModalMessage('Ratings updated successfully. Thanks for your review.');
       setModalVisible(true);
@@ -103,14 +143,22 @@ export default function ProfilePage() {
       setModalVisible(true);
     }
   };
-
+  console.log('bundle reservations : ',packageBookings)
   const handleCancelation = async (bookingId, type) => {
     try {
+        let apiEndpoint;
+        if(type==='flight'){
+          apiEndpoint='http://localhost:8000/api/v1/cancelledFlightReservation/cancelFlightReservation';
+        }
+        else if (type==='hotel'){
+          apiEndpoint='http://localhost:8000/api/v1/cancelledHotelReservation/cancelHotelReservation';
+        }
+        else if(type==='package'){
+          apiEndpoint='http://localhost:8000/api/v1/cancelledBundleReservation/cancelBundleReservation'
+        }
         
-      const response = await axios.post(type === 'flight'
-        ? 'http://localhost:8000/api/v1/cancelledFlightReservation/cancelFlightReservation'
-        : 'http://localhost:8000/api/v1/cancelledHotelReservation/cancelHotelReservation',
-        { reservationId: bookingId });
+      const response = await axios.post(apiEndpoint,
+        { reservationId: bookingId,bundleReservationId:bookingId });
 
       if (response.data.data) {
         setModalVisible(true); 
@@ -132,23 +180,97 @@ export default function ProfilePage() {
     setModalVisible(false);
     setModalMessage('')
 };
-
+console.log(flightBookings)
   const renderBookingCard = (booking, type) => {
-    if(booking.reservationStatus==='Cancelled'){
-        return null;
-    }
+    
     //const bookingDate = new Date(booking.flightDepartureTime || booking.reservationStartDate).toLocaleString();
-    const bookingDate = booking.flightDepartureTime || booking.reservationStartDate;
+    let bookingDate = type==='hotel'? booking.reservationStartDate : type==='flight'? convertToLocalTime(booking.flightDepartureTime) : null ;
     
-    const formattedDate = bookingDate === 'Invalid Date' ? 'N/A' : bookingDate;
-    const bookingId = booking.reservationId;
-    
+    let formattedDate = bookingDate === 'Invalid Date' ? 'N/A' : bookingDate;
+    let bookingId = booking.reservationId;
+    if(type==='package'){
+      bookingId=booking.bundleReservationId;
+    }
     const isFlight = type === 'flight';
 
-    const currentRating = isFlight
-      ? (flightHoveredRating[bookingId] !== undefined ? flightHoveredRating[bookingId] : flightUserRating[bookingId] || 0)
-      : (hotelHoveredRating[bookingId] !== undefined ? hotelHoveredRating[bookingId] : hotelUserRating[bookingId] || 0);
-
+    const currentRating = type === 'package'
+  ? (packageHoveredRating[bookingId] !== undefined ? packageHoveredRating[bookingId] : packageUserRating[bookingId] || 0)
+  : (isFlight
+    ? (flightHoveredRating[bookingId] !== undefined ? flightHoveredRating[bookingId] : flightUserRating[bookingId] || 0)
+    : (hotelHoveredRating[bookingId] !== undefined ? hotelHoveredRating[bookingId] : hotelUserRating[bookingId] || 0));
+    
+      if (type === 'package') {
+        console.log('current rating is : ',currentRating)
+        return (
+          <MDBCard className="view-user-profile-comp-card" key={`package-${bookingId}`}>
+            <MDBCardBody>
+              <MDBCardTitle className="view-user-profile-comp-card-title">Package Booking</MDBCardTitle>
+              <MDBRow>
+                <MDBCol md="6">
+                  <strong>Flights:</strong>
+                  <p>
+                    <FaPlane className="view-user-profile-comp-icon-main" />
+                    Outbound: <strong>{booking.outwardFlightOrigin}</strong> → <strong>{booking.outwardFlightDestination}</strong> via <strong>{booking.outwardAirlineName}</strong>
+                  </p>
+                  <p>
+                    <FaPlane className="view-user-profile-comp-icon-main" />
+                    Return: <strong>{booking.returnFlightOrigin}</strong> → <strong>{booking.returnFlightDestination}</strong> via <strong>{booking.returnAirlineName}</strong>
+                  </p>
+                  <strong>Hotel:</strong>
+                  <p>
+                    <FaHotel className="view-user-profile-comp-icon-main" />
+                    {booking.hotelName}, {booking.hotelLocation}
+                  </p>
+                </MDBCol>
+                <MDBCol md="3">
+                  <p>
+                    <FaCalendarAlt className="view-user-profile-comp-icon-main" /> Departure: {convertToLocalTime(booking.outwardFlightDepartureTime)}
+                  </p>
+                  <p>
+                    <FaCalendarAlt className="view-user-profile-comp-icon-main" /> Return: {convertToLocalTime(booking.returnFlightDepartureTime)}
+                  </p>
+                  <p>
+                    <FaUser className="view-user-profile-comp-icon-main" /> Seats: {booking.seats}
+                  </p>
+                  <p>
+                    <FaRegCalendarCheck className="view-user-profile-comp-icon-main" /> {booking.hotelReservationRooms} {booking.hotelReservationType} Room(s)
+                  </p>
+                </MDBCol>
+                <MDBCol md="3" className="text-end">
+                  <FaDollarSign className="view-user-profile-comp-dollar-icon" /> {booking.bundleBill}
+                </MDBCol>
+              </MDBRow>
+              <MDBRow className="text-center mt-3">
+                <MDBCol>
+                  {booking.bundleStatus === 'Booked' && (
+                    <MDBBtn color="danger" size="sm" className='view-user-profile-comp-margin-above view-user-profile-comp-cancel-res-button' onClick={() => handleCancelation(bookingId, 'package')}>
+                      Cancel Reservation
+                    </MDBBtn>
+                  )}
+                  {booking.bundleStatus==='Cancelled' && (
+                    <p className='view-user-profile-comp-cancelled-reservation'><strong>This reservation was cancelled by the user.</strong></p>
+                  )}
+                  {booking.bundleStatus==='Availed' &&(<div className="view-user-profile-comp-rating">
+                    {renderStars(currentRating || 0, bookingId, 'package').map((star, index) => (
+                      <span
+                        key={index}
+                        className="view-user-profile-comp-star stars-filling-on-hover-class"
+                        onMouseEnter={() => handleStarHover(index + 1, bookingId, 'package')}
+                        onMouseLeave={() => handleStarHover(0, bookingId, 'package')}
+                        onClick={() => handleStarClick(index + 1, bookingId, 'package', booking.packageId)}
+                      >
+                        {star}
+                      </span>
+                    ))}
+                  </div>
+                )}
+                    
+                </MDBCol>
+              </MDBRow>
+            </MDBCardBody>
+          </MDBCard>
+        );
+      }
     return (
       <MDBCard className="view-user-profile-comp-card" key={`${type}-${bookingId}`}>
         <MDBCardBody>
@@ -189,8 +311,11 @@ export default function ProfilePage() {
 
           <MDBRow className="view-user-profile-comp-row text-center">
             <MDBCol>
+            {booking.reservationStatus==='Cancelled' && (
+                    <p className='view-user-profile-comp-cancelled-reservation'><strong>This reservation was cancelled by the user.</strong></p>
+              )}
               {booking.reservationStatus==='Booked' && (
-                <MDBBtn color="danger" size="sm" className='view-user-profile-comp-margin-above' onClick={() => handleCancelation(bookingId, type)}>
+                <MDBBtn color="danger" size="sm" className='view-user-profile-comp-margin-above view-user-profile-comp-cancel-res-button' onClick={() => handleCancelation(bookingId, type)}>
                   Cancel Reservation
                 </MDBBtn>
               )}  
@@ -212,6 +337,7 @@ export default function ProfilePage() {
                   ))}
                 </div>
               )}
+              
             </MDBCol>
           </MDBRow>
         </MDBCardBody>
@@ -221,6 +347,15 @@ export default function ProfilePage() {
 
   return (
     <MDBContainer className="view-user-profile-comp-container">
+      <section className="view-user-profile-comp-section">
+        <h2 className="view-user-profile-comp-heading">Package Bookings</h2>
+        {packageBookings.length > 0 ? (
+          packageBookings.map(booking => renderBookingCard(booking, 'package'))
+        ) : (
+          <p>No package bookings found.</p>
+        )}
+      </section>
+
       <section className="view-user-profile-comp-section">
         <h2 className="view-user-profile-comp-heading">Flight Bookings</h2>
         {flightBookings.length > 0 ? (

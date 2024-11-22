@@ -10,15 +10,16 @@ const PackageCardComponent = React.memo((props) => {
   const { user, isAuthenticated } = useContext(AuthContext); // Get authentication status from context
   const navigate = useNavigate();
   const handleBookNow = () => {
-    if (!isAuthenticated) {
-      alert('Please log in to book a package.');
-      navigate('/login');
-      return;
-    }
+    console.log(props.packageData)
+    // if (!isAuthenticated) {
+    //   alert('Please log in to book a package.');
+    //   navigate('/login');
+    //   return;
+    // }
 
     // Navigate to booking page with bundleId in state
-    navigate('/packages/details', {
-      state: { pkgData: props.pkgData },
+    navigate('/packages/inputdata', {
+      state: { pkgData: props.packageData },
     });
   };
 

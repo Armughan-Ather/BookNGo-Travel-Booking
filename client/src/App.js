@@ -50,8 +50,8 @@ import PaymentForm from './pages/PaymentForm';
 import FlightReservationPage from './pages/flightReservation';
 import ProtectedRoute from './components/ProtectedRoute'; 
 import PageNotFound from './pages/NotFound/PageNotFound';
+import PackageInputData from './pages/PackageInputData.js';
 import PackageDetails from './pages/PackageDetails.js';
-
 function App() {
   return (
     <BrowserRouter>
@@ -59,7 +59,10 @@ function App() {
         {/* Pages without layout */}
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignupPage />} />
-        
+        <Route
+           path='/payment' 
+           element={<ProtectedRoute><PaymentForm /></ProtectedRoute>} 
+           />
         <Route element={<Layout />}> {/* Apply Layout to these routes */}
           {/* Pages with layout */}
           <Route path="/" element={<HomePage />} />
@@ -67,7 +70,7 @@ function App() {
           <Route path="/hotels" element={<HotelPage />} />
           <Route path='/packages' element={<PackagesPage/>} />
           <Route path='/about' element={<AboutPage/>} />
-          <Route path='/packages/details' element={<packageDetails />} />
+          <Route path='/packages/inputdata' element={<PackageInputData />} />
 
           {/* Protected Routes */}
           <Route 
@@ -78,9 +81,10 @@ function App() {
             path="/flights/reservation" 
             element={<ProtectedRoute><FlightReservationPage /></ProtectedRoute>} 
           />
-          <Route
-           path='/payment' 
-           element={<ProtectedRoute><PaymentForm /></ProtectedRoute>} 
+          
+           <Route
+           path='/packages/details' 
+           element={<ProtectedRoute><PackageDetails /></ProtectedRoute>} 
            />
            <Route
            path='/profile' 

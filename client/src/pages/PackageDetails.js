@@ -1,63 +1,152 @@
-import React, { useState } from 'react';
+import React, { useContext } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { MDBInput, MDBBtn, MDBDropdown, MDBDropdownMenu, MDBDropdownToggle, MDBDropdownItem } from 'mdb-react-ui-kit';
-
-//import '../styles/packageDetails.css';
+import '../styles/packageDetails.css';
+import { AuthContext } from '../Context/AuthContext';
 
 export default function PackageDetails() {
-  const location = useLocation();
-  const navigate = useNavigate();
+    const location = useLocation();
+    const navigate = useNavigate();
+    const { user } = useContext(AuthContext);
 
-  // Hooks must be defined unconditionally
-  const [seats, setSeats] = useState('');
-  const [rooms, setRooms] = useState('');
-  const [roomType, setRoomType] = useState('Standard');
+    const { pkgData, inputData } = location.state;
+    const convertToLocalTime = (utcTime) => {
+        const date = new Date(utcTime);
+        return date.toLocaleString('default', {
+            year: 'numeric',
+            month: 'long',  // "November"
+            day: 'numeric',
+            hour: 'numeric',
+            minute: 'numeric',
+            second: 'numeric',
+            hour12: true    // 12-hour format, set to false for 24-hour
+        });
+    };
+    const handleProceedToPayment = () => {
+        const bookingData = {
+            bookingType: 'Package',
+            amount: inputData.price,
+            bookingDetails: {
+                bundleId: pkgData.bundleId,
+                origin:pkgData.origin,
+                destination:pkgData.destination,
+                hotelName: pkgData.hotelName,
+                onwardDate:convertToLocalTime(pkgData.onwardDate),
+                onwardAirline:pkgData.onwardAirline,
+                returnDate: convertToLocalTime(pkgData.returnDate),
+                returnAirline:pkgData.returnAirline,
+                roomType: inputData.roomType,
+                numberOfRooms: inputData.numRooms,
+                numberOfSeats: inputData.numSeats,
+            },
+            userName: user?.username,
+        };
 
-  // Access pkgData from state
-  const pkgData = location.state?.pkgData;
+        navigate('/payment', { state: bookingData });
+    };
 
-  if (!pkgData) {
-    alert('Invalid access. Returning to the home page.');
-    navigate('/');
-    return null;
-  }
-
-  const handleSubmit = () => {
-    if (!seats || !rooms) {
-      alert('Please fill out all fields.');
-      return;
-    }
-
-    console.log('Booking Details:', { bundleId: pkgData.bundleId, seats, rooms, roomType });
-    alert('Booking successful!');
-    navigate('/');
-  };
-
-  return (
-    <div className="package-booking-page-container">
-      <h2>Book Your Package</h2>
-      <div className="form-section">
-        <MDBInput
-          label="Number of Seats"
-          type="number"
-          value={seats}
-          onChange={(e) => setSeats(e.target.value)}
-        />
-        <MDBInput
-          label="Number of Rooms"
-          type="number"
-          value={rooms}
-          onChange={(e) => setRooms(e.target.value)}
-        />
-        <MDBDropdown>
-          <MDBDropdownToggle>{roomType}</MDBDropdownToggle>
-          <MDBDropdownMenu>
-            <MDBDropdownItem onClick={() => setRoomType('Standard')}>Standard</MDBDropdownItem>
-            <MDBDropdownItem onClick={() => setRoomType('Deluxe')}>Deluxe</MDBDropdownItem>
-          </MDBDropdownMenu>
-        </MDBDropdown>
-        <MDBBtn onClick={handleSubmit}>Confirm Booking</MDBBtn>
-      </div>
-    </div>
-  );
+    return (
+        <div className="bookngo-package-final-details-container">
+            <h1 className="bookngo-package-final-details-title">{pkgData.origin} To {pkgData.destination} Package</h1>
+            <div className="bookngo-package-final-details-box">
+                <div className="bookngo-package-final-details-row">
+                    <label>Signed In As</label>
+                    <input
+                        type="text"
+                        value={user?.username || ""}
+                        readOnly
+                        className="bookngo-package-final-details-input-field"
+                    />
+                </div>
+                <div className="bookngo-package-final-details-row">
+                    <label>Departure Flight Time</label>
+                    <input
+                        type="text"
+                        value={convertToLocalTime(pkgData?.onwardDate) || ""}
+                        readOnly
+                        className="bookngo-package-final-details-input-field"
+                    />
+                </div>
+                <div className="bookngo-package-final-details-row">
+                    <label>Departure Airline</label>
+                    <input
+                        type="text"
+                        value={pkgData?.onwardAirline || ""}
+                        readOnly
+                        className="bookngo-package-final-details-input-field"
+                    />
+                </div>
+                <div className="bookngo-package-final-details-row">
+                    <label>Number of Seats</label>
+                    <input
+                        type="number"
+                        value={inputData?.numSeats || ""}
+                        readOnly
+                        className="bookngo-package-final-details-input-field"
+                    />
+                </div>
+                <div className="bookngo-package-final-details-row">
+                    <label>Hotel Name</label>
+                    <input
+                        type="text"
+                        value={pkgData?.hotelName || ""}
+                        readOnly
+                        className="bookngo-package-final-details-input-field"
+                    />
+                </div>
+                <div className="bookngo-package-final-details-row">
+                    <label>Room Type</label>
+                    <input
+                        type="text"
+                        value={inputData?.roomType || ""}
+                        readOnly
+                        className="bookngo-package-final-details-input-field"
+                    />
+                </div>
+                <div className="bookngo-package-final-details-row">
+                    <label>Number of Rooms</label>
+                    <input
+                        type="number"
+                        value={inputData?.numRooms || ""}
+                        readOnly
+                        className="bookngo-package-final-details-input-field"
+                    />
+                </div>
+                
+                
+                <div className="bookngo-package-final-details-row">
+                    <label>Return Flight Time</label>
+                    <input
+                        type="text"
+                        value={convertToLocalTime(pkgData?.returnDate) || ""}
+                        readOnly
+                        className="bookngo-package-final-details-input-field"
+                    />
+                </div>
+                <div className="bookngo-package-final-details-row">
+                    <label>Return Airline</label>
+                    <input
+                        type="text"
+                        value={pkgData?.returnAirline || ""}
+                        readOnly
+                        className="bookngo-package-final-details-input-field"
+                    />
+                </div>
+                <div className="bookngo-package-final-details-row">
+                    <label>Total Price</label>
+                    <input
+                        type="text"
+                        value={`$${inputData?.price}` || ""}
+                        readOnly
+                        className="bookngo-package-final-details-input-field"
+                    />
+                </div>
+            </div>
+            <button
+                className="bookngo-package-final-details-proceed-button"
+                onClick={handleProceedToPayment}
+            >
+                Proceed to Payment
+            </button>
+        </div>
+    );
 }

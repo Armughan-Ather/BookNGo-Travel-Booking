@@ -2,13 +2,16 @@
     padding: 3rem;
     background-color: #f7f9fc;
     font-family: 'Poppins', sans-serif;
+    min-height: 100vh;
 }
 
-.booking-type {
+.booking-type,.payment-important-head-title {
     font-weight: bold;
     color: #003049;
 }
-
+.payment-spacing-summary-details{
+    margin-left: 10rem;
+}
 .add-payment-option {
     cursor: pointer;
 }
