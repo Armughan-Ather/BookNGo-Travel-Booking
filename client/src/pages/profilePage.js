@@ -100,9 +100,33 @@ export default function ProfilePage() {
   console.log('packages :',packageBookings)
   const handleStarClickPackage=async (rating,bookingId,departureAirlineId,departureFlightReservationId,hotelId,hotelReservationId,returnAirlineId,returnFlightReservationId)=>{
     try{
+      await axios.post('http://localhost:8000/api/v1/airlines/updateAirlineRating', {
+        flightReservationId:departureFlightReservationId,
+        airlineId: departureAirlineId,
+        rating,
+      });
 
+      await axios.post('http://localhost:8000/api/v1/airlines/updateAirlineRating', {
+        flightReservationId:returnFlightReservationId,
+        airlineId: returnAirlineId,
+        rating,
+      });
+      await axios.post('http://localhost:8000/api/v1/hotels/updateHotelRating', {
+        hotelReservationId:hotelReservationId,
+          hotelId: hotelId,
+          rating,
+      });
+      await axios.post('http://localhost:8000/api/v1/bundle/updateBundleRating', {
+        bundleReservationId:bookingId
+      });
+      setModalMessage('Ratings updated successfully. Thanks for your review.');
+      setModalVisible(true);
+      setTemp((prev)=>!prev);
+    
     }catch(error){
-      
+      console.log('error in bundle rating update :',error)
+      setModalMessage('Failed to submit your rating. Please try again later.');
+      setModalVisible(true);
     }
   }
   // Handle rating submission for each booking (flight or hotel)
@@ -113,7 +137,7 @@ export default function ProfilePage() {
         setFlightUserRating(prev => ({ ...prev, [bookingId]: rating }));
 
         
-        const response = await axios.post('http://localhost:8000/api/v1/airlines/updateAirlineRating', {
+        await axios.post('http://localhost:8000/api/v1/airlines/updateAirlineRating', {
           flightReservationId:bookingId,
           airlineId: id,
           rating,
@@ -121,26 +145,14 @@ export default function ProfilePage() {
       } else if (type === 'hotel') {
         setHotelUserRating(prev => ({ ...prev, [bookingId]: rating }));
 
-        const response = await axios.post('http://localhost:8000/api/v1/hotels/updateHotelRating', {
+        await axios.post('http://localhost:8000/api/v1/hotels/updateHotelRating', {
           hotelReservationId:bookingId,
           hotelId: id,
           rating,
         });
       
       }
-      else if (type === 'package') {
-        setPackageUserRating(prev => ({ ...prev, [bookingId]: rating }));
-
-        //try {
-          const response = await axios.post('http://localhost:8000/api/v1/packages/updatePackageRating', {
-            packageId: id,
-            rating,
-          });
-          
-        // } catch (error) {
-        //   console.error('Error updating package rating:', error);
-        // }
-      }
+      
       setModalMessage('Ratings updated successfully. Thanks for your review.');
       setModalVisible(true);
       setTemp((prev)=>!prev);
@@ -252,7 +264,7 @@ export default function ProfilePage() {
                     </MDBBtn>
                   )}
                   {booking.bundleStatus==='Cancelled' && (
-                    <p className='view-user-profile-comp-cancelled-reservation'><strong>This reservation was cancelled by the user.</strong></p>
+                    <p className='view-user-profile-comp-cancelled-reservation'><strong>This reservation was cancelled by {username}.</strong></p>
                   )}
                   {booking.bundleStatus==='Availed' &&(<div className="view-user-profile-comp-rating">
                     {renderStars(currentRating || 0, bookingId, 'package').map((star, index) => (
@@ -261,7 +273,7 @@ export default function ProfilePage() {
                         className="view-user-profile-comp-star stars-filling-on-hover-class"
                         onMouseEnter={() => handleStarHover(index + 1, bookingId, 'package')}
                         onMouseLeave={() => handleStarHover(0, bookingId, 'package')}
-                        onClick={() => handleStarClick(index + 1, bookingId, 'package', booking.packageId)}
+                        onClick={() => handleStarClickPackage(index+1,bookingId,booking.outwardAirlineId,booking.outwardFlightReservationId,booking.hotelId,booking.hotelReservationId,booking.returnAirlineId,booking.returnFlightReservationId) }
                       >
                         {star}
                       </span>
@@ -316,7 +328,7 @@ export default function ProfilePage() {
           <MDBRow className="view-user-profile-comp-row text-center">
             <MDBCol>
             {booking.reservationStatus==='Cancelled' && (
-                    <p className='view-user-profile-comp-cancelled-reservation'><strong>This reservation was cancelled by the user.</strong></p>
+                    <p className='view-user-profile-comp-cancelled-reservation'><strong>This reservation was cancelled by {username}.</strong></p>
               )}
               {booking.reservationStatus==='Booked' && (
                 <MDBBtn color="danger" size="sm" className='view-user-profile-comp-margin-above view-user-profile-comp-cancel-res-button' onClick={() => handleCancelation(bookingId, type)}>
