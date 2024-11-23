@@ -69,9 +69,7 @@ export default function ProfilePage() {
     const emptyStars = 5 - Math.ceil(rating);
     const halfStars = rating % 1 > 0 ? 1 : 0;
     let stars = [];
-    if(rating > 0){
-      console.log('current type is : ',type)
-    }
+    
     for (let i = 0; i < fullStars; i++) {
       stars.push(<RiStarSFill key={`full-${type}-${bookingId}-${i}`} className="view-user-profile-comp-stars" />);
     }
@@ -96,20 +94,27 @@ export default function ProfilePage() {
     } else if (type === 'package') {
       // Add logic for package ratings
       setPackageHoveredRating(prev => ({ ...prev, [bookingId]: rating }));
-      console.log('package star hover : ',packageHoveredRating)
     }
     
   };
-  
+  console.log('packages :',packageBookings)
+  const handleStarClickPackage=async (rating,bookingId,departureAirlineId,departureFlightReservationId,hotelId,hotelReservationId,returnAirlineId,returnFlightReservationId)=>{
+    try{
 
+    }catch(error){
+      
+    }
+  }
   // Handle rating submission for each booking (flight or hotel)
   const handleStarClick = async (rating, bookingId, type, id) => {
     try {
+      console.log('rating : ',rating," type : ",type," bookingID : ",bookingId, ' id : ',id);
       if (type === 'flight') {
         setFlightUserRating(prev => ({ ...prev, [bookingId]: rating }));
 
         
         const response = await axios.post('http://localhost:8000/api/v1/airlines/updateAirlineRating', {
+          flightReservationId:bookingId,
           airlineId: id,
           rating,
         });
@@ -117,33 +122,34 @@ export default function ProfilePage() {
         setHotelUserRating(prev => ({ ...prev, [bookingId]: rating }));
 
         const response = await axios.post('http://localhost:8000/api/v1/hotels/updateHotelRating', {
+          hotelReservationId:bookingId,
           hotelId: id,
           rating,
         });
       
       }
       else if (type === 'package') {
-        try {
+        setPackageUserRating(prev => ({ ...prev, [bookingId]: rating }));
+
+        //try {
           const response = await axios.post('http://localhost:8000/api/v1/packages/updatePackageRating', {
             packageId: id,
             rating,
           });
-          setPackageUserRating(prev => ({ ...prev, [bookingId]: rating }));
-
-          setTemp((prev) => !prev);
-        } catch (error) {
-          console.error('Error updating package rating:', error);
-        }
+          
+        // } catch (error) {
+        //   console.error('Error updating package rating:', error);
+        // }
       }
       setModalMessage('Ratings updated successfully. Thanks for your review.');
       setModalVisible(true);
       setTemp((prev)=>!prev);
     } catch (error) {
+      console.log('error in rating update :',error)
       setModalMessage('Failed to submit your rating. Please try again later.');
       setModalVisible(true);
     }
   };
-  console.log('bundle reservations : ',packageBookings)
   const handleCancelation = async (bookingId, type) => {
     try {
         let apiEndpoint;
@@ -180,7 +186,6 @@ export default function ProfilePage() {
     setModalVisible(false);
     setModalMessage('')
 };
-console.log(flightBookings)
   const renderBookingCard = (booking, type) => {
     
     //const bookingDate = new Date(booking.flightDepartureTime || booking.reservationStartDate).toLocaleString();
@@ -200,7 +205,6 @@ console.log(flightBookings)
     : (hotelHoveredRating[bookingId] !== undefined ? hotelHoveredRating[bookingId] : hotelUserRating[bookingId] || 0));
     
       if (type === 'package') {
-        console.log('current rating is : ',currentRating)
         return (
           <MDBCard className="view-user-profile-comp-card" key={`package-${bookingId}`}>
             <MDBCardBody>
