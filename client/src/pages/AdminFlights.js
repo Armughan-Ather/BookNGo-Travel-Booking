@@ -8,7 +8,9 @@ export default function AdminFlights() {
   const [isEditing, setIsEditing] = useState(false); // To track if we are in edit mode
   const [editFlight, setEditFlight] = useState(null); // Store the selected flight for editing
   const [formData, setFormData] = useState({
+    id: '',
     airlineId: '',
+    airlineName: '',
     departure: '',
     destination: '',
     origin: '',
@@ -17,21 +19,17 @@ export default function AdminFlights() {
     numSeats: '',
   });
 
-  useEffect(() => {
-    // Hardcoded flight entry for testing
-    const hardcodedFlight = {
-      id: 1,
-      airlineId: 101,
-      departure: '2024-12-15T10:00:00',
-      destination: 'Los Angeles',
-      origin: 'New York',
-      price: 350,
-      status: 'Scheduled',
-      numSeats: 150,
-    };
+  async function getFlights() {
+    try {
+      const response = await axios.get('http://localhost:8000/api/v1/admins/getAllFlights');
+      setFlights(response.data);
+    } catch (error) {
+      console.error('Error getting admin flights:', error);
+    }
+  }
 
-    // Setting the hardcoded flight entry in the state
-    setFlights([hardcodedFlight]);
+  useEffect(() => {
+    getFlights();
   }, []);
 
   const handleInputChange = (e) => {
@@ -39,31 +37,41 @@ export default function AdminFlights() {
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleAddFlight = () => {
-    // Hardcoded API request simulation
-    axios.post('/api/flights', formData)
-      .then(() => {
-        setShowModal(false);
-        setFormData({
-          airlineId: '',
-          departure: '',
-          destination: '',
-          origin: '',
-          price: '',
-          status: 'Scheduled',
-          numSeats: '',
-        });
-        return axios.get('/api/flights'); // Refresh flight list
-      })
-      .then(response => setFlights(response.data))
-      .catch(error => console.error('Error adding flight:', error));
+  const handleAddFlight = async () => {
+    try {
+      await axios.post('http://localhost:8000/api/v1/admins/addFlight', {
+        airlineName: formData.airlineName,
+        departure: formData.departure,
+        destination: formData.destination,
+        origin: formData.origin,
+        price: formData.price,
+        numSeats: formData.numSeats,
+      });
+      setShowModal(false);
+      setFormData({
+        id: '',
+        airlineId: '',
+        airlineName: '',
+        departure: '',
+        destination: '',
+        origin: '',
+        price: '',
+        status: 'Scheduled',
+        numSeats: '',
+      });
+      getFlights();
+    } catch (error) {
+      console.error('Error adding flight:', error);
+    }
   };
 
   const handleEditClick = (flight) => {
     setIsEditing(true);
     setEditFlight(flight); // Store the selected flight to edit
     setFormData({
+      id: flight.id,
       airlineId: flight.airlineId,
+      airlineName: flight.airlineName,
       departure: flight.departure,
       destination: flight.destination,
       origin: flight.origin,
@@ -74,33 +82,32 @@ export default function AdminFlights() {
     setShowModal(true);
   };
 
-  const handleUpdateFlight = () => {
-    axios.put(`/api/flights/${editFlight.id}`, formData)
-      .then(() => {
-        setShowModal(false);
-        setFormData({
-          airlineId: '',
-          departure: '',
-          destination: '',
-          origin: '',
-          price: '',
-          status: 'Scheduled',
-          numSeats: '',
-        });
-        setIsEditing(false); // Reset the editing state
-        return axios.get('/api/flights'); // Refresh flight list after update
-      })
-      .then(response => setFlights(response.data))
-      .catch(error => console.error('Error updating flight:', error));
-  };
-
-  const handleDeleteFlight = (flightId) => {
-    axios.delete(`/api/flights/${flightId}`)
-      .then(() => {
-        return axios.get('/api/flights'); // Refresh flight list after deletion
-      })
-      .then(response => setFlights(response.data))
-      .catch(error => console.error('Error deleting flight:', error));
+  const handleUpdateFlight = async () => {
+    try {
+      await axios.post('http://localhost:8000/api/v1/admins/updateFlight', {
+        id: formData.id,
+        departure: formData.departure,
+        numSeats: formData.numSeats,
+        status: formData.status,
+        price: formData.price,
+      });
+      setShowModal(false);
+      setFormData({
+        id: '',
+        airlineId: '',
+        airlineName: '',
+        departure: '',
+        destination: '',
+        origin: '',
+        price: '',
+        status: 'Scheduled',
+        numSeats: '',
+      });
+      setIsEditing(false); // Reset the editing state
+      getFlights();
+    } catch (error) {
+      console.error('Error updating admin flight:', error);
+    }
   };
 
   return (
@@ -116,21 +123,21 @@ export default function AdminFlights() {
         <thead className="admin-flights-comp-thead">
           <tr>
             <th>ID</th>
-            <th>Airline ID</th>
+            <th>Airline Name</th>
             <th>Departure</th>
             <th>Destination</th>
             <th>Origin</th>
             <th>Price</th>
             <th>Status</th>
             <th>Seats</th>
-            <th>Actions</th> {/* Added Actions column */}
+            <th>Actions</th>
           </tr>
         </thead>
         <tbody className="admin-flights-comp-tbody">
           {flights.map(flight => (
             <tr key={flight.id}>
               <td>{flight.id}</td>
-              <td>{flight.airlineId}</td>
+              <td>{flight.airlineName}</td>
               <td>{flight.departure}</td>
               <td>{flight.destination}</td>
               <td>{flight.origin}</td>
@@ -143,12 +150,6 @@ export default function AdminFlights() {
                   onClick={() => handleEditClick(flight)}
                 >
                   Edit
-                </button>
-                <button
-                  className="btn btn-danger"
-                  onClick={() => handleDeleteFlight(flight.id)}
-                >
-                  Delete
                 </button>
               </td>
             </tr>
@@ -165,10 +166,10 @@ export default function AdminFlights() {
               </div>
               <div className="modal-body">
                 <input
-                  type="number"
-                  name="airlineId"
-                  placeholder="Airline ID"
-                  value={formData.airlineId}
+                  type="text"
+                  name="airlineName"
+                  placeholder="Airline Name"
+                  value={formData.airlineName}
                   onChange={handleInputChange}
                 />
                 <input
@@ -197,13 +198,6 @@ export default function AdminFlights() {
                   name="price"
                   placeholder="Price"
                   value={formData.price}
-                  onChange={handleInputChange}
-                />
-                <input
-                  type="text"
-                  name="status"
-                  placeholder="Status"
-                  value={formData.status}
                   onChange={handleInputChange}
                 />
                 <input

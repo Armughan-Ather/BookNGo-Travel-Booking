@@ -8,6 +8,7 @@ export default function AdminHotels() {
   const [isEditing, setIsEditing] = useState(false); // Track if we are in edit mode
   const [editHotel, setEditHotel] = useState(null); // Store the selected hotel for editing
   const [formData, setFormData] = useState({
+    id: '',
     name: '',
     standard: '',
     deluxe: '',
@@ -16,18 +17,17 @@ export default function AdminHotels() {
     pricePerNightDeluxe: '',
   });
 
+  async function getHotels() {
+    try {
+      const response = await axios.get('http://localhost:8000/api/v1/admins/getAllHotels');
+      setHotels(response.data);
+    } catch (error) {
+      console.log('Error getting hotels admin:', error);
+    }
+  }
+
   useEffect(() => {
-    // Hardcoded hotel entry for testing
-    const hardcodedHotel = {
-      id: 1,
-      name: 'Sample Hotel',
-      standard: 10,
-      deluxe: 5,
-      location: 'New York',
-      pricePerNightStandard: 100,
-      pricePerNightDeluxe: 200,
-    };
-    setHotels([hardcodedHotel]);
+    getHotels();
   }, []);
 
   const handleInputChange = (e) => {
@@ -35,28 +35,36 @@ export default function AdminHotels() {
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleAddHotel = () => {
-    axios.post('/api/hotels', formData)
-      .then(() => {
-        setShowModal(false);
-        setFormData({
-          name: '',
-          standard: '',
-          deluxe: '',
-          location: '',
-          pricePerNightStandard: '',
-          pricePerNightDeluxe: '',
-        });
-        return axios.get('/api/hotels'); // Refresh hotel list
-      })
-      .then(response => setHotels(response.data))
-      .catch(error => console.error('Error adding hotel:', error));
+  const handleAddHotel = async () => {
+    try {
+      const response = await axios.post('http://localhost:8000/api/v1/admins/addHotel', {
+        name: formData.name,
+        standard: formData.standard,
+        deluxe: formData.deluxe,
+        location: formData.location,
+        pricePerNightStandard: formData.pricePerNightStandard,
+        pricePerNightDeluxe: formData.pricePerNightDeluxe,
+      });
+      setShowModal(false);
+      setFormData({
+        name: '',
+        standard: '',
+        deluxe: '',
+        location: '',
+        pricePerNightStandard: '',
+        pricePerNightDeluxe: '',
+      });
+      getHotels();
+    } catch (error) {
+      console.log('Error adding hotels admin:', error);
+    }
   };
 
   const handleEditClick = (hotel) => {
     setIsEditing(true);
     setEditHotel(hotel); // Store the selected hotel to edit
     setFormData({
+      id: hotel.id,
       name: hotel.name,
       standard: hotel.standard,
       deluxe: hotel.deluxe,
@@ -67,32 +75,29 @@ export default function AdminHotels() {
     setShowModal(true);
   };
 
-  const handleUpdateHotel = () => {
-    axios.put(`/api/hotels/${editHotel.id}`, formData)
-      .then(() => {
-        setShowModal(false);
-        setFormData({
-          name: '',
-          standard: '',
-          deluxe: '',
-          location: '',
-          pricePerNightStandard: '',
-          pricePerNightDeluxe: '',
-        });
-        setIsEditing(false); // Reset the editing state
-        return axios.get('/api/hotels'); // Refresh hotel list after update
-      })
-      .then(response => setHotels(response.data))
-      .catch(error => console.error('Error updating hotel:', error));
-  };
-
-  const handleDeleteHotel = (hotelId) => {
-    axios.delete(`/api/hotels/${hotelId}`)
-      .then(() => {
-        return axios.get('/api/hotels'); // Refresh hotel list after deletion
-      })
-      .then(response => setHotels(response.data))
-      .catch(error => console.error('Error deleting hotel:', error));
+  const handleUpdateHotel = async () => {
+    try {
+      const response = await axios.post('http://localhost:8000/api/v1/admins/updateHotel', {
+        id: formData.id,
+        standard: formData.standard,
+        deluxe: formData.deluxe,
+        pricePerNightStandard: formData.pricePerNightStandard,
+        pricePerNightDeluxe: formData.pricePerNightDeluxe,
+      });
+      setShowModal(false);
+      setFormData({
+        name: '',
+        standard: '',
+        deluxe: '',
+        location: '',
+        pricePerNightStandard: '',
+        pricePerNightDeluxe: '',
+      });
+      setIsEditing(false);
+      getHotels();
+    } catch (error) {
+      console.error('Error updating hotel admin:', error);
+    }
   };
 
   return (
@@ -100,7 +105,10 @@ export default function AdminHotels() {
       <h1 className="admin-hotels-comp-title">Manage Hotels</h1>
       <button
         className="admin-hotels-comp-add-btn"
-        onClick={() => { setShowModal(true); setIsEditing(false); }}
+        onClick={() => {
+          setShowModal(true);
+          setIsEditing(false);
+        }}
       >
         Add New Hotel
       </button>
@@ -114,11 +122,11 @@ export default function AdminHotels() {
             <th>Location</th>
             <th>Price/Standard</th>
             <th>Price/Deluxe</th>
-            <th>Actions</th> {/* Added Actions column */}
+            <th>Actions</th> {/* Removed delete button */}
           </tr>
         </thead>
         <tbody className="admin-hotels-comp-tbody">
-          {hotels.map(hotel => (
+          {hotels.map((hotel) => (
             <tr key={hotel.id}>
               <td>{hotel.id}</td>
               <td>{hotel.name}</td>
@@ -134,12 +142,6 @@ export default function AdminHotels() {
                 >
                   Edit
                 </button>
-                <button
-                  className="btn btn-danger"
-                  onClick={() => handleDeleteHotel(hotel.id)}
-                >
-                  Delete
-                </button>
               </td>
             </tr>
           ))}
@@ -150,7 +152,9 @@ export default function AdminHotels() {
           <div className="modal-dialog">
             <div className="modal-content">
               <div className="modal-header">
-                <h5 className="modal-title">{isEditing ? 'Edit Hotel' : 'Add New Hotel'}</h5>
+                <h5 className="modal-title">
+                  {isEditing ? 'Edit Hotel' : 'Add New Hotel'}
+                </h5>
                 <button onClick={() => setShowModal(false)}>×</button>
               </div>
               <div className="modal-body">

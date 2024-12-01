@@ -67,6 +67,9 @@ export default function Navbar() {
             <a href="/admin/hotels" className="navbar-link">
               <FaBed /> &nbsp; Hotels
             </a>
+            <a href="/admin/airlines" className="navbar-link">
+              <FaPlane /> &nbsp; Airlines
+            </a>
             {/* <a href="/packages" className="navbar-link">
               <FaSuitcase /> &nbsp; Packages
             </a> */}

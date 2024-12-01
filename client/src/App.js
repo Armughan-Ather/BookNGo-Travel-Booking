@@ -21,7 +21,8 @@ import AdminPortal from './pages/AdminPortal.js';
 import AdminLayout from "./layout/AdminLayout.js"
 import AdminHotels from './pages/AdminHotels.js';
 import AdminFlights from './pages/AdminFlights.js';
-import AdminLogin from "./pages/AdminLogin.js"
+import AdminLogin from "./pages/AdminLogin.js";
+import AdminAirlines from './pages/AdminAirline.js';
 function App() {
   return (
     <BrowserRouter>
@@ -71,6 +72,8 @@ function App() {
         <Route path='/admin/login' element={<AdminLogin />} />
           <Route path='/adminportal' element={<AdminPortal />} />
           <Route path='/admin/hotels' element={<AdminHotels />} />
+          <Route path='/admin/airlines' element={<AdminAirlines />} />
+          
           <Route path='/admin/flights' element={<AdminFlights />} />
         </Route>
         <Route element={<Layout />}>

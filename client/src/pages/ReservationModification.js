@@ -128,7 +128,7 @@ export default function ReservationModificationsPage() {
                 navigate('/payment',{state:BookingDatav2})
             }else{
                 alert(`Modification Successful.You will be refunded ${amount*-1} in next 7 business days.`)
-                // navigate('/')
+                 navigate('/')
             }
         }catch(error){
           console.log("error in flight modi :",error)
