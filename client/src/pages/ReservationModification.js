@@ -71,13 +71,14 @@ export default function ReservationModificationsPage() {
         return;
     }
     
-    if(type=='flight'){
+    if(type==='flight'){
         try{
-            const response=await axios.post('http://localhost:8000/api/v1/',{
+            const response=await axios.post('http://localhost:8000/api/v1/flightReservation/updateFlightReservation2',{
                 seats:numSeats,
                 reservationId:bookingData.reservationId
             })
-            let amount=response.data.data;
+            let amount=response.data.changeInBill;
+            console.log('response flight modi :',response.data)
             if(response.data.data>0){
                 const BookingDatav2={
                     bookingType:'Flight Modification',
@@ -94,7 +95,9 @@ export default function ReservationModificationsPage() {
                 alert(`Modification Successful.You will be refunded ${amount} in next 7 business days.`)
             }
         }catch(error){
-
+            console.log("error in flight modi :",error)
+            setError(error?.response?.data?.error);
+            
         }
     }
     else if(type=='hotel'){
