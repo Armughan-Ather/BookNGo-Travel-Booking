@@ -16,7 +16,7 @@ export const updateFlightReservation = async (req, res) => {
             `SELECT r.id, r.flightId, r.seats AS currentSeats, r.bill AS currentBill, f.price AS pricePerSeat, f.numSeats AS availableSeats, f.departure
              FROM FlightReservation r
              JOIN Flight f ON r.flightId = f.id
-             WHERE r.id = ? AND r.status = 'Booked'`,
+             WHERE r.id = :reservationId AND r.status = 'Booked'`,
             {
                 replacements: [reservationId],
                 type: sequelize.QueryTypes.SELECT,
@@ -108,7 +108,7 @@ export const updateFlightReservation2 = async (req, res) => {
             `SELECT r.id, r.flightId, r.seats AS currentSeats, r.bill AS currentBill, f.price AS pricePerSeat, f.numSeats AS availableSeats, f.departure
              FROM FlightReservation r
              JOIN Flight f ON r.flightId = f.id
-             WHERE r.id = ? AND fr.status = 'Booked'`,
+             WHERE r.id = :reservationId AND r.status = 'Booked'`,
             {
                 replacements: [reservationId],
                 type: sequelize.QueryTypes.SELECT,
