@@ -1,5 +1,7 @@
 import { Router } from "express";
 import { reserveHotelRoom } from "../controllers/hotelReservation.controller.js";
+import { updateHotelReservation } from "../controllers/hotelReservation.controller.js";
+import { updateHotelReservation2 } from "../controllers/hotelReservation.controller.js";
 
 const router = Router()
 
