@@ -1,11 +1,11 @@
-import React from 'react';
+import React,{useContext} from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../Context/AuthContext'; // Assuming you have this context for authentication
+import { AuthContext } from '../Context/AuthContext'; 
 
 const ProtectedRoute = ({ children }) => {
     const navigate = useNavigate();
-    const { isAuthenticated } = useAuth(); // Assuming you have an auth hook
-
+    const { isAuthenticated} = useContext(AuthContext);
+    
     if (!isAuthenticated) {
         // Redirect to login if not authenticated
         navigate("/login", { replace: true });

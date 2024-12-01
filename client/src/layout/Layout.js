@@ -1,7 +1,7 @@
 import React from "react";
 import { Outlet, useLocation } from "react-router-dom";
 import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";  // Uncomment when you create your Footer
+import Footer from "../components/Footer";  
 
 function Layout() {
     const location = useLocation();

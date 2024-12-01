@@ -40,7 +40,7 @@ export default function PaymentForm() {
 
   const toggleResponseModal = () => {
     setResponseModalOpen(!responseModalOpen);
-    if(responseMessage=='Reservation confirmed!Thanks for choosing us!'){
+    if(responseMessage=='Reservation confirmed! Thanks for choosing us!'){
       navigate('/')
     }
   };
