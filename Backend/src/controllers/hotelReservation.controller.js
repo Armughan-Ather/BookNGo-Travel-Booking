@@ -93,6 +93,184 @@
 import sequelize from '../config/database.js';
 import { ApiResponse } from '../utils/ApiResponse.js';
 
+export const updateHotelReservation = async (req, res) => {
+    const { reservationId, reservationStartDate, reservationEndDate, roomType, rooms } = req.body;
+    const transaction = await sequelize.transaction();
+
+    try {
+        if (!reservationId || !reservationStartDate || !reservationEndDate || !roomType || rooms == null) {
+            return res.status(400).json({ error: 'All reservation details are required.' });
+        }
+
+        const roomTypeField = roomType === 'Standard' ? 'standard' : 'deluxe';
+        const priceField = roomType === 'Standard' ? 'pricePerNightStandard' : 'pricePerNightDeluxe';
+
+        // Fetch current reservation details
+        const [reservation] = await sequelize.query(
+            `SELECT hr.hotelId, hr.noOfRooms AS currentRooms, hr.bill AS currentBill, 
+                    h.${roomTypeField} AS totalRooms, h.${priceField} AS pricePerNight
+             FROM HotelReservation hr
+             JOIN Hotel h ON hr.hotelId = h.id
+             WHERE hr.id = ? AND hr.type = ?`,
+            {
+                replacements: [reservationId, roomType],
+                type: sequelize.QueryTypes.SELECT,
+                transaction,
+            }
+        );
+
+        if (!reservation) {
+            return res.status(404).json({ error: 'Reservation not found.' });
+        }
+
+        const { hotelId, currentRooms, currentBill, totalRooms, pricePerNight } = reservation;
+
+        // Calculate used rooms for the given date range (excluding current reservation)
+        const [usedRoomsResult] = await sequelize.query(
+            `SELECT COALESCE(SUM(noOfRooms), 0) AS usedRooms
+             FROM HotelReservation
+             WHERE hotelId = ? AND type = ? AND id != ? AND 
+                   ((reservationDate BETWEEN ? AND ?) OR (endDate BETWEEN ? AND ?))`,
+            {
+                replacements: [hotelId, roomType, reservationId, reservationStartDate, reservationEndDate, reservationStartDate, reservationEndDate],
+                type: sequelize.QueryTypes.SELECT,
+                transaction,
+            }
+        );
+
+        const usedRooms = usedRoomsResult.usedRooms;
+        const availableRooms = totalRooms - usedRooms;
+
+        if (availableRooms < rooms) {
+            return res.status(400).json({ error: 'Not enough rooms available.' });
+        }
+
+        // Calculate number of days for the updated reservation
+        const [daysResult] = await sequelize.query(
+            'SELECT DATEDIFF(?, ?) AS noOfDays',
+            {
+                replacements: [reservationEndDate, reservationStartDate],
+                type: sequelize.QueryTypes.SELECT,
+                transaction,
+            }
+        );
+        const noOfDays = daysResult.noOfDays + 1;
+
+        // Calculate the new bill
+        const newBill = pricePerNight * rooms * noOfDays;
+        const changeInBill = newBill - currentBill;
+
+        // If the bill decreases or remains the same, update the reservation
+        if (changeInBill <= 0) {
+            await sequelize.query(
+                `UPDATE HotelReservation
+                 SET reservationDate = ?, endDate = ?, noOfRooms = ?, bill = ?, type = ?
+                 WHERE id = ?`,
+                {
+                    replacements: [reservationStartDate, reservationEndDate, rooms, newBill, roomType, reservationId],
+                    type: sequelize.QueryTypes.UPDATE,
+                    transaction,
+                }
+            );
+
+            await transaction.commit();
+            return res.status(200).json({
+                message: 'Reservation updated successfully.',
+                changeInBill,
+            });
+        }
+
+        // If the bill increases, do not update the reservation but return the bill increase
+        await transaction.rollback();
+        return res.status(200).json({
+            message: 'Bill increase detected.',
+            changeInBill,
+        });
+    } catch (error) {
+        await transaction.rollback();
+        console.error(error.message);
+        res.status(500).json({ error: 'Error updating hotel reservation.' });
+    }
+};
+
+export const updateHotelReservation2 = async (req, res) => {
+    const { reservationId, reservationStartDate, reservationEndDate, roomType, rooms, amount } = req.body;
+    const transaction = await sequelize.transaction();
+
+    try {
+        if (!reservationId || !reservationStartDate || !reservationEndDate || !roomType || rooms == null) {
+            return res.status(400).json({ error: 'All reservation details are required.' });
+        }
+
+        const roomTypeField = roomType === 'Standard' ? 'standard' : 'deluxe';
+        const priceField = roomType === 'Standard' ? 'pricePerNightStandard' : 'pricePerNightDeluxe';
+
+        // Fetch current reservation details
+        const [reservation] = await sequelize.query(
+            `SELECT hr.hotelId, hr.noOfRooms AS currentRooms, hr.bill AS currentBill, 
+                    h.${roomTypeField} AS totalRooms, h.${priceField} AS pricePerNight
+             FROM HotelReservation hr
+             JOIN Hotel h ON hr.hotelId = h.id
+             WHERE hr.id = ? AND hr.type = ?`,
+            {
+                replacements: [reservationId, roomType],
+                type: sequelize.QueryTypes.SELECT,
+                transaction,
+            }
+        );
+
+        if (!reservation) {
+            return res.status(404).json({ error: 'Reservation not found.' });
+        }
+
+        const { hotelId, currentRooms, currentBill, totalRooms, pricePerNight } = reservation;
+
+        // Calculate used rooms for the given date range (excluding current reservation)
+        const [usedRoomsResult] = await sequelize.query(
+            `SELECT COALESCE(SUM(noOfRooms), 0) AS usedRooms
+             FROM HotelReservation
+             WHERE hotelId = ? AND type = ? AND id != ? AND 
+                   ((reservationDate BETWEEN ? AND ?) OR (endDate BETWEEN ? AND ?))`,
+            {
+                replacements: [hotelId, roomType, reservationId, reservationStartDate, reservationEndDate, reservationStartDate, reservationEndDate],
+                type: sequelize.QueryTypes.SELECT,
+                transaction,
+            }
+        );
+
+        const usedRooms = usedRoomsResult.usedRooms;
+        const availableRooms = totalRooms - usedRooms;
+
+        if (availableRooms < rooms) {
+            return res.status(400).json({ error: 'Not enough rooms available.' });
+        }
+
+        const newBill = amount + currentBill;
+
+        await sequelize.query(
+            `UPDATE HotelReservation
+                 SET reservationDate = ?, endDate = ?, noOfRooms = ?, bill = ?, type = ?
+                 WHERE id = ?`,
+            {
+                replacements: [reservationStartDate, reservationEndDate, rooms, newBill, roomType, reservationId],
+                type: sequelize.QueryTypes.UPDATE,
+                transaction,
+            }
+        );
+
+        await transaction.commit();
+        return res.status(200).json({
+            message: 'Reservation updated successfully.',
+            newBill,
+        });
+    } catch (error) {
+        await transaction.rollback();
+        console.error(error.message);
+        res.status(500).json({ error: 'Error updating hotel reservation.' });
+    }
+};
+
+
 export const reserveHotelRoom = async (req, res) => {
     const { hotelId, userName, reservationDate, endDate, noOfRooms, type } = req.body;
     const transaction = await sequelize.transaction();
