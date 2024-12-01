@@ -145,19 +145,19 @@
   border-radius: 0.5rem;
   color: white;
   background-color: #007bff;
-  background-color: #f9a825;
+  background-color: #ff9800 !important;
     
   transition: all 0.3s ease;
   text-align: center;
 }
 
 .package-details-btn.confirm {
-  background-color: #f9a825;
+  background-color: #ff9800 !important;
     
 }
 
 .package-details-btn:hover {
   opacity: 0.9;
-  background-color: #f9a825;
+  background-color: #f9a825 !important;
     
 }

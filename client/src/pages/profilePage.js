@@ -51,6 +51,8 @@ export default function ProfilePage() {
 
     fetchBookingHistory();
   }, [temp]);
+  console.log('flight bookingws:',flightBookings);
+  console.log('hotel bookings:',hotelBookings);
   const convertToLocalTime = (utcTime) => {
     const date = new Date(utcTime);
     return date.toLocaleString('default', {
@@ -97,7 +99,6 @@ export default function ProfilePage() {
     }
     
   };
-  console.log('packages :',packageBookings)
   const handleStarClickPackage=async (rating,bookingId,departureAirlineId,departureFlightReservationId,hotelId,hotelReservationId,returnAirlineId,returnFlightReservationId)=>{
     try{
       await axios.post('http://localhost:8000/api/v1/airlines/updateAirlineRating', {
@@ -198,9 +199,20 @@ export default function ProfilePage() {
     setModalVisible(false);
     setModalMessage('')
 };
+const handleModifyBooking = (bookingData, type) => {
+  console.log("type :",type);
+  console.log("Booking Data : ",bookingData);
+  // if (type === 'flight') {
+  //   navigate(`/flights/modify/${bookingId}`);
+  // } else if (type === 'hotel') {
+  //   navigate(`/hotels/modify/${bookingId}`);
+  // }
+  navigate('/reservation/modifications', {
+    state: { bookingData,type },
+  });
+};
   const renderBookingCard = (booking, type) => {
     
-    //const bookingDate = new Date(booking.flightDepartureTime || booking.reservationStartDate).toLocaleString();
     let bookingDate = type==='hotel'? booking.reservationStartDate : type==='flight'? convertToLocalTime(booking.flightDepartureTime) : null ;
     
     let formattedDate = bookingDate === 'Invalid Date' ? 'N/A' : bookingDate;
@@ -209,7 +221,7 @@ export default function ProfilePage() {
       bookingId=booking.bundleReservationId;
     }
     const isFlight = type === 'flight';
-
+    const isHotel = type === 'hotel';
     const currentRating = type === 'package'
   ? (packageHoveredRating[bookingId] !== undefined ? packageHoveredRating[bookingId] : packageUserRating[bookingId] || 0)
   : (isFlight
@@ -290,8 +302,26 @@ export default function ProfilePage() {
     return (
       <MDBCard className="view-user-profile-comp-card" key={`${type}-${bookingId}`}>
         <MDBCardBody>
-          <MDBCardTitle className="view-user-profile-comp-card-title">{type} Booking</MDBCardTitle>
-
+          {/* <MDBCardTitle className="view-user-profile-comp-card-title">{type} Booking</MDBCardTitle> */}
+          <MDBRow className="align-items-center">
+          <MDBCol size="10">
+            <MDBCardTitle className="view-user-profile-comp-card-title">{type} Booking</MDBCardTitle>
+          </MDBCol>
+          <MDBCol size="2" className="text-end">
+            {(isFlight || isHotel) && 
+            // booking.reservationStatus==='Booked' && 
+            (
+              <MDBBtn
+                color="info"
+                size="sm"
+                className="view-user-profile-comp-modify-button"
+                onClick={() => handleModifyBooking(booking, type)}
+              >
+                Modify
+              </MDBBtn>
+            )}
+          </MDBCol>
+        </MDBRow>
           <MDBRow className="view-user-profile-comp-row">
             <MDBCol size="4">
               {isFlight ? (

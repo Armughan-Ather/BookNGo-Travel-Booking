@@ -52,6 +52,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import PageNotFound from './pages/NotFound/PageNotFound';
 import PackageInputData from './pages/PackageInputData.js';
 import PackageDetails from './pages/PackageDetails.js';
+import ReservationModifications from "./pages/ReservationModification.js"
 function App() {
   return (
     <BrowserRouter>
@@ -90,7 +91,10 @@ function App() {
            path='/profile' 
            element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} 
            />
-           
+           <Route
+           path='/reservation/modifications' 
+           element={<ProtectedRoute><ReservationModifications /></ProtectedRoute>} 
+           />
 
             
         </Route>

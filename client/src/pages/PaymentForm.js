@@ -107,6 +107,8 @@ export default function PaymentForm() {
           <p><strong className='payment-important-head-title'>Number of Rooms:</strong> {details.numberOfRooms}</p>
         </>
       );
+    }else{
+      return(<></>)
     }
     return <p>{details}</p>;
   };
@@ -151,13 +153,40 @@ export default function PaymentForm() {
       console.log('reservation Data : ',reservationData)
       apiEndpoint = 'http://localhost:8000/api/v1/bundleReservation/reserveBundle';
     }
+    else if(bookingType==='Hotel Modification'){
+      apiEndpoint='';
+      reservationData={
+        reservationId:bookingDetails.reservationId,
+        rooms:bookingDetails.rooms,
+        reservationStartDate:bookingDetails.reservationStartDate,
+        reservationEndDate:bookingDetails.reservationEndDate,
+        roomType:bookingDetails.roomType,
+        amount
+      }
+
+    }
+    else if(bookingType==='Flight Modification'){
+      apiEndpoint='';
+      reservationData={
+        reservationId:bookingDetails.reservationId,
+        seats:bookingDetails.seats,
+        amount
+      }
+    }
     
 
     try {
       const response = await axios.post(apiEndpoint, reservationData);
       if (response.status === 200) {
-        setResponseMessage("Reservation confirmed!Thanks for choosing us!");
+        if(bookingType=='Hotel Modification' || bookingType=='Flight Modification'){
+          setResponseMessage("Reservation Modified Successfully.");
         toggleResponseModal();
+        }
+        else{
+          setResponseMessage("Reservation confirmed! Thanks for choosing us!");
+        toggleResponseModal();  
+        }
+        
       }
     } catch (error) {
       console.error("Error making reservation:", error.response?.data?.error);
@@ -174,7 +203,9 @@ export default function PaymentForm() {
             <MDBCol md="7" xl="5" className="mb-4 mb-md-0">
               <h4 className="booking-type">{bookingType} Payment</h4>
               <h4 className="text-success"><strong>${amount}</strong></h4>
+              {bookingType!='Hotel Modification' && bookingType!='Flight Modification' && 
               <h5 className='booking-type'>Booking Summary :</h5>
+              }
               {formatBookingDetails(bookingType, bookingDetails)}
 
               

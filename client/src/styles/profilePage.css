@@ -107,6 +107,12 @@
     justify-content: center;
     margin-top: 1rem;
   }
+  .view-user-profile-comp-modify-button {
+    font-size: 0.8rem;
+    margin-right: 0.5rem;
+    background-color: #007bff !important;
+    margin-right: 2rem;
+  }
   
   .view-user-profile-comp-stars {
     font-size: 1.5rem; /* Increased size of stars */
