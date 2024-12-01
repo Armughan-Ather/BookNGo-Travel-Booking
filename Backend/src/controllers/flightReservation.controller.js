@@ -93,6 +93,78 @@ export const updateFlightReservation = async (req, res) => {
     }
 };
 
+export const updateFlightReservation2 = async (req, res) => {
+    const { reservationId, seats, amount } = req.body;
+    const updatedSeats = parseInt(seats);
+    const transaction = await sequelize.transaction();
+
+    try {
+        if (!reservationId || updatedSeats == null) {
+            return res.status(400).json({ error: 'Reservation ID and updated seats are required.' });
+        }
+
+        // Fetch current reservation details
+        const [reservation] = await sequelize.query(
+            `SELECT r.id, r.flightId, r.seats AS currentSeats, r.bill AS currentBill, f.price AS pricePerSeat, f.numSeats AS availableSeats, f.departure
+             FROM FlightReservation r
+             JOIN Flight f ON r.flightId = f.id
+             WHERE r.id = ? AND fr.status = 'Booked'`,
+            {
+                replacements: [reservationId],
+                type: sequelize.QueryTypes.SELECT,
+                transaction,
+            }
+        );
+
+        if (!reservation) {
+            return res.status(404).json({ error: 'Reservation not found' });
+        }
+
+        const { flightId, currentSeats, currentBill, pricePerSeat, availableSeats, departure } = reservation;
+
+        // Calculate the seat difference and change in the bill
+        const seatDifference = updatedSeats - currentSeats;
+        const changeInBill = seatDifference * pricePerSeat;
+
+        // Validate seat availability for increase
+        if (seatDifference > 0 && availableSeats < seatDifference) {
+            return res.status(400).json({ error: 'Not enough seats available' });
+        }
+
+        await sequelize.query(
+            `UPDATE FlightReservation
+                 SET seats = ?, bill = bill + ?, bookingDate = CURRENT_TIMESTAMP
+                 WHERE id = ?`,
+            {
+                replacements: [updatedSeats, amount, reservationId],
+                type: sequelize.QueryTypes.UPDATE,
+                transaction,
+            }
+        );
+
+        // Update available seats in the Flight table
+        await sequelize.query(
+            `UPDATE Flight
+                 SET numSeats = numSeats - ?
+                 WHERE id = ?`,
+            {
+                replacements: [seatDifference, flightId], // Decrease available seats for positive difference
+                type: sequelize.QueryTypes.UPDATE,
+                transaction,
+            }
+        );
+
+        await transaction.commit();
+        return res.status(200).json({
+            message: 'Reservation updated successfully',
+            changeInBill,
+        });
+    } catch (error) {
+        await transaction.rollback();
+        console.error(error.message);
+        res.status(500).json({ error: 'Error updating reservation' });
+    }
+};
 
 export const reserveFlight = async (req, res) => {
     const { flightId, userName, seats } = req.body;
