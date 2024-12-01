@@ -3,6 +3,217 @@ import bcrypt from 'bcrypt';
 import sequelize from '../config/database.js'; // Sequelize instance
 import { TIME } from "sequelize";
 
+export const getAllAirlines = async (req, res) => {
+    try {
+        const airlines = await sequelize.query(
+            `SELECT * FROM Airline`,
+            { type: sequelize.QueryTypes.SELECT }
+        );
+        res.status(200).json(airlines);
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).json({ error: 'Error fetching airlines' });
+    }
+};
+
+export const addAirline = async (req, res) => {
+    const { name } = req.body;
+
+    if (!name) {
+        return res.status(400).json({ error: 'Airline name required.' });
+    }
+
+    try {
+        await sequelize.query(
+            `INSERT INTO Airline (name) VALUES (:name)`,
+            {
+                replacements: { name },
+                type: sequelize.QueryTypes.INSERT,
+            }
+        );
+        res.status(201).json({ message: 'Airline added successfully.' });
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).json({ error: 'Error adding airline' });
+    }
+};
+
+export const getAllHotels = async (req, res) => {
+    try {
+        const hotels = await sequelize.query(
+            `SELECT * FROM Hotel`,
+            { type: sequelize.QueryTypes.SELECT }
+        );
+        res.status(200).json(hotels);
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).json({ error: 'Error fetching hotels' });
+    }
+};
+
+export const addHotel = async (req, res) => {
+    const {
+        name,
+        standard,
+        deluxe,
+        location,
+        pricePerNightStandard,
+        pricePerNightDeluxe,
+    } = req.body;
+
+    if (
+        !name ||
+        standard == null ||
+        deluxe == null ||
+        !location ||
+        pricePerNightStandard == null ||
+        pricePerNightDeluxe == null
+    ) {
+        return res.status(400).json({ error: 'All hotel details are required.' });
+    }
+
+    try {
+        await sequelize.query(
+            `INSERT INTO Hotel (name, standard, deluxe, location, pricePerNightStandard, pricePerNightDeluxe)
+             VALUES (:name, :standard, :deluxe, :location, :pricePerNightStandard, :pricePerNightDeluxe)`,
+            {
+                replacements: {
+                    name,
+                    standard,
+                    deluxe,
+                    location,
+                    pricePerNightStandard,
+                    pricePerNightDeluxe,
+                },
+                type: sequelize.QueryTypes.INSERT,
+            }
+        );
+        res.status(201).json({ message: 'Hotel added successfully.' });
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).json({ error: 'Error adding hotel' });
+    }
+};
+
+export const updateHotel = async (req, res) => {
+    const { id, standard, deluxe, pricePerNightStandard, pricePerNightDeluxe } = req.body;
+
+    if (!id) {
+        return res.status(400).json({ error: 'Hotel ID is required.' });
+    }
+
+    try {
+        await sequelize.query(
+            `UPDATE Hotel
+             SET standard = COALESCE(:standard, standard),
+                 deluxe = COALESCE(:deluxe, deluxe),
+                 pricePerNightStandard = COALESCE(:pricePerNightStandard, pricePerNightStandard),
+                 pricePerNightDeluxe = COALESCE(:pricePerNightDeluxe, pricePerNightDeluxe)
+             WHERE id = :id`,
+            {
+                replacements: {
+                    id,
+                    standard,
+                    deluxe,
+                    pricePerNightStandard,
+                    pricePerNightDeluxe,
+                },
+                type: sequelize.QueryTypes.UPDATE,
+            }
+        );
+        res.status(200).json({ message: 'Hotel updated successfully.' });
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).json({ error: 'Error updating hotel' });
+    }
+};
+
+export const getAllFlights = async (req, res) => {
+    try {
+        const flights = await sequelize.query(
+            `SELECT 
+                f.id, f.departure, f.destination, f.origin, f.price, f.status, f.numSeats,
+                a.name AS airlineName
+             FROM Flight f
+             JOIN Airline a ON f.airlineId = a.id`,
+            { type: sequelize.QueryTypes.SELECT }
+        );
+
+        res.status(200).json(flights);
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).json({ error: 'Error fetching flights' });
+    }
+};
+
+export const addFlight = async (req, res) => {
+    const { airlineName, departure, destination, origin, price, numSeats } = req.body;
+
+    if (!airlineName || !departure || !destination || !origin || price == null || numSeats == null) {
+        return res.status(400).json({ error: 'All flight details are required.' });
+    }
+
+    try {
+        // Get airlineId from airline name
+        const airline = await sequelize.query(
+            `SELECT id FROM Airline WHERE name = :airlineName`,
+            {
+                replacements: { airlineName },
+                type: sequelize.QueryTypes.SELECT,
+            }
+        );
+
+        if (!airline.length) {
+            return res.status(404).json({ error: 'Airline not found.' });
+        }
+
+        const airlineId = airline[0].id;
+
+        // Insert flight into the Flight table
+        await sequelize.query(
+            `INSERT INTO Flight (airlineId, departure, destination, origin, price, numSeats)
+             VALUES (:airlineId, :departure, :destination, :origin, :price, :numSeats)`,
+            {
+                replacements: { airlineId, departure, destination, origin, price, numSeats },
+                type: sequelize.QueryTypes.INSERT,
+            }
+        );
+
+        res.status(201).json({ message: 'Flight added successfully.' });
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).json({ error: 'Error adding flight' });
+    }
+};
+
+export const updateFlight = async (req, res) => {
+    const { id, departure, numSeats, status, price } = req.body;
+
+    if (!id) {
+        return res.status(400).json({ error: 'Flight ID is required.' });
+    }
+
+    try {
+        await sequelize.query(
+            `UPDATE Flight
+             SET departure = COALESCE(:departure, departure),
+                 numSeats = COALESCE(:numSeats, numSeats),
+                 status = COALESCE(:status, status),
+                 price = COALESCE(:price, price)
+             WHERE id = :id`,
+            {
+                replacements: { id, departure, numSeats, status, price },
+                type: sequelize.QueryTypes.UPDATE,
+            }
+        );
+        res.status(200).json({ message: 'Flight updated successfully.' });
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).json({ error: 'Error updating flight' });
+    }
+};
+
+
 export const updateFlightReservationStatuses = async (req, res) => {
     try {
         const currentDateTime = new Date().toISOString(); // Get the current date and time in 'yyyy-mm-ddTHH:MM:SS' format
