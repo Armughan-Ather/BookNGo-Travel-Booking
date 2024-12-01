@@ -73,13 +73,13 @@ export default function ReservationModificationsPage() {
     
     if(type==='flight'){
         try{
-            const response=await axios.post('http://localhost:8000/api/v1/flightReservation/updateFlightReservation2',{
+            const response=await axios.post('http://localhost:8000/api/v1/flightReservation/updateFlightReservation',{
                 seats:numSeats,
                 reservationId:bookingData.reservationId
             })
             let amount=response.data.changeInBill;
             console.log('response flight modi :',response.data)
-            if(response.data.data>0){
+            if(response.data.changeInBill>0){
                 const BookingDatav2={
                     bookingType:'Flight Modification',
                     amount,
@@ -92,7 +92,8 @@ export default function ReservationModificationsPage() {
                 }
 
             }else{
-                alert(`Modification Successful.You will be refunded ${amount} in next 7 business days.`)
+                alert(`Modification Successful.You will be refunded ${amount*-1} in next 7 business days.`)
+                navigate('/')
             }
         }catch(error){
             console.log("error in flight modi :",error)
@@ -102,32 +103,36 @@ export default function ReservationModificationsPage() {
     }
     else if(type=='hotel'){
         try{
-            const response=await axios.post('http://localhost:8000/api/v1/',{
+            const response=await axios.post('http://localhost:8000/api/v1/hotelReservation/updateHotelReservation',{
                 reservationId:bookingData.reservationId,
                 reservationStartDate:startDate,
                 reservationEndDate:endDate,
                 roomType:roomType,
                 rooms:numRooms
             })
-            let amount=response.data.data;
-            if(response.data.data>0){
+            let amount=response.data.changeInBill;
+            console.log('response flight modi :',response.data)
+            if(amount>0){
                 const BookingDatav2={
                     bookingType:'Hotel Modification',
                     amount,
                     bookingDetails:{
                         reservationId:bookingData.reservationId,
-                        reservationStartDate:bookingData.reservationStartDate,
-                        reservationEndDate:bookingData.reservationEndDate,
+                        reservationStartDate:startDate,
+                        reservationEndDate:endDate,
                         roomType,
                         rooms:numRooms
                     },
                     username
                 }
+                navigate('/payment',{state:BookingDatav2})
             }else{
-                alert(`Modification Successful.You will be refunded ${amount} in next 7 business days.`)
+                alert(`Modification Successful.You will be refunded ${amount*-1} in next 7 business days.`)
+                // navigate('/')
             }
         }catch(error){
-
+          console.log("error in flight modi :",error)
+            setError(error?.response?.data?.error);
         }
     }
 };

@@ -40,7 +40,7 @@ export default function PaymentForm() {
 
   const toggleResponseModal = () => {
     setResponseModalOpen(!responseModalOpen);
-    if(responseMessage=='Reservation confirmed! Thanks for choosing us!'){
+    if(responseMessage=='Reservation confirmed! Thanks for choosing us!' || responseMessage=="Reservation Modified Successfully."){
       navigate('/')
     }
   };
@@ -154,7 +154,7 @@ export default function PaymentForm() {
       apiEndpoint = 'http://localhost:8000/api/v1/bundleReservation/reserveBundle';
     }
     else if(bookingType==='Hotel Modification'){
-      apiEndpoint='';
+      apiEndpoint='http://localhost:8000/api/v1/hotelReservation/updateHotelReservation2';
       reservationData={
         reservationId:bookingDetails.reservationId,
         rooms:bookingDetails.rooms,
@@ -166,7 +166,7 @@ export default function PaymentForm() {
 
     }
     else if(bookingType==='Flight Modification'){
-      apiEndpoint='';
+      apiEndpoint='http://localhost:8000/api/v1/flightReservation/updateFlightReservation2';
       reservationData={
         reservationId:bookingDetails.reservationId,
         seats:bookingDetails.seats,
