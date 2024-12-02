@@ -18,7 +18,22 @@ export default function AdminFlights() {
     status: 'Scheduled',
     numSeats: '',
   });
-
+  const formatDate = (utcDate) => {
+    if (!utcDate) return ''; // Handle empty or undefined date
+    const date = new Date(utcDate);
+    const options = {
+      year: 'numeric',
+      month: 'short',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: true,
+      timeZoneName: 'short',
+    };
+    return new Intl.DateTimeFormat('en-US', options).format(date);
+  };
+  
   async function getFlights() {
     try {
       const response = await axios.get('http://localhost:8000/api/v1/admins/getAllFlights');
@@ -39,6 +54,12 @@ export default function AdminFlights() {
 
   const handleAddFlight = async () => {
     try {
+        console.log({airlineName: formData.airlineName,
+            departure: formData.departure,
+            destination: formData.destination,
+            origin: formData.origin,
+            price: formData.price,
+            numSeats: formData.numSeats})
       await axios.post('http://localhost:8000/api/v1/admins/addFlight', {
         airlineName: formData.airlineName,
         departure: formData.departure,
@@ -62,6 +83,7 @@ export default function AdminFlights() {
       getFlights();
     } catch (error) {
       console.error('Error adding flight:', error);
+      alert(error?.response?.data?.error)
     }
   };
 
@@ -107,9 +129,10 @@ export default function AdminFlights() {
       getFlights();
     } catch (error) {
       console.error('Error updating admin flight:', error);
+      alert(error?.response?.data?.error)
     }
   };
-
+  console.log('admin flights :',flights);
   return (
     <div className="admin-flights-comp-container">
       <h1 className="admin-flights-comp-title">Manage Flights</h1>
@@ -138,7 +161,7 @@ export default function AdminFlights() {
             <tr key={flight.id}>
               <td>{flight.id}</td>
               <td>{flight.airlineName}</td>
-              <td>{flight.departure}</td>
+              <td>{formatDate(flight.departure)}</td>
               <td>{flight.destination}</td>
               <td>{flight.origin}</td>
               <td>{flight.price}</td>
@@ -165,13 +188,13 @@ export default function AdminFlights() {
                 <button onClick={() => setShowModal(false)}>×</button>
               </div>
               <div className="modal-body">
-                <input
+              {!isEditing && (<input
                   type="text"
                   name="airlineName"
                   placeholder="Airline Name"
                   value={formData.airlineName}
                   onChange={handleInputChange}
-                />
+                />)}
                 <input
                   type="datetime-local"
                   name="departure"

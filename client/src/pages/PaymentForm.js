@@ -201,7 +201,7 @@ export default function PaymentForm() {
         <MDBCardBody>
           <MDBRow className="d-flex justify-content-center pb-5">
             <MDBCol md="7" xl="5" className="mb-4 mb-md-0">
-              <h4 className="booking-type">{bookingType} Payment</h4>
+              <h4 className="booking-type booking-head-payment">{bookingType} Payment</h4>
               <h4 className="text-success"><strong>${amount}</strong></h4>
               {bookingType!='Hotel Modification' && bookingType!='Flight Modification' && 
               <h5 className='booking-type'>Booking Summary :</h5>

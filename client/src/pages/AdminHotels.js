@@ -57,6 +57,7 @@ export default function AdminHotels() {
       getHotels();
     } catch (error) {
       console.log('Error adding hotels admin:', error);
+      alert(error?.response?.data?.error);
     }
   };
 
@@ -97,6 +98,7 @@ export default function AdminHotels() {
       getHotels();
     } catch (error) {
       console.error('Error updating hotel admin:', error);
+      alert(error?.response?.data?.error)
     }
   };
 

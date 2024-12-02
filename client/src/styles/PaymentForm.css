@@ -9,6 +9,10 @@
     font-weight: bold;
     color: #003049;
 }
+.booking-head-payment{
+    margin-top: 2rem;
+    
+}
 .payment-spacing-summary-details{
     margin-left: 10rem;
 }

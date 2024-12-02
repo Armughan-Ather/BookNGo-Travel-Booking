@@ -202,11 +202,7 @@ export default function ProfilePage() {
 const handleModifyBooking = (bookingData, type) => {
   console.log("type :",type);
   console.log("Booking Data : ",bookingData);
-  // if (type === 'flight') {
-  //   navigate(`/flights/modify/${bookingId}`);
-  // } else if (type === 'hotel') {
-  //   navigate(`/hotels/modify/${bookingId}`);
-  // }
+  
   navigate('/reservation/modifications', {
     state: { bookingData,type },
   });
@@ -309,7 +305,7 @@ const handleModifyBooking = (bookingData, type) => {
           </MDBCol>
           <MDBCol size="2" className="text-end">
             {(isFlight || isHotel) && 
-            // booking.reservationStatus==='Booked' && 
+             booking.reservationStatus==='Booked' && 
             (
               <MDBBtn
                 color="info"

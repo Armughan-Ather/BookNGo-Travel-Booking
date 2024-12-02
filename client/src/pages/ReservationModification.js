@@ -90,7 +90,7 @@ export default function ReservationModificationsPage() {
                     },
                     username
                 }
-
+                navigate('/payment',{state:BookingDatav2})
             }else{
                 alert(`Modification Successful.You will be refunded ${amount*-1} in next 7 business days.`)
                 navigate('/')
@@ -111,7 +111,7 @@ export default function ReservationModificationsPage() {
                 rooms:numRooms
             })
             let amount=response.data.changeInBill;
-            console.log('response flight modi :',response.data)
+            console.log('response hotel modi :',response.data)
             if(amount>0){
                 const BookingDatav2={
                     bookingType:'Hotel Modification',
