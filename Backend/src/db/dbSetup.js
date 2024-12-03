@@ -38,7 +38,6 @@ export const setupDatabase = async () => {
             createTableFlight,
             createTableFlightReservation,
             createTableHotelReservation,
-            createTableBundle,
             createTableCancelledFlightReservation,
             createTableCancelledHotelReservation,
             createTableBundle,

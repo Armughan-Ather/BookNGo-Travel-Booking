@@ -1,5 +1,231 @@
 import sequelize from '../config/database.js'; // Sequelize instance
 import bcrypt from 'bcrypt';
+import fs from 'fs';
+
+// Load datasets
+const cities = JSON.parse(fs.readFileSync('cities.json', 'utf-8')).map(c => c.name);
+const airlines = JSON.parse(fs.readFileSync('airlines.json', 'utf-8')).map(a => a.name);
+const hotels = JSON.parse(fs.readFileSync('hotels.json', 'utf-8')).map(h => h.hotel_name);
+
+// Utility to generate random numbers in a range
+const random = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
+
+const insertAirlines = async () => {
+    try {
+        const airlineValues = airlines.map(name => {
+            // Escape single quotes in the airline name
+            const escapedName = name.replace(/'/g, "''"); // Escape single quotes for SQL
+            const rating = (Math.random() * 4 + 1).toFixed(1);
+            const ratingCount = random(100, 1000);
+            return `('${escapedName}', ${rating}, ${ratingCount})`;
+        });
+
+        // Check for existing airlines first
+        for (const airlineValue of airlineValues) {
+            const name = airlineValue.match(/\('([^']+)'/)[1]; // Extract the airline name from the value
+
+            // Query to check if the airline already exists
+            const [existingAirline] = await sequelize.query(
+                `SELECT COUNT(*) AS count FROM Airline WHERE name = '${name}'`,
+                { type: sequelize.QueryTypes.SELECT }
+            );
+
+            if (existingAirline.count > 0) {
+                console.log(`Airline '${name}' already exists. Skipping insertion.`);
+            } else {
+                // Insert the airline if it doesn't exist
+                const query = `
+                    INSERT INTO Airline (name, rating, ratingCount)
+                    VALUES ${airlineValue}
+                `;
+                await sequelize.query(query, { type: sequelize.QueryTypes.INSERT });
+                console.log(`Inserted airline: ${name}`);
+            }
+        }
+
+        console.log('Airlines insertion completed!');
+    } catch (error) {
+        console.error('Error during airline insertion:', error);
+    }
+};
+
+// Insert Hotels
+const insertHotels = async () => {
+    try {
+        for (const city of cities) {
+            const usedHotelNames = new Set(); // Track unique names for this city during processing
+
+            for (let i = 0; i < 2; i++) {
+                let hotelBaseName, uniqueName;
+
+                // Ensure unique base name per city
+                do {
+                    hotelBaseName = hotels[random(0, hotels.length - 1)].replace(/'/g, "''");
+                } while (usedHotelNames.has(hotelBaseName.toLowerCase().trim()));
+                usedHotelNames.add(hotelBaseName.toLowerCase().trim());
+
+                // Generate a unique hotel name
+                let suffix = 0;
+                do {
+                    uniqueName = `${hotelBaseName} - ${city}${suffix > 0 ? ` - ${suffix}` : ''}`.replace(/'/g, "''");
+                    suffix++;
+
+                    // Check for duplicate entry in the database
+                    const [existingHotel] = await sequelize.query(
+                        `SELECT COUNT(*) AS count FROM Hotel WHERE name = '${uniqueName}'`,
+                        { type: sequelize.QueryTypes.SELECT }
+                    );
+
+                    if (existingHotel.count === 0) break; // Name is unique in the database
+                } while (true);
+
+                const location = city.replace(/'/g, "''");
+                const standardRooms = random(10, 50);
+                const deluxeRooms = random(5, 30);
+                const priceStandard = random(100, 300);
+                const priceDeluxe = random(200, 500);
+                const rating = (Math.random() * 4 + 1).toFixed(1);
+                const ratingCount = random(100, 1000);
+
+                const query = `
+                    INSERT INTO Hotel (name, standard, deluxe, location, pricePerNightStandard, pricePerNightDeluxe, rating, ratingCount)
+                    VALUES ('${uniqueName}', ${standardRooms}, ${deluxeRooms}, '${location}', ${priceStandard}, ${priceDeluxe}, ${rating}, ${ratingCount})
+                `;
+                try {
+                    await sequelize.query(query, { type: sequelize.QueryTypes.INSERT });
+                    console.log(`Inserted hotel: ${uniqueName}`);
+                } catch (error) {
+                    console.error(`Error inserting hotel '${uniqueName}':`, error);
+                }
+            }
+        }
+
+        console.log('Hotel insertion completed!');
+    } catch (error) {
+        console.error('Error during hotel insertion:', error);
+    }
+};
+
+// Insert Flights
+const insertFlights = async () => {
+    try {
+        const totalFlights = 10000; // Target total number of flights
+        const startDate = new Date('2024-12-01');
+        const endDate = new Date('2025-01-31');
+        let flightCount = 0;
+
+        const usedFlightIdentifiers = new Set(); // Track all unique flight identifiers
+
+        while (flightCount < totalFlights) {
+            const origin = cities[random(0, cities.length - 1)];
+            const destination = cities[random(0, cities.length - 1)];
+
+            if (origin === destination) continue; // Skip same-city flights
+
+            let airline, departureDate, flightIdentifier;
+
+            // Ensure unique flight identifier for this route
+            do {
+                airline = random(0, airlines.length - 1);
+                departureDate = new Date(startDate.getTime() + random(0, endDate - startDate));
+                flightIdentifier = `${airline}-${origin}-${destination}-${departureDate.toISOString()}`.toLowerCase().trim();
+            } while (usedFlightIdentifiers.has(flightIdentifier));
+
+            usedFlightIdentifiers.add(flightIdentifier);
+
+            const price = random(100, 500);
+            const numSeats = random(50, 300);
+            const status = 'Scheduled';
+
+            const query = `
+                INSERT INTO Flight (airlineId, origin, destination, departure, price, status, numSeats)
+                VALUES ('${airline}', '${origin}', '${destination}', '${departureDate.toISOString().slice(0, 19).replace('T', ' ')}', ${price}, '${status}', ${numSeats})
+            `;
+
+            try {
+                // Check for duplicate entry in the database
+                const [existingFlight] = await sequelize.query(
+                    `SELECT COUNT(*) AS count FROM Flight WHERE airlineId = '${airline}' AND origin = '${origin}' AND destination = '${destination}' AND departure = '${departureDate.toISOString().slice(0, 19).replace('T', ' ')}'`,
+                    { type: sequelize.QueryTypes.SELECT }
+                );
+
+                if (existingFlight.count === 0) {
+                    await sequelize.query(query, { type: sequelize.QueryTypes.INSERT });
+                    console.log(`Inserted flight: ${airline}, ${origin} -> ${destination}, ${departureDate}`);
+                    flightCount++;
+                } else {
+                    console.log(`Duplicate flight detected. Skipping: ${airline}, ${origin} -> ${destination}, ${departureDate}`);
+                }
+            } catch (error) {
+                console.error(`Error inserting flight '${airline}, ${origin} -> ${destination}, ${departureDate}':`, error);
+            }
+        }
+
+        console.log(`Flight insertion completed! Total flights inserted: ${flightCount}`);
+    } catch (error) {
+        console.error('Error during flight insertion:', error);
+    }
+};
+
+// Insert Bundles
+const insertBundles = async () => {
+    try {
+        const bundleValues = [];
+        const bundleCount = 1000; // Number of bundles to generate
+
+        for (let i = 0; i < bundleCount; i++) {
+            const hotelId = random(1, 2000); // Assuming hotel IDs are from 1 to 2000
+            let flightId, flightIdRet;
+
+            // Ensure return flight's date is after the departure flight's date
+            do {
+                flightId = random(1, 10000); // Assuming flight IDs are from 1 to 10000
+                flightIdRet = random(1, 10000);
+
+                const [goingFlight] = await sequelize.query(
+                    `SELECT departure FROM Flight WHERE id = ${flightId}`,
+                    { type: sequelize.QueryTypes.SELECT }
+                );
+
+                const [returnFlight] = await sequelize.query(
+                    `SELECT departure FROM Flight WHERE id = ${flightIdRet}`,
+                    { type: sequelize.QueryTypes.SELECT }
+                );
+
+                if (!goingFlight || !returnFlight) continue; // Skip if flight IDs don't exist
+
+                const goingDate = new Date(goingFlight.departure);
+                const returnDate = new Date(returnFlight.departure);
+
+                if (returnDate > goingDate) break; // Valid return date found
+            } while (true);
+
+            const discount = random(5, 50); // Discount percentage (5% to 50%)
+            bundleValues.push(`(${flightId}, ${flightIdRet}, ${hotelId}, ${discount})`);
+        }
+
+        if (bundleValues.length === 0) {
+            console.error('No bundle data to insert. Skipping insertion.');
+            return;
+        }
+
+        const batchSize = 100; // Process in batches to avoid memory issues
+        for (let i = 0; i < bundleValues.length; i += batchSize) {
+            const batch = bundleValues.slice(i, i + batchSize);
+            const query = `
+                INSERT INTO Bundle (flightId, flightIdRet, hotelId, discount)
+                VALUES ${batch.join(', ')}
+            `;
+            await sequelize.query(query, { type: sequelize.QueryTypes.INSERT });
+            console.log(`Inserted batch ${i / batchSize + 1} of bundles.`);
+        }
+
+        console.log('Bundle insertion completed!');
+    } catch (error) {
+        console.error('Error during bundle insertion:', error);
+    }
+};
+
 
 const insertAdmins = async () => {
     try {
@@ -34,225 +260,19 @@ const insertAdmins = async () => {
     }
 };
 
-
-
-
-
-
-
-
-
-const insertAirlines = async () => {
+// Run Insertions
+const runInserts = async () => {
     try {
-        const query = `
-        INSERT INTO Airline (name, rating, ratingCount)
-        VALUES ${Array.from({ length: 5 }, (_, i) =>
-            `('Airline${i + 1}', ${Math.floor(Math.random() * 5) + 1}, ${Math.floor(Math.random() * 500) + 1})`
-        ).join(', ')}
-    `;
-
-        await sequelize.query(query, { type: sequelize.QueryTypes.INSERT });
-    } catch (error) {
-        console.error('Error inserting users:', error);
-    }
-};
-
-
-
-
-
-
-
-
-
-
-const insertHotels = async () => {
-    try {
-        const cities = Array.from({ length: 10 }, (_, i) => `City${i + 1}`);
-
-        const query = `
-        INSERT INTO Hotel (name, standard, deluxe, location, pricePerNightStandard, pricePerNightDeluxe, rating, ratingCount)
-        VALUES ${cities.flatMap(city =>
-            Array.from({ length: 10 }, (_, i) =>
-                `('Hotel${city}_${i + 1}', ${Math.floor(Math.random() * 20) + 1}, ${Math.floor(Math.random() * 10) + 1}, '${city}', ${100 + i * 10}, ${150 + i * 15}, ${Math.floor(Math.random() * 5) + 1}, ${Math.floor(Math.random() * 300) + 1})`)
-        ).join(', ')}
-    `;
-
-        await sequelize.query(query, { type: sequelize.QueryTypes.INSERT });
-    } catch (error) {
-        console.error('Error inserting users:', error);
-    }
-};
-
-
-
-
-
-
-
-
-
-
-const insertFlights = async () => {
-    try {
-        const cities = Array.from({ length: 10 }, (_, i) => `City${i + 1}`);
-        const airlines = Array.from({ length: 5 }, (_, i) => i + 1);
-
-        const query = `
-        INSERT INTO Flight (airlineId, departure, destination, origin, price, status, numSeats)
-        VALUES ${cities.flatMap(origin =>
-            cities.filter(destination => destination !== origin)
-                .flatMap(destination =>
-                    airlines.flatMap(airline =>
-                        Array.from({ length: 10 }, () =>
-                            `(${airline}, NOW(), '${destination}', '${origin}', ${Math.floor(Math.random() * 500) + 100}, 'Scheduled', ${Math.floor(Math.random() * 150) + 50})`)
-                    )
-                )
-        ).join(', ')}
-    `;
-
-        await sequelize.query(query, { type: sequelize.QueryTypes.INSERT });
-    } catch (error) {
-        console.error('Error inserting users:', error);
-    }
-};
-
-
-
-
-
-
-
-
-
-
-const insertFlightReservations = async () => {
-    try {
-        const query = `
-        INSERT INTO FlightReservation (flightId, userId, bookingDate, status, seats)
-        VALUES ${Array.from({ length: 500 }, (_, i) =>
-            `(${i + 1}, ${Math.floor(i / 5) + 1}, NOW(), 'Booked', ${Math.floor(Math.random() * 5) + 1})`
-        ).join(', ')}
-    `;
-
-        await sequelize.query(query, { type: sequelize.QueryTypes.INSERT });
-    } catch (error) {
-        console.error('Error inserting users:', error);
-    }
-};
-
-
-
-
-
-
-
-
-
-
-const insertHotelReservations = async () => {
-    try {
-        const query = `
-        INSERT INTO HotelReservation (hotelId, userId, bookingDate, reservationDate, endDate, status, noOfDays, noOfRooms, type)
-        VALUES ${Array.from({ length: 1000 }, (_, i) =>
-            `(${Math.floor(i / 10) + 1}, ${Math.floor(i / 10) + 1}, NOW(), NOW(), NOW(), 'Booked', ${Math.floor(Math.random() * 10) + 1}, ${Math.floor(Math.random() * 5) + 1}, '${i % 2 === 0 ? 'Standard' : 'Deluxe'}')`
-        ).join(', ')}
-    `;
-
-        await sequelize.query(query, { type: sequelize.QueryTypes.INSERT });
-    } catch (error) {
-        console.error('Error inserting users:', error);
-    }
-};
-
-
-
-
-
-
-
-
-
-
-
-const insertBundles = async () => {
-    try {
-        const totalFlights = 900;  // From insertFlights (10 cities * 9 destination cities * 10 flights each = 900 flights)
-        const totalHotels = 100;   // From insertHotels (10 cities * 10 hotels each = 100 hotels)
-
-        const query = `
-        INSERT INTO Bundle (flightId, flightIdRet, hotelId, discount)
-        VALUES ${Array.from({ length: 500 }, (_, i) => {
-            const flightId = (i % totalFlights) + 1;               // Flight ID (1 to 900)
-            const flightIdRet = ((i + 1) % totalFlights) + 1;       // Return Flight ID (next flight)
-            const hotelId = (Math.floor(i / 5) % totalHotels) + 1;  // Hotel ID (1 to 100)
-            const discount = Math.floor(Math.random() * 30) + 5;    // Random discount (5 to 35)
-
-            return `(${flightId}, ${flightIdRet}, ${hotelId}, ${discount})`;
-        }).join(', ')}
-        `;
-
-        await sequelize.query(query, { type: sequelize.QueryTypes.INSERT });
-        console.log('Bundles inserted successfully.');
-    } catch (error) {
-        console.error('Error inserting bundles:', error);
-    }
-};
-
-
-
-
-
-
-
-
-
-
-
-
-const insertUsers = async () => {
-    try {
-        // Hash the password for all users (same password for simplicity)
-        const hashedPassword = await bcrypt.hash('Samepass1', 10);
-
-        // Create the insert query with hashed passwords
-        const query = `
-            INSERT INTO User (userName, name, password, email, phone, bookings)
-            VALUES ${Array.from({ length: 100 }, (_, i) =>
-            `('user${i + 1}', 'User ${i + 1}', '${hashedPassword}', 'user${i + 1}@example.com', '1234567${i + 1}', 0)`
-        ).join(', ')}
-        `;
-
-        await sequelize.query(query, { type: sequelize.QueryTypes.INSERT });
-        console.log('Users inserted successfully');
-    } catch (error) {
-        console.error('Error inserting users:', error);
-    }
-};
-
-
-
-
-
-
-
-
-
-
-const insertAllData = async () => {
-    try {
-        await insertUsers();
-        await insertAdmins();
+        console.log('Starting data insertion...');
         await insertAirlines();
+        await insertAdmins();
         await insertHotels();
         await insertFlights();
-        await insertFlightReservations();
-        await insertHotelReservations();
         await insertBundles();
-        console.log('Data inserted successfully!');
+        console.log('Data insertion completed.');
     } catch (error) {
-        console.error('Error inserting data:', error);
+        console.error('Error during data insertion:', error);
     }
 };
 
-insertAllData();
+runInserts();
