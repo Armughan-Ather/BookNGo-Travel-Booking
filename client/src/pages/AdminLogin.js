@@ -33,7 +33,7 @@ export default function LoginPage() {
                 userName: loginData.userName,
                 password: loginData.password
             });
-            navigate('/admin/flights');
+            navigate('/admin/airlines');
 
             // const { token } = response.data.data; // Get token from response
             // if (token) {

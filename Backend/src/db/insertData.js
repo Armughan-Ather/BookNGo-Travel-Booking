@@ -109,7 +109,7 @@ const insertHotels = async () => {
 // Insert Flights
 const insertFlights = async () => {
     try {
-        const totalFlights = 10000; // Target total number of flights
+        const totalFlights = 5000; // Target total number of flights
         const startDate = new Date('2024-12-01');
         const endDate = new Date('2025-01-31');
         let flightCount = 0;

@@ -61,14 +61,15 @@ export default function Navbar() {
             {/* <a href="/" className="navbar-link">
               <FaHome /> &nbsp; Home
             </a> */}
-            <a href="/admin/flights" className="navbar-link">
-              <FaPlane /> &nbsp; Flights
+            <a href="/admin/airlines" className="navbar-link">
+              <FaPlane /> &nbsp; Airlines
             </a>
+            
             <a href="/admin/hotels" className="navbar-link">
               <FaBed /> &nbsp; Hotels
             </a>
-            <a href="/admin/airlines" className="navbar-link">
-              <FaPlane /> &nbsp; Airlines
+            <a href="/admin/flights" className="navbar-link">
+              <FaPlane /> &nbsp; Flights
             </a>
             {/* <a href="/packages" className="navbar-link">
               <FaSuitcase /> &nbsp; Packages

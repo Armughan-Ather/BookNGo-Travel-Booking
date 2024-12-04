@@ -88,7 +88,6 @@ export default function Navbar() {
                   ref={profileMenuRef} // Attach the ref to the dropdown menu
                 >
                   <a href="/profile">View Profile</a>
-                  <a href="/edit-user-profile">Edit Profile</a>
                   <a href="#" onClick={handleLogout}>Logout</a> {/* Trigger logout here */}
                 </div>
               </>

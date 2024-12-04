@@ -69,7 +69,8 @@ export default function AdminAirlines() {
             <tr key={airline.id}>
               <td>{airline.id}</td>
               <td>{airline.name}</td>
-              <td>{airline.rating.toFixed(1)}</td>
+              <td>{airline.rating}</td>
+              
               <td>{airline.ratingCount}</td>
             </tr>
           ))}
