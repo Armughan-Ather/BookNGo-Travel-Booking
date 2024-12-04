@@ -13,7 +13,8 @@ export default function SignupPage() {
     phone: "",
     userName: "",
     password: "",
-    confirmPassword: ""
+    confirmPassword: "",
+    cnicOrPassport:""
   });
 
   const [errorMessage, setErrorMessage] = useState("");
@@ -27,7 +28,8 @@ export default function SignupPage() {
     event.preventDefault();
     setErrorMessage(""); // Reset error message before each signup attempt
 
-    if (!signupData.name || !signupData.email || !signupData.phone || !signupData.userName || !signupData.password || !signupData.confirmPassword) {
+    if (!signupData.name || !signupData.email || !signupData.phone || !signupData.userName || !signupData.password 
+      || !signupData.confirmPassword || !signupData.cnicOrPassport) {
       setErrorMessage("Please fill all the fields.");
       return;
     }
@@ -122,6 +124,16 @@ export default function SignupPage() {
                 required
                 className="input-fields-form"
               />
+              <MDBInput
+                label="CNIC or Passport"
+                type="text"
+                name="cnicOrPassport"
+                value={signupData.cnicOrPassport}
+                onChange={handleChange}
+                required
+                className="input-fields-form"
+              />
+
               <div className="password-container">
                 <MDBInput
                   label="Password"
