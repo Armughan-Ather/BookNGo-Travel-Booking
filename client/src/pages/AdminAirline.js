@@ -18,6 +18,9 @@ export default function AdminAirlines() {
       console.error('Error fetching airlines:', error);
     }
   }
+  React.useEffect(() => {
+    window.scrollTo(0, 0); // Scroll to the top of the page
+  }, []);
 
   useEffect(() => {
     getAirlines();

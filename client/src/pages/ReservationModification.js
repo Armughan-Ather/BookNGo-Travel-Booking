@@ -19,6 +19,10 @@ export default function ReservationModificationsPage() {
     if(!isAuthenticated){
       navigate('/');
     }
+    React.useEffect(() => {
+      window.scrollTo(0, 0); // Scroll to the top of the page
+    }, []);
+
     const username = user?.username;
     const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");

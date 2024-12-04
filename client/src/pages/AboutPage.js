@@ -3,6 +3,10 @@ import { MDBContainer, MDBRow, MDBCol, MDBCard, MDBCardBody } from "mdb-react-ui
 import "../styles/aboutPage.css";
 
 const AboutPage = () => {
+  React.useEffect(() => {
+    window.scrollTo(0, 0); // Scroll to the top of the page
+  }, []);
+
   return (
     
     <MDBContainer fluid className="about-page-comp-wrapper">

@@ -7,6 +7,10 @@ import '../styles/packagesPage.css';
 export default function PackagesPage() {
   const [packages, setPackages] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
+  React.useEffect(() => {
+    window.scrollTo(0, 0); // Scroll to the top of the page
+  }, []);
+
 
   useEffect(() => {
     const fetchPackages = async () => {

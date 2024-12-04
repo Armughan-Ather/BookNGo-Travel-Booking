@@ -59,6 +59,10 @@ export default function HotelPage() {
         }
         indexedCities[firstLetter].push(city.name);
     });
+    React.useEffect(() => {
+        window.scrollTo(0, 0); // Scroll to the top of the page
+      }, []);
+
 
     useEffect(() => {
         async function fetchHotels() {

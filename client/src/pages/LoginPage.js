@@ -22,6 +22,10 @@ export default function LoginPage() {
     const hotelDetails = location.state?.hotelDetails || {};  // Get hotel details if passed
     const flightDetails = location.state?.flightDetails || {};  // Get flight details if passed
 
+    React.useEffect(() => {
+        window.scrollTo(0, 0); // Scroll to the top of the page
+      }, []);
+
     async function handleLogin(event) {
         event.preventDefault();
         try {

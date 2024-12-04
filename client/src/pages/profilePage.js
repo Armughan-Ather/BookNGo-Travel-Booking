@@ -14,6 +14,10 @@ export default function ProfilePage() {
   if(!isAuthenticated){
     navigate('/');
   }
+  React.useEffect(() => {
+    window.scrollTo(0, 0); // Scroll to the top of the page
+  }, []);
+
   const username = user?.username;
 
   const [hotelBookings, setHotelBookings] = useState([]);

@@ -16,6 +16,10 @@ export default function SignupPage() {
     confirmPassword: "",
     cnicOrPassport:""
   });
+  React.useEffect(() => {
+    window.scrollTo(0, 0); // Scroll to the top of the page
+  }, []);
+
 
   const [errorMessage, setErrorMessage] = useState("");
   const [showPassword, setShowPassword] = useState(false);

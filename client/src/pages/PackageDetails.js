@@ -9,6 +9,10 @@ export default function PackageDetails() {
     const { user } = useContext(AuthContext);
 
     const { pkgData, inputData } = location.state;
+    React.useEffect(() => {
+        window.scrollTo(0, 0); // Scroll to the top of the page
+      }, []);
+
     const convertToLocalTime = (utcTime) => {
         const date = new Date(utcTime);
         return date.toLocaleString('default', {

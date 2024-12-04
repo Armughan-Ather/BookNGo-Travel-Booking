@@ -34,6 +34,10 @@ export default function PackageInputData() {
       navigate('/');
     }
   }, [pkgData, navigate]);
+  React.useEffect(() => {
+    window.scrollTo(0, 0); // Scroll to the top of the page
+  }, []);
+
 
   const handleGetPrice = async () => {
     if (!seats || !rooms) {

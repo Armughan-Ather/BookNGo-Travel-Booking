@@ -28,6 +28,10 @@ export default function PaymentForm() {
   const [selectedCard, setSelectedCard] = useState('visa');
   const [newCard, setNewCard] = useState({ type: 'visa', number: '', expiryMM: '', expiryYYYY: '', cvv: '' });
   const navigate=useNavigate();
+  React.useEffect(() => {
+    window.scrollTo(0, 0); // Scroll to the top of the page
+  }, []);
+
  
 
   const handleCardSelection = (cardType) => {

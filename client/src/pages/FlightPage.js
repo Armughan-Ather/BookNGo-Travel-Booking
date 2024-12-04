@@ -63,6 +63,10 @@ export default function FlightPage() {
         }
         indexedCities[firstLetter].push(city.name);
     });
+    React.useEffect(() => {
+        window.scrollTo(0, 0); // Scroll to the top of the page
+      }, []);
+
 
     // Fetch airlines from backend when the page loads
     useEffect(() => {

@@ -9,6 +9,9 @@ export default function FlightReservationPage() {
     const flightDetails = location.state;
     const [travellers, setTravellers] = useState('');
     const [travellerDetails, setTravellerDetails] = useState([]);
+    React.useEffect(() => {
+        window.scrollTo(0, 0); // Scroll to the top of the page
+      }, []);
 
     function handleTravellersChange(e) {
         const value = e.target.value.replace(/\D/g, ''); // Ensures only numbers are input

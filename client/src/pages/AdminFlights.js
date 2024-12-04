@@ -18,6 +18,10 @@ export default function AdminFlights() {
     status: 'Scheduled',
     numSeats: '',
   });
+  React.useEffect(() => {
+    window.scrollTo(0, 0); // Scroll to the top of the page
+  }, []);
+
   const formatDate = (utcDate) => {
     if (!utcDate) return ''; // Handle empty or undefined date
     const date = new Date(utcDate);

@@ -6,7 +6,7 @@ import image2 from "../images/homeSliderImage4.jpg";
 import image3 from "../images/homeSliderImage.jpg";
 import image4 from "../images/homeSliderImage2.jpg";
 import image5 from "../images/homeSliderImage3.jpg";
-
+import { useNavigate } from "react-router-dom"
 const images = [
   { src: image3 },
   { src: image1 },
@@ -16,7 +16,11 @@ const images = [
 ];
 
 export default function HomePage() {
+  const navigate = useNavigate()
   const [currentIndex, setCurrentIndex] = useState(0);
+  React.useEffect(() => {
+    window.scrollTo(0, 0); // Scroll to the top of the page
+  }, []);
 
   React.useEffect(()=>{
     async function updateHotelReservationStatus(){
@@ -39,7 +43,9 @@ export default function HomePage() {
     updateFlightReservationStatus();
 
 },[])
-
+  function navigator(link){
+    navigate(link);
+  }
   useEffect(() => {
     const interval = setInterval(() => {
       handleNext();
@@ -91,21 +97,21 @@ export default function HomePage() {
             <p className="home-page-comp-service-description">
               Discover unbeatable prices on flights to destinations around the globe.
             </p>
-            <button className="home-page-comp-service-btn">Explore Flights</button>
+            <button className="home-page-comp-service-btn" onClick={()=> navigator('/flights')}>Explore Flights</button>
           </div>
           <div className="home-page-comp-service">
             <h3 className="home-page-comp-service-title">Luxury Hotels</h3>
             <p className="home-page-comp-service-description">
               Stay in luxury hotels with exclusive offers and packages.
             </p>
-            <button className="home-page-comp-service-btn">Explore Hotels</button>
+            <button className="home-page-comp-service-btn" onClick={()=> navigator('/hotels')}>Explore Hotels</button>
           </div>
           <div className="home-page-comp-service">
             <h3 className="home-page-comp-service-title">All-Inclusive Packages</h3>
             <p className="home-page-comp-service-description">
               Explore customized vacation packages tailored to your needs.
             </p>
-            <button className="home-page-comp-service-btn">Explore Packages</button>
+            <button className="home-page-comp-service-btn" onClick={()=> navigator('/packages')}>Explore Packages</button>
           </div>
         </div>
       </section>

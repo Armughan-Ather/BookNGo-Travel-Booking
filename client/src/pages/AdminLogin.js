@@ -16,6 +16,9 @@ export default function LoginPage() {
     const navigate = useNavigate();
     const location = useLocation();
     const { login } = useContext(AuthContext); // Get login function from context
+    React.useEffect(() => {
+        window.scrollTo(0, 0); // Scroll to the top of the page
+      }, []);
 
    
     async function handleLogin(event) {
