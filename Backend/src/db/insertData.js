@@ -168,40 +168,78 @@ const insertFlights = async () => {
 };
 
 // Insert Bundles
+
 const insertBundles = async () => {
     try {
         const bundleValues = [];
-        const bundleCount = 1000; // Number of bundles to generate
+        const bundleCount = 100; // Number of bundles to generate
+        const maxRetries = 50; // Maximum retries for finding valid bundles
 
         for (let i = 0; i < bundleCount; i++) {
-            const hotelId = random(1, 2000); // Assuming hotel IDs are from 1 to 2000
-            let flightId, flightIdRet;
+            let retries = 0;
+            let validBundleFound = false;
 
-            // Ensure return flight's date is after the departure flight's date
-            do {
-                flightId = random(1, 10000); // Assuming flight IDs are from 1 to 10000
-                flightIdRet = random(1, 10000);
+            while (!validBundleFound && retries < maxRetries) {
+                retries++;
 
+                // Step 1: Select a random going flight
                 const [goingFlight] = await sequelize.query(
-                    `SELECT departure FROM Flight WHERE id = ${flightId}`,
+                    `SELECT id, origin, destination, departure 
+                     FROM Flight 
+                     ORDER BY RAND() 
+                     LIMIT 1`,
                     { type: sequelize.QueryTypes.SELECT }
                 );
 
-                const [returnFlight] = await sequelize.query(
-                    `SELECT departure FROM Flight WHERE id = ${flightIdRet}`,
-                    { type: sequelize.QueryTypes.SELECT }
-                );
-
-                if (!goingFlight || !returnFlight) continue; // Skip if flight IDs don't exist
+                if (!goingFlight) continue; // Skip if no going flight is found
 
                 const goingDate = new Date(goingFlight.departure);
-                const returnDate = new Date(returnFlight.departure);
 
-                if (returnDate > goingDate) break; // Valid return date found
-            } while (true);
+                // Step 2: Find return flights
+                const returnFlights = await sequelize.query(
+                    `SELECT id, origin, destination, departure 
+                     FROM Flight 
+                     WHERE origin = :destination 
+                       AND destination = :origin 
+                       AND departure > :goingDate`,
+                    {
+                        type: sequelize.QueryTypes.SELECT,
+                        replacements: {
+                            destination: goingFlight.destination,
+                            origin: goingFlight.origin,
+                            goingDate: goingDate.toISOString(),
+                        },
+                    }
+                );
 
-            const discount = random(5, 50); // Discount percentage (5% to 50%)
-            bundleValues.push(`(${flightId}, ${flightIdRet}, ${hotelId}, ${discount})`);
+                if (returnFlights.length === 0) continue; // Skip if no return flights are found
+
+                // Randomly select one return flight
+                const returnFlight = returnFlights[Math.floor(Math.random() * returnFlights.length)];
+
+                // Step 3: Find hotels at the destination of the going flight
+                const hotels = await sequelize.query(
+                    `SELECT id FROM Hotel WHERE location = :destination`,
+                    {
+                        type: sequelize.QueryTypes.SELECT,
+                        replacements: { destination: goingFlight.destination },
+                    }
+                );
+
+                if (hotels.length === 0) continue; // Skip if no hotels are found
+
+                // Randomly select one hotel
+                const hotel = hotels[Math.floor(Math.random() * hotels.length)];
+
+                // Step 4: Add to bundle values
+                const discount = random(5, 50); // Discount percentage (5% to 50%)
+                bundleValues.push(`(${goingFlight.id}, ${returnFlight.id}, ${hotel.id}, ${discount})`);
+                validBundleFound = true;
+            }
+
+            if (!validBundleFound) {
+                console.warn(`Failed to generate a valid bundle after ${maxRetries} retries.`);
+            }
         }
 
         if (bundleValues.length === 0) {
@@ -209,7 +247,7 @@ const insertBundles = async () => {
             return;
         }
 
-        const batchSize = 100; // Process in batches to avoid memory issues
+        const batchSize = 100; // Process in batches
         for (let i = 0; i < bundleValues.length; i += batchSize) {
             const batch = bundleValues.slice(i, i + batchSize);
             const query = `
@@ -217,7 +255,7 @@ const insertBundles = async () => {
                 VALUES ${batch.join(', ')}
             `;
             await sequelize.query(query, { type: sequelize.QueryTypes.INSERT });
-            console.log(`Inserted batch ${i / batchSize + 1} of bundles.`);
+            console.log(`Inserted batch ${Math.ceil(i / batchSize) + 1} of bundles.`);
         }
 
         console.log('Bundle insertion completed!');
@@ -225,6 +263,139 @@ const insertBundles = async () => {
         console.error('Error during bundle insertion:', error);
     }
 };
+
+// const insertBundles = async () => {
+//     try {
+//         const bundleValues = [];
+//         const bundleCount = 100; // Number of bundles to generate
+
+//         for (let i = 0; i < bundleCount; i++) {
+//             const hotelId = random(1, 2000); // Assuming hotel IDs are from 1 to 2000
+//             let flightId, flightIdRet;
+
+//             // Ensure flights form a valid round trip and hotel is at the destination
+//             do {
+//                 flightId = random(1, 10000); // Assuming flight IDs are from 1 to 10000
+//                 flightIdRet = random(1, 10000);
+
+//                 // Fetch the going flight details
+//                 const [goingFlight] = await sequelize.query(
+//                     `SELECT id, origin, destination, departure 
+//                      FROM Flight WHERE id = ${flightId}`,
+//                     { type: sequelize.QueryTypes.SELECT }
+//                 );
+
+//                 // Fetch the return flight details
+//                 const [returnFlight] = await sequelize.query(
+//                     `SELECT id, origin, destination, departure 
+//                      FROM Flight WHERE id = ${flightIdRet}`,
+//                     { type: sequelize.QueryTypes.SELECT }
+//                 );
+
+//                 if (!goingFlight || !returnFlight) continue; // Skip if flight IDs don't exist
+
+//                 const goingDate = new Date(goingFlight.departure);
+//                 const returnDate = new Date(returnFlight.departure);
+
+//                 // Check flight validity: going flight destination == return flight origin, and vice versa
+//                 if (
+//                     goingFlight.destination === returnFlight.origin &&
+//                     goingFlight.origin === returnFlight.destination &&
+//                     returnDate > goingDate
+//                 ) {
+//                     // Fetch the hotel details to ensure it's at the destination of the first flight
+//                     const [hotel] = await sequelize.query(
+//                         `SELECT id FROM Hotel WHERE id = ${hotelId} AND location = '${goingFlight.destination}'`,
+//                         { type: sequelize.QueryTypes.SELECT }
+//                     );
+
+//                     if (hotel) break; // Valid bundle found
+//                 }
+//             } while (true);
+
+//             const discount = random(5, 50); // Discount percentage (5% to 50%)
+//             bundleValues.push(`(${flightId}, ${flightIdRet}, ${hotelId}, ${discount})`);
+//         }
+
+//         if (bundleValues.length === 0) {
+//             console.error('No bundle data to insert. Skipping insertion.');
+//             return;
+//         }
+
+//         const batchSize = 100; // Process in batches to avoid memory issues
+//         for (let i = 0; i < bundleValues.length; i += batchSize) {
+//             const batch = bundleValues.slice(i, i + batchSize);
+//             const query = `
+//                 INSERT INTO Bundle (flightId, flightIdRet, hotelId, discount)
+//                 VALUES ${batch.join(', ')}
+//             `;
+//             await sequelize.query(query, { type: sequelize.QueryTypes.INSERT });
+//             console.log(`Inserted batch ${i / batchSize + 1} of bundles.`);
+//         }
+
+//         console.log('Bundle insertion completed!');
+//     } catch (error) {
+//         console.error('Error during bundle insertion:', error);
+//     }
+// };
+
+// const insertBundles = async () => {
+//     try {
+//         const bundleValues = [];
+//         const bundleCount = 1000; // Number of bundles to generate
+
+//         for (let i = 0; i < bundleCount; i++) {
+//             const hotelId = random(1, 2000); // Assuming hotel IDs are from 1 to 2000
+//             let flightId, flightIdRet;
+
+//             // Ensure return flight's date is after the departure flight's date
+//             do {
+//                 flightId = random(1, 10000); // Assuming flight IDs are from 1 to 10000
+//                 flightIdRet = random(1, 10000);
+
+//                 const [goingFlight] = await sequelize.query(
+//                     `SELECT departure FROM Flight WHERE id = ${flightId}`,
+//                     { type: sequelize.QueryTypes.SELECT }
+//                 );
+
+//                 const [returnFlight] = await sequelize.query(
+//                     `SELECT departure FROM Flight WHERE id = ${flightIdRet}`,
+//                     { type: sequelize.QueryTypes.SELECT }
+//                 );
+
+//                 if (!goingFlight || !returnFlight) continue; // Skip if flight IDs don't exist
+
+//                 const goingDate = new Date(goingFlight.departure);
+//                 const returnDate = new Date(returnFlight.departure);
+
+//                 if (returnDate > goingDate) break; // Valid return date found
+//             } while (true);
+
+//             const discount = random(5, 50); // Discount percentage (5% to 50%)
+//             bundleValues.push(`(${flightId}, ${flightIdRet}, ${hotelId}, ${discount})`);
+//         }
+
+//         if (bundleValues.length === 0) {
+//             console.error('No bundle data to insert. Skipping insertion.');
+//             return;
+//         }
+
+//         const batchSize = 100; // Process in batches to avoid memory issues
+//         for (let i = 0; i < bundleValues.length; i += batchSize) {
+//             const batch = bundleValues.slice(i, i + batchSize);
+//             const query = `
+//                 INSERT INTO Bundle (flightId, flightIdRet, hotelId, discount)
+//                 VALUES ${batch.join(', ')}
+//             `;
+//             await sequelize.query(query, { type: sequelize.QueryTypes.INSERT });
+//             console.log(`Inserted batch ${i / batchSize + 1} of bundles.`);
+//         }
+
+//         console.log('Bundle insertion completed!');
+//     } catch (error) {
+//         console.error('Error during bundle insertion:', error);
+//     }
+// };
 
 
 const insertAdmins = async () => {
@@ -264,10 +435,10 @@ const insertAdmins = async () => {
 const runInserts = async () => {
     try {
         console.log('Starting data insertion...');
-        await insertAirlines();
-        await insertAdmins();
-        await insertHotels();
-        await insertFlights();
+        // await insertAirlines();
+        // await insertAdmins();
+        // await insertHotels();
+        // await insertFlights();
         await insertBundles();
         console.log('Data insertion completed.');
     } catch (error) {
