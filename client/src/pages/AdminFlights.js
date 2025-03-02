@@ -57,6 +57,14 @@ export default function AdminFlights() {
   };
 
   const handleAddFlight = async () => {
+    if (formData.numSeats<=0) {
+      alert('Number of seats should be greater than 0')
+      return
+    }
+    if(formData.price<=0){
+      alert('Price should be greater than 0')
+      return
+    }
     try {
         console.log({airlineName: formData.airlineName,
             departure: formData.departure,
