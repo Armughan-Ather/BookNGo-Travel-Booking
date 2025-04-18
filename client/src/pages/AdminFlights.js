@@ -118,6 +118,14 @@ export default function AdminFlights() {
 
   const handleUpdateFlight = async () => {
     try {
+      if (formData.numSeats<=0) {
+        alert('Number of seats should be greater than 0')
+        return
+      }
+      if(formData.price<=0){
+        alert('Price should be greater than 0')
+        return
+      }
       await axios.post('http://localhost:8000/api/v1/admins/updateFlight', {
         id: formData.id,
         departure: formData.departure,
