@@ -110,8 +110,8 @@ const insertHotels = async () => {
 const insertFlights = async () => {
     try {
         const totalFlights = 5000; // Target total number of flights
-        const startDate = new Date('2024-12-01');
-        const endDate = new Date('2025-01-31');
+        const startDate = new Date('2025-3-31');
+        const endDate = new Date('2025-12-31');
         let flightCount = 0;
 
         const usedFlightIdentifiers = new Set(); // Track all unique flight identifiers
