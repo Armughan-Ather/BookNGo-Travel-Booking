@@ -166,6 +166,76 @@ const insertFlights = async () => {
         console.error('Error during flight insertion:', error);
     }
 };
+const insertFlightsPak = async () => {
+    try {
+        const totalFlights = 300;
+        const startDate = new Date('2025-03-31');
+        const endDate = new Date('2025-12-31');
+        let flightCount = 0;
+        const cities = [
+            'Karachi',
+            'Lahore',
+            'Islamabad',
+            'Faisalabad',
+            'Multan',
+            'Peshawar',
+            'Quetta',
+            'Hyderabad',
+            'Skardu'
+        ];
+
+        const usedFlightIdentifiers = new Set();
+
+        while (flightCount < totalFlights) {
+            const origin = cities[random(0, cities.length - 1)];
+            const destination = cities[random(0, cities.length - 1)];
+
+            if (origin === destination) continue;
+
+            let airline, departureDate, flightIdentifier;
+
+            do {
+                airline = random(0, airlines.length - 1);
+                departureDate = new Date(startDate.getTime() + random(0, endDate - startDate));
+                flightIdentifier = `${airline}-${origin}-${destination}-${departureDate.toISOString()}`.toLowerCase().trim();
+            } while (usedFlightIdentifiers.has(flightIdentifier));
+
+            usedFlightIdentifiers.add(flightIdentifier);
+
+            const price = random(100, 500);
+            const numSeats = random(50, 300);
+            const status = 'Scheduled';
+
+            const formattedDate = departureDate.toISOString().slice(0, 19).replace('T', ' ');
+
+            const query = `
+                INSERT INTO Flight (airlineId, origin, destination, departure, price, status, numSeats)
+                VALUES ('${airline}', '${origin}', '${destination}', '${formattedDate}', ${price}, '${status}', ${numSeats})
+            `;
+
+            try {
+                const [existingFlight] = await sequelize.query(
+                    `SELECT COUNT(*) AS count FROM Flight WHERE airlineId = '${airline}' AND origin = '${origin}' AND destination = '${destination}' AND departure = '${formattedDate}'`,
+                    { type: sequelize.QueryTypes.SELECT }
+                );
+
+                if (existingFlight.count === 0) {
+                    await sequelize.query(query, { type: sequelize.QueryTypes.INSERT });
+                    console.log(`Inserted flight: ${airline}, ${origin} -> ${destination}, ${departureDate}`);
+                    flightCount++;
+                } else {
+                    console.log(`Duplicate flight detected. Skipping: ${airline}, ${origin} -> ${destination}, ${departureDate}`);
+                }
+            } catch (error) {
+                console.error(`Error inserting flight '${airline}, ${origin} -> ${destination}, ${departureDate}':`, error);
+            }
+        }
+
+        console.log(`Flight insertion completed! Total flights inserted: ${flightCount}`);
+    } catch (error) {
+        console.error('Error during flight insertion:', error);
+    }
+};
 
 // Insert Bundles
 
@@ -438,8 +508,9 @@ const runInserts = async () => {
         // await insertAirlines();
         // await insertAdmins();
         // await insertHotels();
-        // await insertFlights();
-        await insertBundles();
+        //await insertFlights();
+        //await insertBundles();
+        await insertFlightsPak();
         console.log('Data insertion completed.');
     } catch (error) {
         console.error('Error during data insertion:', error);
