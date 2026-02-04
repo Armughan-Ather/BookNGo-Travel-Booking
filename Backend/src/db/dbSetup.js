@@ -1,4 +1,4 @@
-import mysql from 'mysql';
+import mysql from 'mysql2/promise';
 import { createTableAdmin } from "../models/admin.model.js";
 import { createTableAirline } from "../models/airline.model.js";
 import { createTableFlight } from "../models/flight.model.js";
@@ -14,20 +14,26 @@ import { createTableUser } from "../models/user.model.js";
 
 export const setupDatabase = async () => {
     try {
+        // First connect without specifying database to create it
         const connection = await mysql.createConnection({
-            host: 'localhost',
-            user: 'root',
-            password: ''
+            host: process.env.MYSQL_HOST || 'localhost',
+            port: process.env.MYSQL_PORT || 3306,
+            user: process.env.MYSQL_USER || 'root',
+            password: process.env.MYSQL_PASSWORD || '',
+            ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
         });
         console.log('Connected to MySQL');
 
-        // Create database if it doesn't exist
-        await connection.query('CREATE DATABASE IF NOT EXISTS BookNGo');
-        console.log('Database created or already exists');
-
-        // Use the database
-        await connection.query('USE BookNGo');
-        console.log('Using BookNGo database');
+        // Create database if it doesn't exist (for Aiven, use the provided database)
+        if (process.env.NODE_ENV !== 'production') {
+            await connection.query('CREATE DATABASE IF NOT EXISTS BookNGo');
+            console.log('Database created or already exists');
+            await connection.query('USE BookNGo');
+        } else {
+            // For production (Aiven), use the provided database
+            await connection.query(`USE ${process.env.MYSQL_DATABASE || 'defaultdb'}`);
+        }
+        console.log('Using database');
 
         // Queries to create tables
         const tableQueries = [
