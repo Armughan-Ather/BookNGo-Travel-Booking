@@ -16,7 +16,7 @@ export const searchFlights = async (req, res) => {
 
         // 3. Build the base query for flights
         let query = `
-            SELECT flight.id, airlineId, Airline.name, departure, destination, origin, price, status, numSeats, rating, ratingCount
+            SELECT Flight.id, airlineId, Airline.name, departure, destination, origin, price, status, numSeats, rating, ratingCount
             FROM Flight, Airline
             WHERE 
                 Airline.id = Flight.airlineId

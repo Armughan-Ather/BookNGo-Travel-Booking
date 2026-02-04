@@ -226,7 +226,8 @@ export const updateFlight = async (req, res) => {
 
 export const updateFlightReservationStatuses = async (req, res) => {
     try {
-        const currentDateTime = new Date().toISOString(); // Get the current date and time in 'yyyy-mm-ddTHH:MM:SS' format
+        // Get current date in MySQL format (YYYY-MM-DD HH:MM:SS)
+        const currentDateTime = new Date().toISOString().slice(0, 19).replace('T', ' ');
 
         // Step 1: Update "Booked" to "Availed" in FlightReservation where the flight's departure is past the current date and time
         const updateToAvailedReservationQuery = `

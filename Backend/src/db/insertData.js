@@ -541,8 +541,19 @@ const runInserts = async () => {
 // Limited Airlines insertion (first N airlines only)
 const insertAirlinesLimited = async (limit = 20) => {
     try {
-        const limitedAirlines = airlines.slice(0, limit);
-        const airlineValues = limitedAirlines.map(name => {
+        // Add Pakistani airlines first for better testing
+        const pakistaniAirlines = [
+            'Pakistan International Airlines',
+            'Airblue',
+            'SereneAir',
+            'Shaheen Air',
+            'Air Sial'
+        ];
+        
+        const internationalAirlines = airlines.slice(0, limit - pakistaniAirlines.length);
+        const allAirlines = [...pakistaniAirlines, ...internationalAirlines];
+        
+        const airlineValues = allAirlines.map(name => {
             const escapedName = name.replace(/'/g, "''");
             const rating = (Math.random() * 4 + 1).toFixed(1);
             const ratingCount = random(100, 1000);
@@ -562,7 +573,7 @@ const insertAirlinesLimited = async (limit = 20) => {
                 console.log(`Inserted airline: ${name}`);
             }
         }
-        console.log(`Airlines insertion completed! Inserted ${limitedAirlines.length} airlines.`);
+        console.log(`Airlines insertion completed! Inserted ${allAirlines.length} airlines.`);
     } catch (error) {
         console.error('Error during airline insertion:', error);
     }
@@ -571,9 +582,15 @@ const insertAirlinesLimited = async (limit = 20) => {
 // Limited Hotels insertion (first N cities only)
 const insertHotelsLimited = async (cityLimit = 10) => {
     try {
+        // Pakistani cities for better testing
+        const pakistaniCities = ['Karachi', 'Lahore', 'Islamabad', 'Faisalabad', 'Multan', 'Peshawar', 'Quetta', 'Hyderabad', 'Rawalpindi', 'Gujranwala'];
         const limitedCities = cities.slice(0, cityLimit);
         
-        for (const city of limitedCities) {
+        // Combine Pakistani cities with other cities
+        const allCities = [...pakistaniCities, ...limitedCities.filter(city => !pakistaniCities.includes(city))];
+        const citiesToUse = allCities.slice(0, cityLimit + pakistaniCities.length);
+        
+        for (const city of citiesToUse) {
             const usedHotelNames = new Set();
 
             for (let i = 0; i < 2; i++) {
@@ -614,7 +631,7 @@ const insertHotelsLimited = async (cityLimit = 10) => {
                 console.log(`Inserted hotel: ${uniqueName}`);
             }
         }
-        console.log(`Hotel insertion completed! Inserted hotels for ${limitedCities.length} cities.`);
+        console.log(`Hotel insertion completed! Inserted hotels for ${citiesToUse.length} cities.`);
     } catch (error) {
         console.error('Error during hotel insertion:', error);
     }
@@ -623,14 +640,20 @@ const insertHotelsLimited = async (cityLimit = 10) => {
 // Limited Flights insertion
 const insertFlightsLimited = async (flightLimit = 100) => {
     try {
-        const limitedCities = cities.slice(0, 20); // Use first 20 cities for flights
+        // Pakistani cities for better testing
+        const pakistaniCities = ['Karachi', 'Lahore', 'Islamabad', 'Faisalabad', 'Multan', 'Peshawar', 'Quetta', 'Hyderabad', 'Rawalpindi', 'Gujranwala'];
+        const internationalCities = cities.slice(0, 10); // First 10 international cities
+        
+        // Combine for flight routes
+        const allCities = [...pakistaniCities, ...internationalCities];
+        
         const startDate = new Date('2025-3-31');
         const endDate = new Date('2025-12-31');
         let flightCount = 0;
 
         while (flightCount < flightLimit) {
-            const origin = limitedCities[random(0, limitedCities.length - 1)];
-            const destination = limitedCities[random(0, limitedCities.length - 1)];
+            const origin = allCities[random(0, allCities.length - 1)];
+            const destination = allCities[random(0, allCities.length - 1)];
 
             if (origin === destination) continue;
 
