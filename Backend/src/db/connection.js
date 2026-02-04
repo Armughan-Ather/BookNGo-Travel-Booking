@@ -1,4 +1,4 @@
-import mysql from 'mysql2/promise';
+import mysql from 'mysql2';
 import { DB_NAME } from '../constants.js';
 
 const connection = mysql.createConnection({
