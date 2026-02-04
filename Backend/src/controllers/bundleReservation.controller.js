@@ -1,6 +1,11 @@
 import sequelize from '../config/database.js'; // Sequelize instance
 import { ApiResponse } from '../utils/ApiResponse.js'; // Assuming you have this
 
+// Utility function to convert ISO date to MySQL DATE format
+const formatDateForMySQL = (isoDate) => {
+    return new Date(isoDate).toISOString().split('T')[0];
+};
+
 // export const reserveBundle = async (req, res) => {
 //     const { bundleId, userName, seats, reservationDate, endDate, noOfRooms, roomType } = req.body;
 //     const transaction = await sequelize.transaction();
@@ -189,8 +194,8 @@ export const reserveBundle = async (req, res) => {
         }
 
         // Calculate reservationDate and endDate
-        const reservationDate = onwardFlight.departure;
-        const endDate = returnFlight.departure;
+        const reservationDate = formatDateForMySQL(onwardFlight.departure);
+        const endDate = formatDateForMySQL(returnFlight.departure);
 
         // Reserve onward flight
         const onwardBill = ((onwardFlight.price * seats) / 100) * (100 - discount);

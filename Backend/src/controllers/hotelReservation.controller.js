@@ -93,6 +93,11 @@
 import sequelize from '../config/database.js';
 import { ApiResponse } from '../utils/ApiResponse.js';
 
+// Utility function to convert ISO date to MySQL DATE format
+const formatDateForMySQL = (isoDate) => {
+    return new Date(isoDate).toISOString().split('T')[0];
+};
+
 export const updateHotelReservation = async (req, res) => {
     const { reservationId, reservationStartDate, reservationEndDate, roomType, rooms } = req.body;
     const transaction = await sequelize.transaction();
@@ -101,6 +106,10 @@ export const updateHotelReservation = async (req, res) => {
         if (!reservationId || !reservationStartDate || !reservationEndDate || !roomType || rooms == null) {
             return res.status(400).json({ error: 'All reservation details are required.' });
         }
+
+        // Convert ISO dates to MySQL DATE format (YYYY-MM-DD)
+        const formattedStartDate = formatDateForMySQL(reservationStartDate);
+        const formattedEndDate = formatDateForMySQL(reservationEndDate);
 
         const roomTypeField = roomType === 'Standard' ? 'standard' : 'deluxe';
         const priceField = roomType === 'Standard' ? 'pricePerNightStandard' : 'pricePerNightDeluxe';
@@ -132,7 +141,7 @@ export const updateHotelReservation = async (req, res) => {
              WHERE hotelId = ? AND type = ? AND id != ? AND 
                    ((reservationDate BETWEEN ? AND ?) OR (endDate BETWEEN ? AND ?))`,
             {
-                replacements: [hotelId, roomType, reservationId, reservationStartDate, reservationEndDate, reservationStartDate, reservationEndDate],
+                replacements: [hotelId, roomType, reservationId, formattedStartDate, formattedEndDate, formattedStartDate, formattedEndDate],
                 type: sequelize.QueryTypes.SELECT,
                 transaction,
             }
@@ -149,7 +158,7 @@ export const updateHotelReservation = async (req, res) => {
         const [daysResult] = await sequelize.query(
             'SELECT DATEDIFF(?, ?) AS noOfDays',
             {
-                replacements: [reservationEndDate, reservationStartDate],
+                replacements: [formattedEndDate, formattedStartDate],
                 type: sequelize.QueryTypes.SELECT,
                 transaction,
             }
@@ -167,7 +176,7 @@ export const updateHotelReservation = async (req, res) => {
                  SET reservationDate = ?, endDate = ?, noOfRooms = ?, bill = ?, type = ?
                  WHERE id = ?`,
                 {
-                    replacements: [reservationStartDate, reservationEndDate, rooms, newBill, roomType, reservationId],
+                    replacements: [formattedStartDate, formattedEndDate, rooms, newBill, roomType, reservationId],
                     type: sequelize.QueryTypes.UPDATE,
                     transaction,
                 }
@@ -202,6 +211,10 @@ export const updateHotelReservation2 = async (req, res) => {
             return res.status(400).json({ error: 'All reservation details are required.' });
         }
 
+        // Convert ISO dates to MySQL DATE format (YYYY-MM-DD)
+        const formattedStartDate = formatDateForMySQL(reservationStartDate);
+        const formattedEndDate = formatDateForMySQL(reservationEndDate);
+
         const roomTypeField = roomType === 'Standard' ? 'standard' : 'deluxe';
         const priceField = roomType === 'Standard' ? 'pricePerNightStandard' : 'pricePerNightDeluxe';
 
@@ -232,7 +245,7 @@ export const updateHotelReservation2 = async (req, res) => {
              WHERE hotelId = ? AND type = ? AND id != ? AND 
                    ((reservationDate BETWEEN ? AND ?) OR (endDate BETWEEN ? AND ?))`,
             {
-                replacements: [hotelId, roomType, reservationId, reservationStartDate, reservationEndDate, reservationStartDate, reservationEndDate],
+                replacements: [hotelId, roomType, reservationId, formattedStartDate, formattedEndDate, formattedStartDate, formattedEndDate],
                 type: sequelize.QueryTypes.SELECT,
                 transaction,
             }
@@ -252,7 +265,7 @@ export const updateHotelReservation2 = async (req, res) => {
                  SET reservationDate = ?, endDate = ?, noOfRooms = ?, bill = ?, type = ?
                  WHERE id = ?`,
             {
-                replacements: [reservationStartDate, reservationEndDate, rooms, newBill, roomType, reservationId],
+                replacements: [formattedStartDate, formattedEndDate, rooms, newBill, roomType, reservationId],
                 type: sequelize.QueryTypes.UPDATE,
                 transaction,
             }
@@ -279,6 +292,10 @@ export const reserveHotelRoom = async (req, res) => {
         if (!hotelId || !userName || !reservationDate || !endDate || !noOfRooms || !type) {
             return res.status(400).json({ error: 'All reservation details are required.' });
         }
+
+        // Convert ISO dates to MySQL DATE format (YYYY-MM-DD)
+        const formattedReservationDate = formatDateForMySQL(reservationDate);
+        const formattedEndDate = formatDateForMySQL(endDate);
 
         const roomTypeField = type === 'Standard' ? 'standard' : 'deluxe';
         const priceField = type === 'Standard' ? 'pricePerNightStandard' : 'pricePerNightDeluxe';
@@ -319,7 +336,7 @@ export const reserveHotelRoom = async (req, res) => {
              WHERE hotelId = ? AND type = ? AND 
                    ((reservationDate BETWEEN ? AND ?) OR (endDate BETWEEN ? AND ?))`,
             {
-                replacements: [hotelId, type, reservationDate, endDate, reservationDate, endDate],
+                replacements: [hotelId, type, formattedReservationDate, formattedEndDate, formattedReservationDate, formattedEndDate],
                 type: sequelize.QueryTypes.SELECT,
                 transaction,
             }
@@ -335,7 +352,7 @@ export const reserveHotelRoom = async (req, res) => {
         const [daysResult] = await sequelize.query(
             'SELECT DATEDIFF(?, ?) AS noOfDays',
             {
-                replacements: [endDate, reservationDate],
+                replacements: [formattedEndDate, formattedReservationDate],
                 type: sequelize.QueryTypes.SELECT,
                 transaction,
             }
@@ -350,7 +367,7 @@ export const reserveHotelRoom = async (req, res) => {
             `INSERT INTO HotelReservation (hotelId, userId, reservationDate, endDate, noOfRooms, type, bill)
              VALUES (?, ?, ?, ?, ?, ?, ?)`,
             {
-                replacements: [hotelId, userId, reservationDate, endDate, noOfRooms, type, bill],
+                replacements: [hotelId, userId, formattedReservationDate, formattedEndDate, noOfRooms, type, bill],
                 type: sequelize.QueryTypes.INSERT,
                 transaction,
             }
