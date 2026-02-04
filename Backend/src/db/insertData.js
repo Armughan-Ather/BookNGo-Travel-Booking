@@ -1,11 +1,17 @@
 import sequelize from '../config/database.js'; // Sequelize instance
 import bcrypt from 'bcrypt';
 import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
-// Load datasets
-const cities = JSON.parse(fs.readFileSync('cities.json', 'utf-8')).map(c => c.name);
-const airlines = JSON.parse(fs.readFileSync('airlines.json', 'utf-8')).map(a => a.name);
-const hotels = JSON.parse(fs.readFileSync('hotels.json', 'utf-8')).map(h => h.hotel_name);
+// Get current directory for ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Load datasets with correct paths
+const cities = JSON.parse(fs.readFileSync(path.join(__dirname, 'cities.json'), 'utf-8')).map(c => c.name);
+const airlines = JSON.parse(fs.readFileSync(path.join(__dirname, 'airlines.json'), 'utf-8')).map(a => a.name);
+const hotels = JSON.parse(fs.readFileSync(path.join(__dirname, 'hotels.json'), 'utf-8')).map(h => h.hotel_name);
 
 // Utility to generate random numbers in a range
 const random = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
@@ -505,15 +511,210 @@ const insertAdmins = async () => {
 const runInserts = async () => {
     try {
         console.log('Starting data insertion...');
-        // await insertAirlines();
-        // await insertAdmins();
-        // await insertHotels();
-        //await insertFlights();
-        //await insertBundles();
-        await insertFlightsPak();
+        
+        // Insert only first 20 airlines for demo
+        console.log('Inserting airlines...');
+        await insertAirlinesLimited(20);
+        
+        // Insert admins
+        console.log('Inserting admins...');
+        await insertAdmins();
+        
+        // Insert hotels for only first 10 cities
+        console.log('Inserting hotels...');
+        await insertHotelsLimited(10);
+        
+        // Insert only 100 flights instead of 5000
+        console.log('Inserting flights...');
+        await insertFlightsLimited(100);
+        
+        // Insert 20 bundles instead of 100
+        console.log('Inserting bundles...');
+        await insertBundlesLimited(20);
+        
         console.log('Data insertion completed.');
     } catch (error) {
         console.error('Error during data insertion:', error);
+    }
+};
+
+// Limited Airlines insertion (first N airlines only)
+const insertAirlinesLimited = async (limit = 20) => {
+    try {
+        const limitedAirlines = airlines.slice(0, limit);
+        const airlineValues = limitedAirlines.map(name => {
+            const escapedName = name.replace(/'/g, "''");
+            const rating = (Math.random() * 4 + 1).toFixed(1);
+            const ratingCount = random(100, 1000);
+            return `('${escapedName}', ${rating}, ${ratingCount})`;
+        });
+
+        for (const airlineValue of airlineValues) {
+            const name = airlineValue.match(/\('([^']+)'/)[1];
+            const [existingAirline] = await sequelize.query(
+                `SELECT COUNT(*) AS count FROM Airline WHERE name = '${name}'`,
+                { type: sequelize.QueryTypes.SELECT }
+            );
+
+            if (existingAirline.count === 0) {
+                const query = `INSERT INTO Airline (name, rating, ratingCount) VALUES ${airlineValue}`;
+                await sequelize.query(query, { type: sequelize.QueryTypes.INSERT });
+                console.log(`Inserted airline: ${name}`);
+            }
+        }
+        console.log(`Airlines insertion completed! Inserted ${limitedAirlines.length} airlines.`);
+    } catch (error) {
+        console.error('Error during airline insertion:', error);
+    }
+};
+
+// Limited Hotels insertion (first N cities only)
+const insertHotelsLimited = async (cityLimit = 10) => {
+    try {
+        const limitedCities = cities.slice(0, cityLimit);
+        
+        for (const city of limitedCities) {
+            const usedHotelNames = new Set();
+
+            for (let i = 0; i < 2; i++) {
+                let hotelBaseName, uniqueName;
+
+                do {
+                    hotelBaseName = hotels[random(0, hotels.length - 1)].replace(/'/g, "''");
+                } while (usedHotelNames.has(hotelBaseName.toLowerCase().trim()));
+                usedHotelNames.add(hotelBaseName.toLowerCase().trim());
+
+                let suffix = 0;
+                do {
+                    uniqueName = `${hotelBaseName} - ${city}${suffix > 0 ? ` - ${suffix}` : ''}`.replace(/'/g, "''");
+                    suffix++;
+
+                    const [existingHotel] = await sequelize.query(
+                        `SELECT COUNT(*) AS count FROM Hotel WHERE name = '${uniqueName}'`,
+                        { type: sequelize.QueryTypes.SELECT }
+                    );
+
+                    if (existingHotel.count === 0) break;
+                } while (true);
+
+                const location = city.replace(/'/g, "''");
+                const standardRooms = random(10, 50);
+                const deluxeRooms = random(5, 30);
+                const priceStandard = random(100, 300);
+                const priceDeluxe = random(200, 500);
+                const rating = (Math.random() * 4 + 1).toFixed(1);
+                const ratingCount = random(100, 1000);
+
+                const query = `
+                    INSERT INTO Hotel (name, standard, deluxe, location, pricePerNightStandard, pricePerNightDeluxe, rating, ratingCount)
+                    VALUES ('${uniqueName}', ${standardRooms}, ${deluxeRooms}, '${location}', ${priceStandard}, ${priceDeluxe}, ${rating}, ${ratingCount})
+                `;
+                
+                await sequelize.query(query, { type: sequelize.QueryTypes.INSERT });
+                console.log(`Inserted hotel: ${uniqueName}`);
+            }
+        }
+        console.log(`Hotel insertion completed! Inserted hotels for ${limitedCities.length} cities.`);
+    } catch (error) {
+        console.error('Error during hotel insertion:', error);
+    }
+};
+
+// Limited Flights insertion
+const insertFlightsLimited = async (flightLimit = 100) => {
+    try {
+        const limitedCities = cities.slice(0, 20); // Use first 20 cities for flights
+        const startDate = new Date('2025-3-31');
+        const endDate = new Date('2025-12-31');
+        let flightCount = 0;
+
+        while (flightCount < flightLimit) {
+            const origin = limitedCities[random(0, limitedCities.length - 1)];
+            const destination = limitedCities[random(0, limitedCities.length - 1)];
+
+            if (origin === destination) continue;
+
+            const airline = random(1, 20); // Use first 20 airlines
+            const departureDate = new Date(startDate.getTime() + random(0, endDate - startDate));
+            const price = random(100, 500);
+            const numSeats = random(50, 300);
+            const status = 'Scheduled';
+
+            const query = `
+                INSERT INTO Flight (airlineId, origin, destination, departure, price, status, numSeats)
+                VALUES ('${airline}', '${origin}', '${destination}', '${departureDate.toISOString().slice(0, 19).replace('T', ' ')}', ${price}, '${status}', ${numSeats})
+            `;
+
+            try {
+                await sequelize.query(query, { type: sequelize.QueryTypes.INSERT });
+                console.log(`Inserted flight: ${airline}, ${origin} -> ${destination}`);
+                flightCount++;
+            } catch (error) {
+                console.error(`Error inserting flight: ${error.message}`);
+            }
+        }
+
+        console.log(`Flight insertion completed! Total flights inserted: ${flightCount}`);
+    } catch (error) {
+        console.error('Error during flight insertion:', error);
+    }
+};
+
+// Limited Bundles insertion
+const insertBundlesLimited = async (bundleLimit = 20) => {
+    try {
+        const bundleValues = [];
+        let bundleCount = 0;
+
+        while (bundleCount < bundleLimit) {
+            const [goingFlight] = await sequelize.query(
+                `SELECT id, origin, destination, departure FROM Flight ORDER BY RAND() LIMIT 1`,
+                { type: sequelize.QueryTypes.SELECT }
+            );
+
+            if (!goingFlight) break;
+
+            const goingDate = new Date(goingFlight.departure);
+            const returnFlights = await sequelize.query(
+                `SELECT id FROM Flight WHERE origin = :destination AND destination = :origin AND departure > :goingDate LIMIT 5`,
+                {
+                    type: sequelize.QueryTypes.SELECT,
+                    replacements: {
+                        destination: goingFlight.destination,
+                        origin: goingFlight.origin,
+                        goingDate: goingDate.toISOString(),
+                    },
+                }
+            );
+
+            if (returnFlights.length === 0) continue;
+
+            const hotels = await sequelize.query(
+                `SELECT id FROM Hotel WHERE location = :destination LIMIT 5`,
+                {
+                    type: sequelize.QueryTypes.SELECT,
+                    replacements: { destination: goingFlight.destination },
+                }
+            );
+
+            if (hotels.length === 0) continue;
+
+            const returnFlight = returnFlights[Math.floor(Math.random() * returnFlights.length)];
+            const hotel = hotels[Math.floor(Math.random() * hotels.length)];
+            const discount = random(5, 50);
+
+            bundleValues.push(`(${goingFlight.id}, ${returnFlight.id}, ${hotel.id}, ${discount})`);
+            bundleCount++;
+        }
+
+        if (bundleValues.length > 0) {
+            const query = `INSERT INTO Bundle (flightId, flightIdRet, hotelId, discount) VALUES ${bundleValues.join(', ')}`;
+            await sequelize.query(query, { type: sequelize.QueryTypes.INSERT });
+        }
+
+        console.log(`Bundle insertion completed! Inserted ${bundleValues.length} bundles.`);
+    } catch (error) {
+        console.error('Error during bundle insertion:', error);
     }
 };
 

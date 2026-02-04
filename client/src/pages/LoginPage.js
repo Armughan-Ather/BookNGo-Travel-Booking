@@ -4,6 +4,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { AuthContext } from "../Context/AuthContext";  // Import AuthContext
+import { API_ENDPOINTS } from "../config/api.js";
 import "../styles/LoginPage.css";
 
 export default function LoginPage() {
@@ -34,7 +35,7 @@ export default function LoginPage() {
                 return;
             }
 
-            const response = await axios.post("http://localhost:8000/api/v1/users/login", {
+            const response = await axios.post(API_ENDPOINTS.LOGIN, {
                 userNameOrEmail: loginData.userName,
                 password: loginData.password
             });

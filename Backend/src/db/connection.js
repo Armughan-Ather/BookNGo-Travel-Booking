@@ -1,12 +1,16 @@
-import mysql from 'mysql';
+import mysql from 'mysql2/promise';
 import { DB_NAME } from '../constants.js';
 
-const connection = await mysql.createConnection({
+const connection = mysql.createConnection({
     host: process.env.MYSQL_HOST || 'localhost',
+    port: process.env.MYSQL_PORT || 3306,
     user: process.env.MYSQL_USER || 'root',
     password: process.env.MYSQL_PASSWORD || '',
-    database: DB_NAME
+    database: process.env.MYSQL_DATABASE || DB_NAME,
+    ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
+    connectTimeout: 60000
 });
+
 export default connection;
 
 

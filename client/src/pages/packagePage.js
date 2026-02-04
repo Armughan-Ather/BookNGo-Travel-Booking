@@ -2,6 +2,7 @@ import React, { useEffect, useState, useMemo } from 'react';
 import axios from 'axios';
 import PackageCardComponent from '../components/PackageCardComponent';
 import { MDBInput } from 'mdb-react-ui-kit';
+import { API_ENDPOINTS } from "../config/api.js";
 import '../styles/packagesPage.css';
 
 export default function PackagesPage() {
@@ -15,7 +16,7 @@ export default function PackagesPage() {
   useEffect(() => {
     const fetchPackages = async () => {
       try {
-        const response = await axios.get('http://localhost:8000/api/v1/bundle/searchValidBundles');
+        const response = await axios.get(API_ENDPOINTS.SEARCH_PACKAGES);
         setPackages(response.data.data);
       } catch (error) {
         console.error('Error fetching packages:', error);

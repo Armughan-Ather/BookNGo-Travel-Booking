@@ -8,7 +8,8 @@ import axios from 'axios';
 import cities from 'cities.json'; 
 import FlightSearchResultCard from '../components/flightSearchResultsCard.js';
 import { format } from 'date-fns';
-import { toZonedTime } from 'date-fns-tz';  
+import { toZonedTime } from 'date-fns-tz';
+import { API_ENDPOINTS } from "../config/api.js";  
 
 // Custom Date Picker Input
 const CustomInput = React.forwardRef(({ onClick, value, onClear, placeholder }, ref) => (
@@ -72,7 +73,7 @@ export default function FlightPage() {
     useEffect(() => {
         async function fetchAirlines() {
             try {
-                const response = await axios.get('http://localhost:8000/api/v1/airlines/allAirlines');
+                const response = await axios.get(API_ENDPOINTS.ALL_AIRLINES);
                 const airlineNames = response.data.data.map(airline => airline.name);
                 setAirlineSearch(airlineNames);
             } catch (error) {
@@ -195,7 +196,7 @@ export default function FlightPage() {
                 return;
             }
 
-            const response = await axios.post('http://localhost:8000/api/v1/flights/searchFlights', {
+            const response = await axios.post(API_ENDPOINTS.SEARCH_FLIGHTS, {
                 origin: searchData.origin,
                 destination: searchData.destination,
                 numberOfSeats: searchData.travelers,

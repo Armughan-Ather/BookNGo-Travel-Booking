@@ -3,6 +3,7 @@ import { MDBContainer, MDBRow, MDBCol, MDBInput, MDBBtn, MDBTypography } from "m
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { API_ENDPOINTS } from "../config/api.js";
 import "../styles/SignUpPage.css";
 import { useAuth } from "../Context/AuthContext";
 
@@ -46,7 +47,7 @@ export default function SignupPage() {
     setLoading(true); // Set loading state to true
 
     try {
-      const response = await axios.post("http://localhost:8000/api/v1/users/register", signupData);
+      const response = await axios.post(API_ENDPOINTS.REGISTER, signupData);
       console.log('Response:', response);
 
       if (response.data.success) {

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { API_ENDPOINTS } from "../config/api.js";
 import '../styles/AdminFlights.css';
 
 export default function AdminFlights() {
@@ -40,7 +41,7 @@ export default function AdminFlights() {
   
   async function getFlights() {
     try {
-      const response = await axios.get('http://localhost:8000/api/v1/admins/getAllFlights');
+      const response = await axios.get(API_ENDPOINTS.GET_ALL_FLIGHTS);
       setFlights(response.data);
     } catch (error) {
       console.error('Error getting admin flights:', error);
@@ -90,7 +91,7 @@ export default function AdminFlights() {
         numSeats: formData.numSeats,
       });
   
-      await axios.post('http://localhost:8000/api/v1/admins/addFlight', {
+      await axios.post(API_ENDPOINTS.ADD_FLIGHT, {
         airlineName: formData.airlineName,
         departure: formData.departure,
         destination: formData.destination,
@@ -146,7 +147,7 @@ export default function AdminFlights() {
         alert('Price should be greater than 0')
         return
       }
-      await axios.post('http://localhost:8000/api/v1/admins/updateFlight', {
+      await axios.post(API_ENDPOINTS.UPDATE_FLIGHT, {
         id: formData.id,
         departure: formData.departure,
         numSeats: formData.numSeats,
