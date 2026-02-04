@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { API_ENDPOINTS } from "../config/api.js";
 import '../styles/AdminHotels.css';
 
 export default function AdminHotels() {
@@ -22,7 +23,7 @@ export default function AdminHotels() {
 
   async function getHotels() {
     try {
-      const response = await axios.get('http://localhost:8000/api/v1/admins/getAllHotels');
+      const response = await axios.get(API_ENDPOINTS.GET_ALL_HOTELS);
       setHotels(response.data);
     } catch (error) {
       console.log('Error getting hotels admin:', error);
@@ -54,7 +55,7 @@ export default function AdminHotels() {
 
     try {
 
-      const response = await axios.post('http://localhost:8000/api/v1/admins/addHotel', {
+      const response = await axios.post(API_ENDPOINTS.ADD_HOTEL, {
         name: formData.name,
         standard: formData.standard,
         deluxe: formData.deluxe,
@@ -108,7 +109,7 @@ export default function AdminHotels() {
         alert('No of rooms should be positive')
         return 
       }
-      const response = await axios.post('http://localhost:8000/api/v1/admins/updateHotel', {
+      const response = await axios.post(API_ENDPOINTS.UPDATE_HOTEL, {
         id: formData.id,
         standard: formData.standard,
         deluxe: formData.deluxe,

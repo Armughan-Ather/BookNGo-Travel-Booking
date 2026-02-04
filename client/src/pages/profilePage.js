@@ -6,6 +6,7 @@ import { RiStarSFill, RiStarHalfSFill, RiStarLine } from 'react-icons/ri';
 import '../styles/profilePage.css';
 import { AuthContext } from '../Context/AuthContext';
 import { useNavigate } from "react-router-dom";
+import { API_ENDPOINTS } from "../config/api.js";
 
 
 export default function ProfilePage() {
@@ -39,13 +40,13 @@ export default function ProfilePage() {
     const fetchBookingHistory = async () => {
       if (username) {
         try {
-          const hotelResponse = await axios.post('http://localhost:8000/api/v1/users/getUserHotelReservationHistory', { username });
+          const hotelResponse = await axios.post(API_ENDPOINTS.USER_HOTEL_HISTORY, { username });
           setHotelBookings(hotelResponse.data.hotelReservations || []);
           
-          const flightResponse = await axios.post('http://localhost:8000/api/v1/users/getUserFlightReservationHistory', { username });
+          const flightResponse = await axios.post(API_ENDPOINTS.USER_FLIGHT_HISTORY, { username });
           setFlightBookings(flightResponse.data.flightReservations || []);
         
-          const packageResponse = await axios.post('http://localhost:8000/api/v1/users/getUserBundleReservationHistory',{username})
+          const packageResponse = await axios.post(API_ENDPOINTS.USER_BUNDLE_HISTORY,{username})
           setPackageBookings(packageResponse.data.bundleReservations || [])
         } catch (error) {
           console.error('Error fetching bookings:', error);
@@ -105,23 +106,23 @@ export default function ProfilePage() {
   };
   const handleStarClickPackage=async (rating,bookingId,departureAirlineId,departureFlightReservationId,hotelId,hotelReservationId,returnAirlineId,returnFlightReservationId)=>{
     try{
-      await axios.post('http://localhost:8000/api/v1/airlines/updateAirlineRating', {
+      await axios.post(API_ENDPOINTS.UPDATE_AIRLINE_RATING, {
         flightReservationId:departureFlightReservationId,
         airlineId: departureAirlineId,
         rating,
       });
 
-      await axios.post('http://localhost:8000/api/v1/airlines/updateAirlineRating', {
+      await axios.post(API_ENDPOINTS.UPDATE_AIRLINE_RATING, {
         flightReservationId:returnFlightReservationId,
         airlineId: returnAirlineId,
         rating,
       });
-      await axios.post('http://localhost:8000/api/v1/hotels/updateHotelRating', {
+      await axios.post(API_ENDPOINTS.UPDATE_HOTEL_RATING, {
         hotelReservationId:hotelReservationId,
           hotelId: hotelId,
           rating,
       });
-      await axios.post('http://localhost:8000/api/v1/bundle/updateBundleRating', {
+      await axios.post(API_ENDPOINTS.UPDATE_BUNDLE_RATING, {
         bundleReservationId:bookingId
       });
       setModalMessage('Ratings updated successfully. Thanks for your review.');
@@ -142,7 +143,7 @@ export default function ProfilePage() {
         setFlightUserRating(prev => ({ ...prev, [bookingId]: rating }));
 
         
-        await axios.post('http://localhost:8000/api/v1/airlines/updateAirlineRating', {
+        await axios.post(API_ENDPOINTS.UPDATE_AIRLINE_RATING, {
           flightReservationId:bookingId,
           airlineId: id,
           rating,
@@ -150,7 +151,7 @@ export default function ProfilePage() {
       } else if (type === 'hotel') {
         setHotelUserRating(prev => ({ ...prev, [bookingId]: rating }));
 
-        await axios.post('http://localhost:8000/api/v1/hotels/updateHotelRating', {
+        await axios.post(API_ENDPOINTS.UPDATE_HOTEL_RATING, {
           hotelReservationId:bookingId,
           hotelId: id,
           rating,
@@ -171,13 +172,13 @@ export default function ProfilePage() {
     try {
         let apiEndpoint;
         if(type==='flight'){
-          apiEndpoint='http://localhost:8000/api/v1/cancelledFlightReservation/cancelFlightReservation';
+          apiEndpoint=API_ENDPOINTS.CANCEL_FLIGHT_RESERVATION;
         }
         else if (type==='hotel'){
-          apiEndpoint='http://localhost:8000/api/v1/cancelledHotelReservation/cancelHotelReservation';
+          apiEndpoint=API_ENDPOINTS.CANCEL_HOTEL_RESERVATION;
         }
         else if(type==='package'){
-          apiEndpoint='http://localhost:8000/api/v1/cancelledBundleReservation/cancelBundleReservation'
+          apiEndpoint=API_ENDPOINTS.CANCEL_BUNDLE_RESERVATION
         }
         
       const response = await axios.post(apiEndpoint,

@@ -12,6 +12,7 @@ import "../styles/ReservationModification.css";
 import axios from 'axios';
 import { AuthContext } from '../Context/AuthContext';
 import { useNavigate } from "react-router-dom";
+import { API_ENDPOINTS } from "../config/api.js";
 
 export default function ReservationModificationsPage() {
     const { user,isAuthenticated } = useContext(AuthContext);
@@ -77,7 +78,7 @@ export default function ReservationModificationsPage() {
     
     if(type==='flight'){
         try{
-            const response=await axios.post('http://localhost:8000/api/v1/flightReservation/updateFlightReservation',{
+            const response=await axios.post(API_ENDPOINTS.UPDATE_FLIGHT_RESERVATION,{
                 seats:numSeats,
                 reservationId:bookingData.reservationId
             })
@@ -107,7 +108,7 @@ export default function ReservationModificationsPage() {
     }
     else if(type=='hotel'){
         try{
-            const response=await axios.post('http://localhost:8000/api/v1/hotelReservation/updateHotelReservation',{
+            const response=await axios.post(API_ENDPOINTS.UPDATE_HOTEL_RESERVATION,{
                 reservationId:bookingData.reservationId,
                 reservationStartDate:startDate,
                 reservationEndDate:endDate,

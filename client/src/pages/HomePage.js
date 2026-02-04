@@ -6,6 +6,7 @@ import image2 from "../images/homeSliderImage4.jpg";
 import image3 from "../images/homeSliderImage.jpg";
 import image4 from "../images/homeSliderImage2.jpg";
 import image5 from "../images/homeSliderImage3.jpg";
+import { API_ENDPOINTS } from "../config/api.js";
 import { useNavigate } from "react-router-dom"
 const images = [
   { src: image3 },
@@ -25,7 +26,7 @@ export default function HomePage() {
   React.useEffect(()=>{
     async function updateHotelReservationStatus(){
         try{
-            const response=await axios.get('http://localhost:8000/api/v1/admins/updateHotelReservationStatuses');
+            const response=await axios.get(API_ENDPOINTS.UPDATE_HOTEL_RESERVATION_STATUS);
             console.log(response.data.data)
         }catch(error){
             console.log(error?.response.data.error)
@@ -33,7 +34,7 @@ export default function HomePage() {
     }
     async function updateFlightReservationStatus(){
         try{
-            const response=await axios.get('http://localhost:8000/api/v1/admins/updateFlightReservationStatuses');
+            const response=await axios.get(API_ENDPOINTS.UPDATE_FLIGHT_RESERVATION_STATUS);
             console.log(response.data.data)
         }catch(error){
             console.log(error?.response.data.error)

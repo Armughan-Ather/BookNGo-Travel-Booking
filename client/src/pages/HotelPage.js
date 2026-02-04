@@ -9,6 +9,7 @@ import cities from 'cities.json';
 import axios from "axios";
 import HotelCard from '../components/hotelSearchResultsCard';
 import { addDays } from 'date-fns';
+import { API_ENDPOINTS } from "../config/api.js";
 
 const CustomInput = React.forwardRef(({ onClick, value, onClear, placeholder }, ref) => (
     <div className="input-container" ref={ref}>
@@ -67,7 +68,7 @@ export default function HotelPage() {
     useEffect(() => {
         async function fetchHotels() {
             try {
-                const response = await axios.get('http://localhost:8000/api/v1/hotels/allHotels');
+                const response = await axios.get(API_ENDPOINTS.ALL_HOTELS);
                 const hotelNames = response.data.data.map(hotel => hotel.name);
                 setHotels(hotelNames);
             } catch (error) {
@@ -161,7 +162,7 @@ export default function HotelPage() {
                 return;
             }
 
-            const response = await axios.post('http://localhost:8000/api/v1/hotels/searchAvailableHotels', {
+            const response = await axios.post(API_ENDPOINTS.SEARCH_HOTELS, {
                 hotelNameOrCity: searchData.HotelOrCity,
                 roomType: searchData.roomType,
                 numberOfRooms: searchData.rooms,

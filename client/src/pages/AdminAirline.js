@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { API_ENDPOINTS } from "../config/api.js";
 import '../styles/AdminAirlines.css';
 
 export default function AdminAirlines() {
@@ -12,7 +13,7 @@ export default function AdminAirlines() {
   // Fetch airlines from the backend
   async function getAirlines() {
     try {
-      const response = await axios.get('http://localhost:8000/api/v1/admins/getAllAirlines');
+      const response = await axios.get(API_ENDPOINTS.GET_ALL_AIRLINES);
       setAirlines(response.data);
     } catch (error) {
       console.error('Error fetching airlines:', error);
@@ -35,7 +36,7 @@ export default function AdminAirlines() {
   // Add new airline
   const handleAddAirline = async () => {
     try {
-      await axios.post('http://localhost:8000/api/v1/admins/addAirline', {
+      await axios.post(API_ENDPOINTS.ADD_AIRLINE, {
         name: formData.name,
       });
       setShowModal(false);

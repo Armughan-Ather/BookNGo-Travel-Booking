@@ -3,7 +3,8 @@ import { MDBContainer, MDBRow, MDBCol, MDBInput, MDBBtn, MDBTypography } from "m
 import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import { AuthContext } from "../Context/AuthContext";  // Import AuthContext
+import { AuthContext } from "../Context/AuthContext";
+import { API_ENDPOINTS } from "../config/api.js";  // Import AuthContext
 import "../styles/LoginPage.css";
 
 export default function LoginPage() {
@@ -29,7 +30,7 @@ export default function LoginPage() {
                 return;
             }
 
-            const response = await axios.post("http://localhost:8000/api/v1/admins/login", {
+            const response = await axios.post(API_ENDPOINTS.ADMIN_LOGIN, {
                 userName: loginData.userName,
                 password: loginData.password
             });

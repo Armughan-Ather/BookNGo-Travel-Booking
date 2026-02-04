@@ -11,6 +11,7 @@ import {
 import '../styles/packageInputData.css';
 import axios from 'axios';
 import { AuthContext } from '../Context/AuthContext';
+import { API_ENDPOINTS } from "../config/api.js";
 
 
 export default function PackageInputData() {
@@ -52,7 +53,7 @@ export default function PackageInputData() {
 
     setError('');
     try {
-      const response = await axios.post('http://localhost:8000/api/v1/bundle/getBundleCost', {
+      const response = await axios.post(API_ENDPOINTS.GET_BUNDLE_COST, {
         bundleId: pkgData.bundleId,
         seats,
         noOfRooms: rooms,

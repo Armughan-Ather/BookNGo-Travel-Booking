@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import axios from "axios"; // For making API calls
+import { API_ENDPOINTS } from "../config/api.js";
 
 export const AuthContext = createContext();
 
@@ -24,7 +25,7 @@ export const AuthProvider = ({ children }) => {
 
     try {
       const response = await axios.post(
-        "http://localhost:8000/api/v1/users/authenticate",
+        API_ENDPOINTS.AUTHENTICATE,
         { token: storedToken }
       );
       console.log("Auth context:", response?.data);
@@ -61,7 +62,7 @@ export const AuthProvider = ({ children }) => {
     // Send a POST request to authenticate the user with the token
     try {
       const response = await axios.post(
-        "http://localhost:8000/api/v1/users/authenticate",
+        API_ENDPOINTS.AUTHENTICATE,
         { token }
       );
       console.log("Auth context:", response.data);

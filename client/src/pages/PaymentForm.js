@@ -17,6 +17,7 @@ import '../styles/PaymentForm.css';
 import { useLocation } from 'react-router-dom';
 import axios from 'axios';
 import { useNavigate } from "react-router-dom";
+import { API_ENDPOINTS } from "../config/api.js";
 
 export default function PaymentForm() {
   const location = useLocation();
@@ -138,14 +139,14 @@ export default function PaymentForm() {
         noOfRooms: bookingDetails.numberOfRooms,
         type: bookingDetails.roomType,
       };
-      apiEndpoint = 'http://localhost:8000/api/v1/hotelReservation/reserveHotelRoom';
+      apiEndpoint = API_ENDPOINTS.RESERVE_HOTEL;
     } else if (bookingType === 'Flight') {
       reservationData = {
         flightId: bookingDetails.flightId,
         userName: userName,
         seats: bookingDetails.travellers,
       };
-      apiEndpoint = 'http://localhost:8000/api/v1/flightReservation/reserveFlight';
+      apiEndpoint = API_ENDPOINTS.RESERVE_FLIGHT;
     } else if (bookingType === 'Package') {
       reservationData = {
         bundleId: bookingDetails.bundleId,
@@ -155,10 +156,10 @@ export default function PaymentForm() {
         roomType: bookingDetails.roomType,
       };
       console.log('reservation Data : ',reservationData)
-      apiEndpoint = 'http://localhost:8000/api/v1/bundleReservation/reserveBundle';
+      apiEndpoint = API_ENDPOINTS.RESERVE_BUNDLE;
     }
     else if(bookingType==='Hotel Modification'){
-      apiEndpoint='http://localhost:8000/api/v1/hotelReservation/updateHotelReservation2';
+      apiEndpoint=API_ENDPOINTS.UPDATE_HOTEL_RESERVATION_2;
       reservationData={
         reservationId:bookingDetails.reservationId,
         rooms:bookingDetails.rooms,
@@ -170,7 +171,7 @@ export default function PaymentForm() {
 
     }
     else if(bookingType==='Flight Modification'){
-      apiEndpoint='http://localhost:8000/api/v1/flightReservation/updateFlightReservation2';
+      apiEndpoint=API_ENDPOINTS.UPDATE_FLIGHT_RESERVATION_2;
       reservationData={
         reservationId:bookingDetails.reservationId,
         seats:bookingDetails.seats,
