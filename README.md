@@ -14,12 +14,9 @@ BookNGo is a comprehensive travel booking platform that provides users with a se
 - [🏗️ System Architecture](#️-system-architecture)
 - [💻 Technology Stack](#-technology-stack)
 - [🚀 Quick Start](#-quick-start)
-- [📱 Mobile Responsiveness](#-mobile-responsiveness)
 - [🔧 API Documentation](#-api-documentation)
 - [👥 User Roles](#-user-roles)
-- [🎨 Screenshots](#-screenshots)
 - [🏢 Project Team](#-project-team)
-- [📄 Documentation](#-documentation)
 - [🤝 Contributing](#-contributing)
 - [📞 Support](#-support)
 
@@ -257,19 +254,6 @@ GET  /api/v1/admin/hotels      - Manage hotels
 - Add, edit, or remove listings
 - Monitor system performance
 
-## 🎨 Screenshots
-
-### 🏠 Homepage
-![Homepage](https://via.placeholder.com/800x400?text=BookNGo+Homepage)
-
-### ✈️ Flight Search
-![Flight Search](https://via.placeholder.com/800x400?text=Flight+Search+Interface)
-
-### 🏨 Hotel Booking
-![Hotel Booking](https://via.placeholder.com/800x400?text=Hotel+Booking+Interface)
-
-### 👨‍💼 Admin Dashboard
-![Admin Dashboard](https://via.placeholder.com/800x400?text=Admin+Dashboard)
 
 ## 🏢 Project Team
 
@@ -303,7 +287,7 @@ We'd love to hear your ideas! Submit feature requests through GitHub Issues.
 
 ### 🆘 Getting Help
 - **GitHub Issues**: [Report bugs or request features](https://github.com/Armughan-Ather/BookNGo-Database-Project/issues)
-- **Email Support**: k224416@nu.edu.pk
+- **Email Support**: armughan.ather83@gmail.com
 - **Documentation**: Check our comprehensive guides above
 
 ### 🔗 Useful Links
@@ -338,6 +322,6 @@ We'd love to hear your ideas! Submit feature requests through GitHub Issues.
 
 **Made with ❤️ by the BookNGo Team**
 
-[🌐 Visit Live Site](https://bookngo-travels.vercel.app/) | [📧 Contact Us](mailto:k224416@nu.edu.pk) | [⭐ Star on GitHub](https://github.com/Armughan-Ather/BookNGo-Database-Project)
+[🌐 Visit Live Site](https://bookngo-travels.vercel.app/) | [📧 Contact Us](mailto:armughan.ather8) | [⭐ Star on GitHub](https://github.com/Armughan-Ather/BookNGo-Database-Project)
 
 </div>
