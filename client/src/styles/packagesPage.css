@@ -52,15 +52,73 @@
 }
 
 @media (max-width: 768px) {
+  .bookngo-packages-page-container {
+    padding: 1.5rem 1rem;
+  }
+
   .bookngo-packages-search-container {
-    max-width: 90%; /* Adjust container width for smaller screens */
+    max-width: 95%;
+    margin-bottom: 1.5rem;
+  }
+
+  .bookngo-packages-search-bar {
+    height: 2.2rem;
+    font-size: 0.9rem;
+    padding: 0.4rem;
   }
 
   .bookngo-packages-title {
     font-size: 2rem;
+    margin-bottom: 0.8rem;
   }
 
   .bookngo-packages-subtitle {
     font-size: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .bookngo-packages-card-container {
+    gap: 1rem;
+  }
+
+  .bookngo-packages-no-results {
+    font-size: 1.1rem;
+    margin-top: 1.5rem;
+    padding: 0 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .bookngo-packages-page-container {
+    padding: 1rem 0.5rem;
+  }
+
+  .bookngo-packages-search-container {
+    max-width: 98%;
+  }
+
+  .bookngo-packages-search-bar {
+    height: 2rem;
+    font-size: 0.85rem;
+    padding: 0.3rem;
+  }
+
+  .bookngo-packages-title {
+    font-size: 1.8rem;
+    margin-bottom: 0.6rem;
+  }
+
+  .bookngo-packages-subtitle {
+    font-size: 0.9rem;
+    margin-bottom: 1.2rem;
+  }
+
+  .bookngo-packages-card-container {
+    gap: 0.8rem;
+  }
+
+  .bookngo-packages-no-results {
+    font-size: 1rem;
+    margin-top: 1.2rem;
   }
 }

@@ -86,16 +86,20 @@
 
 /* Responsive Design */
 @media (max-width: 768px) {
+  .signup-page {
+    height: auto;
+    min-height: 100vh;
+  }
+
   .left-col {
-    padding: 2rem;
+    padding: 2rem 1rem;
     text-align: center;
-    display: flex;
-    flex-direction: column;
-    justify-content: center; /* This will center the title and tagline vertically */
+    order: 1;
   }
 
   .right-col {
-    padding: 2rem;
+    padding: 2rem 1rem;
+    order: 2;
   }
 
   .appTitle {
@@ -106,9 +110,59 @@
   .appTagline {
     font-size: 1.2rem;
     text-align: center;
+    margin-bottom: 1rem;
   }
 
   .signup-form-container {
     padding: 1.5rem;
+    max-width: 100%;
+  }
+
+  .input-fields-form {
+    padding: 1rem;
+    font-size: 0.9rem;
+    margin-bottom: 1.2rem;
+  }
+
+  .eye-icon {
+    top: 25%;
+  }
+}
+
+@media (max-width: 480px) {
+  .signup-page {
+    padding: 0;
+  }
+
+  .left-col, .right-col {
+    padding: 1.5rem 0.8rem;
+  }
+
+  .appTitle {
+    font-size: 2.5rem;
+  }
+
+  .appTagline {
+    font-size: 1rem;
+  }
+
+  .signup-form-container {
+    padding: 1.2rem;
+    border-radius: 0.6rem;
+  }
+
+  .input-fields-form {
+    padding: 0.8rem;
+    font-size: 0.85rem;
+    margin-bottom: 1rem;
+  }
+
+  .eye-icon {
+    font-size: 0.9rem;
+    right: 0.8rem;
+  }
+
+  .error {
+    font-size: 0.8rem;
   }
 }

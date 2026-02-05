@@ -67,3 +67,67 @@
   .margin-right-applied-card-text{
     margin-right: 0.35rem;
   }
+
+  /* Mobile Responsiveness */
+  @media (max-width: 768px) {
+    .hotel-card-search-results {
+      margin: 1rem auto;
+      max-width: 90%;
+      width: 100%;
+    }
+
+    .hotel-card-img {
+      height: 10rem;
+    }
+
+    .hotel-card-body {
+      padding: 0.8rem;
+    }
+
+    .hotel-card-title {
+      font-size: 1.1rem;
+    }
+
+    .hotel-card-text {
+      font-size: 0.9rem;
+    }
+
+    .hotel-card-book-button {
+      padding: 0.6rem;
+      font-size: 0.9rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .hotel-card-search-results {
+      margin: 0.8rem auto;
+      max-width: 95%;
+    }
+
+    .hotel-card-img {
+      height: 8rem;
+    }
+
+    .hotel-card-body {
+      padding: 0.7rem;
+    }
+
+    .hotel-card-title {
+      font-size: 1rem;
+      margin-bottom: 0.4rem;
+    }
+
+    .hotel-card-text {
+      font-size: 0.85rem;
+      line-height: 1.4;
+    }
+
+    .hotel-star-icon {
+      font-size: 1rem;
+    }
+
+    .hotel-card-book-button {
+      padding: 0.5rem;
+      font-size: 0.85rem;
+    }
+  }

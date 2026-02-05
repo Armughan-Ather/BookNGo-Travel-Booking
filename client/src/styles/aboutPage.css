@@ -71,4 +71,81 @@
     font-size: 1rem;
     line-height: 1.6;
   }
+
+  /* Mobile Responsiveness */
+  @media (max-width: 768px) {
+    .about-page-comp-wrapper {
+      padding: 1.5rem 1rem;
+    }
+
+    .about-page-comp-title {
+      font-size: 2rem;
+    }
+
+    .about-page-comp-subtitle {
+      font-size: 1.1rem;
+    }
+
+    .about-page-comp-section-title {
+      font-size: 1.5rem;
+    }
+
+    .about-page-comp-section-text,
+    .about-page-comp-list {
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+
+    .about-page-comp-footer {
+      padding: 1.5rem 1rem;
+    }
+
+    .about-page-comp-footer-title {
+      font-size: 1.5rem;
+    }
+
+    .about-page-comp-footer-text {
+      font-size: 0.9rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .about-page-comp-wrapper {
+      padding: 1rem 0.5rem;
+    }
+
+    .about-page-comp-title {
+      font-size: 1.8rem;
+    }
+
+    .about-page-comp-subtitle {
+      font-size: 1rem;
+    }
+
+    .about-page-comp-section-title {
+      font-size: 1.3rem;
+    }
+
+    .about-page-comp-section-text,
+    .about-page-comp-list {
+      font-size: 0.85rem;
+      line-height: 1.4;
+    }
+
+    .about-page-comp-list {
+      padding-left: 1rem;
+    }
+
+    .about-page-comp-footer {
+      padding: 1.2rem 0.5rem;
+    }
+
+    .about-page-comp-footer-title {
+      font-size: 1.3rem;
+    }
+
+    .about-page-comp-footer-text {
+      font-size: 0.85rem;
+    }
+  }
   

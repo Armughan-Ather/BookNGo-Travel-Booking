@@ -63,8 +63,66 @@
     width: 100%;
     font-size: 1.2rem;
     transition: background-color 0.3s ease;
+    min-height: 44px;
 }
 
 .bookngo-package-final-details-proceed-button:hover {
     background-color: #f57f17;
+}
+
+/* Mobile Responsive Design */
+@media (max-width: 768px) {
+    .bookngo-package-final-details-container {
+        margin: 2rem auto;
+        padding: 1.5rem;
+        max-width: 95%;
+    }
+
+    .bookngo-package-final-details-title {
+        font-size: 1.8rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .bookngo-package-final-details-box {
+        padding: 1.5rem;
+    }
+
+    .bookngo-package-final-details-row {
+        margin-bottom: 1.2rem;
+    }
+
+    .bookngo-package-final-details-input-field {
+        padding: 0.8rem;
+        font-size: 1rem;
+    }
+
+    .bookngo-package-final-details-proceed-button {
+        font-size: 1.1rem;
+        padding: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .bookngo-package-final-details-container {
+        margin: 1rem auto;
+        padding: 1rem;
+    }
+
+    .bookngo-package-final-details-title {
+        font-size: 1.6rem;
+    }
+
+    .bookngo-package-final-details-box {
+        padding: 1rem;
+    }
+
+    .bookngo-package-final-details-input-field {
+        padding: 0.7rem;
+        font-size: 0.9rem;
+    }
+
+    .bookngo-package-final-details-proceed-button {
+        font-size: 1rem;
+        padding: 0.9rem;
+    }
 }

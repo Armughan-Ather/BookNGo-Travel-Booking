@@ -126,8 +126,100 @@
     align-items: center;
 }
 /* Responsive adjustments for mobile view */
-@media (max-width: 36rem) { /* 576px */
+@media (max-width: 768px) {
     .flight-search-results-comp-card {
-        width: 90%; /* Increased width for smaller screens */
+        width: 90%;
+        padding: 1rem;
+        margin: 1rem auto;
+    }
+
+    .flight-search-results-comp-card-title {
+        font-size: 1.2rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .flight-search-results-comp-card-info {
+        flex-direction: column;
+        gap: 0.8rem;
+        align-items: flex-start;
+    }
+
+    .flight-search-results-comp-departure,
+    .flight-search-results-comp-price {
+        font-size: 1rem;
+        width: 100%;
+    }
+
+    .flight-search-results-comp-way-line {
+        font-size: 3rem;
+    }
+
+    .flight-search-results-comp-way-pin {
+        font-size: 1.5rem;
+    }
+
+    .flight-search-results-comp-origin-destination {
+        font-size: 1.1rem;
+        margin: 0 0.5rem;
+    }
+
+    .flight-search-results-comp-from {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 0.2rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .flight-search-results-comp-card {
+        width: 95%;
+        padding: 0.8rem;
+    }
+
+    .flight-search-results-comp-card-title {
+        font-size: 1.1rem;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.3rem;
+    }
+
+    .flight-search-results-comp-card-route {
+        height: auto;
+        margin-bottom: 1rem;
+    }
+
+    .flight-search-results-comp-way-line {
+        font-size: 2rem;
+    }
+
+    .flight-search-results-comp-way-pin {
+        font-size: 1.2rem;
+    }
+
+    .flight-search-results-comp-origin-destination {
+        font-size: 1rem;
+        margin: 0 0.3rem;
+    }
+
+    .flight-search-results-comp-departure,
+    .flight-search-results-comp-price {
+        font-size: 0.9rem;
+    }
+
+    .flight-search-results-comp-price-value {
+        font-size: 1.1rem;
+    }
+
+    .flight-search-results-comp-book-btn {
+        font-size: 0.9rem;
+        padding: 0.7rem;
+    }
+
+    .flight-search-results-comp-stars {
+        font-size: 1.3rem;
+    }
+
+    .flight-search-results-comp-ratingsCount {
+        font-size: 0.9rem;
     }
 }

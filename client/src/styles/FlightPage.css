@@ -242,20 +242,106 @@
 
 /* Responsive Styles */
 @media (max-width: 968px) {
+    .flight-hero-heading {
+        font-size: 2rem;
+        margin-bottom: 2rem;
+    }
+
+    .flight-search-container {
+        max-width: 95%;
+        gap: 1rem;
+    }
+
     .flight-input-container input,
     .flight-date-input,
     .flight-airline-input,
-    .flight-traveler-input,.flight-from-and-to,
-    .flight-search-button-container,
-    .flight-search-button
-    {
+    .flight-traveler-input {
         width: 100%; /* Full width on smaller screens */
+        font-size: 0.9rem;
+        padding: 0.8rem;
+        padding-left: 2.5rem;
     }
 
     .flight-input-row {
         flex-direction: column; /* Stack inputs on smaller screens */
+        gap: 1rem;
     }
-    .flight-from-and-to{
+    
+    .flight-from-and-to {
         width: 100%;
+    }
+
+    .flight-search-button-container {
+        width: 100%;
+    }
+
+    .flight-search-button {
+        width: 100%;
+        padding: 0.8rem;
+        font-size: 1.2rem;
+    }
+
+    .flight-search-results-matched-head {
+        font-size: 2rem;
+        padding: 2rem 1rem;
+    }
+
+    .flight-search-sort-container {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+        padding: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .flight-hero-section {
+        padding: 3rem 0;
+    }
+
+    .flight-hero-heading {
+        font-size: 1.8rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .flight-search-container {
+        max-width: 98%;
+        padding: 0 0.5rem;
+    }
+
+    .flight-input-container input,
+    .flight-date-input,
+    .flight-airline-input,
+    .flight-traveler-input {
+        font-size: 0.85rem;
+        padding: 0.7rem;
+        padding-left: 2.2rem;
+    }
+
+    .flight-input-icon {
+        font-size: 1rem;
+        left: 0.5rem;
+    }
+
+    .flight-bigger-icon {
+        font-size: 1.2rem;
+    }
+
+    .flight-search-results-matched-head {
+        font-size: 1.5rem;
+        padding: 1.5rem 0.5rem;
+    }
+
+    .flight-search-sort-container {
+        padding: 0.8rem;
+    }
+
+    .flight-search-sort-container label {
+        font-size: 0.9rem;
+    }
+
+    .flight-search-sort-dropdown {
+        font-size: 0.9rem;
+        padding: 0.4rem 0.8rem;
     }
 }

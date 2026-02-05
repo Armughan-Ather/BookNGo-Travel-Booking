@@ -45,9 +45,17 @@
     margin-bottom: 1.5rem;
 }
 
+.flight-reservation-comp-traveller-head {
+    font-weight: bold;
+    color: #003049;
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
 .flight-reservation-comp-traveller-row {
     display: flex;
     gap: 1rem;
+    margin-bottom: 1rem;
 }
 
 .flight-reservation-comp-input-small {
@@ -74,21 +82,89 @@
 .flight-reservation-comp-button:hover {
     background-color: #f57f17;
 }
-.flight-reservation-comp-traveller-info {
-    margin-bottom: 1.5rem;
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+    .flight-reservation-comp-page {
+        margin: 2rem auto;
+        padding: 1.5rem;
+        max-width: 95%;
+    }
+
+    .flight-reservation-comp-title {
+        font-size: 1.8rem;
+        margin-bottom: 1.2rem;
+    }
+
+    .flight-reservation-comp-form {
+        padding: 1.5rem;
+    }
+
+    .flight-reservation-comp-field {
+        margin-bottom: 1.2rem;
+    }
+
+    .flight-reservation-comp-input,
+    .flight-reservation-comp-input-readonly,
+    .flight-reservation-comp-input-small {
+        padding: 0.7rem;
+        font-size: 0.9rem;
+    }
+
+    .flight-reservation-comp-traveller-row {
+        flex-direction: column;
+        gap: 0.8rem;
+    }
+
+    .flight-reservation-comp-input-small {
+        flex: none;
+    }
+
+    .flight-reservation-comp-button {
+        padding: 0.9rem;
+        font-size: 1rem;
+    }
 }
 
-.flight-reservation-comp-traveller-row {
-    display: flex;
-    gap: 1rem;
-    margin-bottom: 1rem; /* Adds space between name row and passport row */
-}
+@media (max-width: 480px) {
+    .flight-reservation-comp-page {
+        margin: 1rem auto;
+        padding: 1rem;
+        max-width: 98%;
+        border-radius: 0.8rem;
+    }
 
-.flight-reservation-comp-input-small {
-    flex: 1;
-    padding: 0.6rem;
-    font-size: 1rem;
-    border-radius: 0.4rem;
-    border: 0.1rem solid #ccc;
-    box-shadow: 0 0.1rem 0.2rem rgba(0, 0, 0, 0.05);
+    .flight-reservation-comp-title {
+        font-size: 1.6rem;
+        margin-bottom: 1rem;
+    }
+
+    .flight-reservation-comp-form {
+        padding: 1.2rem;
+        border-radius: 0.8rem;
+    }
+
+    .flight-reservation-comp-field {
+        margin-bottom: 1rem;
+    }
+
+    .flight-reservation-comp-input,
+    .flight-reservation-comp-input-readonly,
+    .flight-reservation-comp-input-small {
+        padding: 0.6rem;
+        font-size: 0.85rem;
+    }
+
+    .flight-reservation-comp-traveller-head {
+        font-size: 0.9rem;
+    }
+
+    .flight-reservation-comp-traveller-row {
+        gap: 0.6rem;
+    }
+
+    .flight-reservation-comp-button {
+        padding: 0.8rem;
+        font-size: 0.9rem;
+    }
 }

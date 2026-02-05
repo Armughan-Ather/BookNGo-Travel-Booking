@@ -153,4 +153,98 @@
     background-color: #007bff;
     color: #fff;
   }
+
+  /* Mobile Responsive Design */
+  @media (max-width: 968px) {
+    .admin-flights-comp-table {
+      font-size: 0.9rem;
+    }
+
+    .admin-flights-comp-thead th,
+    .admin-flights-comp-tbody td {
+      padding: 0.8rem 0.5rem;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .admin-flights-comp-container {
+      padding: 1rem;
+    }
+
+    .admin-flights-comp-title {
+      font-size: 2rem;
+    }
+
+    .admin-flights-comp-add-btn {
+      font-size: 1rem;
+      padding: 0.6rem 1.2rem;
+      margin-left: 0;
+      width: 100%;
+      text-align: center;
+    }
+
+    .admin-flights-comp-table {
+      display: block;
+      overflow-x: auto;
+      white-space: nowrap;
+    }
+
+    .admin-flights-comp-thead th,
+    .admin-flights-comp-tbody td {
+      font-size: 0.8rem;
+      padding: 0.5rem 0.3rem;
+      min-width: 80px;
+    }
+
+    .admin-flights-comp-modal .modal-dialog {
+      width: 95%;
+      margin: 1rem;
+    }
+
+    .admin-flights-comp-modal .modal-content {
+      padding: 1.5rem;
+    }
+
+    .admin-flights-comp-modal .modal-body input {
+      padding: 0.6rem;
+      font-size: 0.9rem;
+    }
+
+    .admin-flights-comp-modal .modal-footer {
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .admin-flights-comp-modal .btn {
+      font-size: 0.9rem;
+      padding: 0.6rem 1rem;
+      width: 100%;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .admin-flights-comp-container {
+      padding: 0.5rem;
+    }
+
+    .admin-flights-comp-title {
+      font-size: 1.8rem;
+    }
+
+    .admin-flights-comp-add-btn {
+      font-size: 0.9rem;
+      padding: 0.5rem 1rem;
+    }
+
+    .admin-flights-comp-thead th,
+    .admin-flights-comp-tbody td {
+      font-size: 0.7rem;
+      padding: 0.4rem 0.2rem;
+      min-width: 60px;
+    }
+
+    .admin-flights-comp-modal .modal-content {
+      padding: 1rem;
+    }
+  }
   

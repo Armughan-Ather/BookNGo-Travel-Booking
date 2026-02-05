@@ -124,16 +124,23 @@
 
 /* Media Queries for Responsiveness */
 @media (max-width: 768px) {
+  .home-page-comp-hero {
+    height: 20vh;
+    padding: 1rem;
+  }
+
   .home-page-comp-hero-title {
     font-size: 2.5rem;
   }
 
   .home-page-comp-hero-description {
     font-size: 1.2rem;
+    margin-bottom: 1rem;
   }
 
-  .home-page-comp-cta-btn {
-    font-size: 1rem;
+  .home-page-comp-carousel {
+    margin: 1rem auto;
+    max-width: 95%;
   }
 
   .home-page-comp-carousel-image-wrapper {
@@ -141,26 +148,43 @@
   }
 
   .home-page-comp-carousel-image {
-    height: 14rem; /* Smaller height for smaller screens */
+    height: 8rem; /* Smaller height for smaller screens */
   }
 
   .home-page-comp-services {
-    padding: 3rem 2rem;
+    padding: 2rem 1rem;
   }
 
   .home-page-comp-services-container {
     flex-direction: column; /* Stack services vertically on small screens */
-    gap: 1rem;
+    gap: 1.5rem;
   }
 
   .home-page-comp-service {
-    width: 80%;
+    width: 90%;
     margin: 0 auto;
+    padding: 1.5rem;
+    background-color: white;
+    border-radius: 0.8rem;
+    box-shadow: 0 0.2rem 0.8rem rgba(0, 0, 0, 0.1);
+  }
+
+  .home-page-comp-service-title {
+    font-size: 1.5rem;
+  }
+
+  .home-page-comp-service-description {
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
   }
 }
 
 /* Additional Media Query for mobile screens */
 @media (max-width: 480px) {
+  .home-page-comp-hero {
+    height: 18vh;
+  }
+
   .home-page-comp-hero-title {
     font-size: 2rem;
   }
@@ -169,17 +193,34 @@
     font-size: 1rem;
   }
 
-  .home-page-comp-cta-btn {
-    font-size: 0.9rem;
-    padding: 0.8rem 2rem;
+  .home-page-comp-carousel {
+    margin: 0.5rem auto;
   }
 
   .home-page-comp-carousel-image {
-    height: 12rem; /* Further reduced height */
+    height: 6rem; /* Further reduced height */
   }
 
   /* Carousel Styling for Small Screens */
   .home-page-comp-carousel-image-wrapper {
-    min-width: 80%; /* Make images bigger and display 1 item per row */
+    min-width: 90%; /* Make images bigger and display 1 item per row */
+  }
+
+  .home-page-comp-services {
+    padding: 1.5rem 0.5rem;
+  }
+
+  .home-page-comp-service {
+    width: 95%;
+    padding: 1rem;
+  }
+
+  .home-page-comp-service-title {
+    font-size: 1.3rem;
+  }
+
+  .home-page-comp-service-btn {
+    padding: 0.6rem 1.5rem;
+    font-size: 0.9rem;
   }
 }
